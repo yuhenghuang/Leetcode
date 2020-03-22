@@ -1,0 +1,55 @@
+import java.util.Queue;
+import java.util.ArrayDeque;
+
+
+class TreeNode {
+       int val;
+       TreeNode left;
+       TreeNode right;
+  TreeNode(int x) { val = x; }
+}
+
+class Pair {
+  TreeNode node;
+  int idx, layer;
+
+  Pair (TreeNode x, int y, int z) {
+    node = x;
+    idx = y;
+    layer = z;
+  }
+}
+
+public class MaximumWidthTree {
+  public int widthOfBinaryTree(TreeNode root) {
+    if (root==null) return 0;
+    Queue<Pair> queue = new ArrayDeque<>();
+    queue.add(new Pair(root, 0, 0));
+
+    TreeNode node;
+    int idx, layer;
+    int cur_layer=0, cur_idx=0, res=1;
+
+    //potential improvement:
+    //update res in each layer only once
+    //to do this, nested loop over one layer into the while loop
+    //and update the res
+    //by checking the first and last index in each nested loop
+    while (!queue.isEmpty()) {
+      Pair info = queue.poll();
+      node = info.node; idx = info.idx; layer = info.layer;
+      if (layer==cur_layer) {
+        res=Math.max(res, idx-cur_idx+1);
+      }
+      else {
+        cur_layer++;
+        cur_idx=idx;
+      }
+
+      if (node.left!=null) queue.offer(new Pair(node.left, idx*2, layer+1));
+      if (node.right!=null) queue.offer(new Pair(node.right, idx*2+1, layer+1));
+    }
+
+    return res;
+  }
+}
