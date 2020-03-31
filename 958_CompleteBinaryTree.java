@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 
-class Solution {
+class CompleteBinaryTree {
   public boolean isCompleteTreeSlow(TreeNode root) {
     Queue<TreeNode> queue = new ArrayDeque<>();
     List<Boolean> list = new ArrayList<>();
