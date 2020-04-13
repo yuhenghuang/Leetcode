@@ -17,7 +17,7 @@ class MinCostKWorkers {
     int qsum=0;
     for (int i=0; i<K; ++i) {
       qsum+=jobmarket[i].quality;
-      heap.offer(qsum);
+      heap.offer(jobmarket[i].quality);
     }
     double res = qsum * jobmarket[K-1].unitwage;
 
