@@ -1,5 +1,5 @@
 import java.util.ArrayDeque;
-import java.util.Arrays;
+// import java.util.Arrays;
 import java.util.Queue;
 import java.util.Scanner;
 
@@ -8,9 +8,8 @@ class PopulatingNextPointers {
     Scanner scan = new Scanner(System.in);
     //System.out.println(scan.nextLine());
     //System.out.println(scan.nextLine());
-    int[][] nums = LeetcodeParser.array2dParser(scan.nextLine());
-    for (int[] line : nums)
-      System.out.println(Arrays.toString(line));
+    TreeNode root = LeetcodeUtil.treeParser(scan.nextLine());
+    System.out.println(root.val+" "+root.left.val+" "+root.right.val);
     scan.close();
   }
   public Node connect(Node root) {
