@@ -1,4 +1,4 @@
-#include "DataStructure.cpp"
+#include "DataStructure.h"
 using namespace std;
 
 class Solution {
