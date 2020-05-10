@@ -1,3 +1,6 @@
+#ifndef _DS_H_
+#define _DS_H_
+
 #include <vector>
 
 struct TreeNode {
@@ -36,3 +39,5 @@ struct ListNode {
 //         children = _children;
 //     }
 // };
+
+#endif
