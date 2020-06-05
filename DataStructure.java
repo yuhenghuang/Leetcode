@@ -38,6 +38,8 @@ class LeetcodeUtil {
   public static int[] arrayIntParser(String s) {
     String[] temp = arrayStringParser(s);
     int[] res = new int[temp.length];
+    if (temp.length==1 && temp[0].length()==0)
+      return res;
     for (int i=0; i<temp.length; ++i)
       res[i] = Integer.parseInt(temp[i]);
     return res; 
@@ -50,6 +52,25 @@ class LeetcodeUtil {
     int[][] res = new int[temp.length][dim2];
     for (int i=0; i<temp.length; ++i)
       res[i] = arrayIntParser(temp[i]);
+    return res;
+  }
+
+  public static List<Integer> listIntParser(String s) {
+    String[] temp = arrayStringParser(s);
+    List<Integer> res = new ArrayList<>();
+    if (temp.length==1 && temp[0].length()==0)
+      return res;
+    for(int i=0; i<temp.length; ++i)
+      res.add(Integer.parseInt(temp[i]));
+    return res;
+  }
+
+  public static List<List<Integer>> listInt2dParser(String s) {
+    s = s.replaceAll("[ \t]+", "");
+    String[] temp = s.split("\\],\\[");
+    List<List<Integer>> res = new ArrayList<>();
+    for (int i=0; i<temp.length; ++i)
+      res.add(listIntParser(temp[i]));
     return res;
   }
 
