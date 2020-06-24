@@ -10,8 +10,38 @@ static int emm = [](){
 }();
 
 class Solution {
+  private:
+    int N, target;
+    vector<vector<int>> memo;
   public:
-    bool canPartition(vector<int>& nums) {
+      bool canPartition(vector<int>& nums) {
+      N = nums.size();
+      if (N<2) return false;
+
+      int sum=0;
+      for (int i=0; i<N; ++i) {
+        sum += nums[i];
+      }
+      if (sum%2!=0) return false;
+      target = sum/2;
+      memo = vector<vector<int>>(N, vector<int>(target+1, -1));
+      return dfs(0, 0, nums);
+    }
+
+    bool dfs(int idx, int sum, vector<int>& nums) {
+      if (sum>target || idx>=N) return false;
+      if (memo[idx][sum]!=-1) return memo[idx][sum]==1;
+
+      if (sum==target) 
+        return true;
+      else {
+        bool flag = dfs(idx+1, sum+nums[idx], nums) ||  dfs(idx+1, sum, nums);
+        memo[idx][sum] = flag?1:0;
+        return flag;
+      }
+    }
+
+    bool canPartitionSlow(vector<int>& nums) {
       int N = nums.size();
       if (N<2) return false;
 
