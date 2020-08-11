@@ -38,6 +38,6 @@ class PathSumIII {
     int dfs(TreeNode* root, int currSum, int& sum) {
       if (root==nullptr) return 0;
       currSum+=root->val;
-      return dfs(root->left, currSum, sum) + dfs(root->right, currSum, sum) + currSum==sum?1:0;
+      return dfs(root->left, currSum, sum) + dfs(root->right, currSum, sum) + (currSum==sum?1:0);
     }
 };
