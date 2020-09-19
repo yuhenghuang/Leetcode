@@ -15,7 +15,7 @@ struct Node {
 
 class Solution {
   private:
-    void addNode(Node* root, const int &num, int layer) {
+    void addNode(Node* root, const int &num, int&& layer) {
       if (layer<0) return;
 
       if ((num >> layer) & 1) {
@@ -30,7 +30,7 @@ class Solution {
       }
     }
 
-    void findMax(Node* root, const int &num, int layer, int &res) {
+    void findMax(Node* root, const int &num, int&& layer, int &res) {
       if (!root->left && !root->right) 
         return;
       else if (!root->left) {
