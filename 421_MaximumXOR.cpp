@@ -54,7 +54,6 @@ class Solution {
       int res=0;
 
       Node *root = new Node();
-      // addNode(root, 0, 31);
       int temp;
       for (int& num : nums) {
         temp = 0;
