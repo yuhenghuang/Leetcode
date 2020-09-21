@@ -1,5 +1,5 @@
-#ifndef UTILS_HPP
-#define UTILS_HPP
+#ifndef _UTILS_HPP
+#define _UTILS_HPP
 
 #include <sstream>
 #include <vector>
@@ -23,11 +23,17 @@ namespace utils {
   /**
    * @brief Parse string to 1D vector, e.g. "[3,2,7]", white spaces allowed.
    * 
-   * @tparam T typename, current support int, std::string
+   * @tparam T typename, current supports int, std::string
    * 
    */
   template<typename T>
   struct parse_vector_1d {
+    /**
+     * @brief Parse string to 1D vector
+     * 
+     * @param line Serialized string of a 1D vector, e.g. "[3,7,9]", white spaces allowed.
+     * @return std::vector<T> T was defined when functor constructed.
+     */
     std::vector<T> operator()(std::string& row) {
       std::vector<T> out;
       row = regex_replace(row, std::regex("[\\[\\]\\s]+"), "");
@@ -45,11 +51,19 @@ namespace utils {
   /**
    * @brief Parse string to 2D vector, e.g. "[[3,2,7],[3,7,9],[8,3,9]]", white spaces allowed.
    * 
-   * @tparam T typename, current support int, std::string
+   * @tparam T typename, current supports int, std::string
    * 
    */
   template<typename T>
   struct parse_vector_2d {
+    /**
+     * @brief Parse string to 2D vector
+     * 
+     * 
+     * @param line Serialized string of a 2D vector, e.g. "[[3,2,7],[3,7,9],[8,3,9]]", white spaces allowed.
+     * 
+     * @return std::vector<std::vector<T>> T was defined when functor constructed.
+     */
     std::vector<std::vector<T>> operator()(std::string& line) {
       line = regex_replace(line, std::regex("\\s+"), "");
       line = regex_replace(line, std::regex("\\],\\["), ";");
@@ -70,16 +84,18 @@ namespace utils {
   /**
    * @brief Parse string to Tree
    * 
-   * @param row Serialized string of a tree, e.g. "[1, NULL, 2]" white space allowed.
+   * 
+   * @param line Serialized string of a tree, e.g. "[1, NULL, 2]" white space allowed.
+   * 
    * @return TreeNode* root
    */
-  TreeNode *parse_tree(std::string& row) {
+  TreeNode *parse_tree(std::string& line) {
     TreeNode* root = nullptr;
     TreeNode* node;
     std::queue<TreeNode*> q;
 
-    row = regex_replace(row, std::regex("[\\[\\]\\s]+"), "");
-    std::istringstream ss(row);
+    line = regex_replace(line, std::regex("[\\[\\]\\s]+"), "");
+    std::istringstream ss(line);
     std::string val;
     bool left=true;
     while (getline(ss, val, ',')) {
@@ -99,6 +115,36 @@ namespace utils {
           q.pop();
         }
         left = !left;
+      }
+    }
+
+    return root;
+  }
+
+  /**
+   * @brief Parse string to linked list.
+   * 
+   * 
+   * @param line Serialized string of a linked list, e.g. "[1, 3, 2]" white space allowed.
+   * 
+   * @return ListNode* head
+   */
+  ListNode *parse_linked_list(std::string& line) {
+    ListNode* root = nullptr;
+    ListNode* prev, * next;
+
+    line = regex_replace(line, std::regex("[\\[\\]\\s]+"), "");
+    std::istringstream ss(line);
+    std::string val;
+    while (getline(ss, val, ',')) {
+      next = new ListNode(stoi(val));
+      if (root==nullptr) {
+        prev = next;
+        root = prev;
+      }
+      else {
+        prev->next = next;
+        prev = next;
       }
     }
 

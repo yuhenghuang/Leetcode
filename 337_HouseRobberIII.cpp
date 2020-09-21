@@ -30,10 +30,10 @@ int main() {
   Solution sol;
 
   fstream f("Inputs/337_HouseRobberIII.txt");
-  string row;
+  string line;
   TreeNode* root;
-  while (getline(f, row)) {
-    root = utils::parse_tree(row);
+  while (getline(f, line)) {
+    root = utils::parse_tree(line);
     cout << sol.rob(root) << endl;
   }
   return 0;

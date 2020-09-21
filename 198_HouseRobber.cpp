@@ -19,7 +19,7 @@ class Solution {
     }
 };
 
-void parser(vector<int> &vec) {
+void parse_vec(vector<int> &vec) {
   ifstream f;
 
   // not necessary to handle exceptions by users
@@ -49,7 +49,7 @@ int main() {
   Solution sol;
   vector<int> vec;
   // vec = {2,1,1,2};
-  parser(vec);
+  parse_vec(vec);
   cout << sol.rob(vec) << endl;
   return 0;
 }
