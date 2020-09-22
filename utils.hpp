@@ -2,6 +2,8 @@
 #define _UTILS_HPP
 
 #include <sstream>
+#include <iostream>
+#include <iterator>
 #include <vector>
 #include <queue>
 #include <bits/stdc++.h>
@@ -150,6 +152,38 @@ namespace utils {
 
     return root;
   }
+
+  /**
+   * @brief Print linked list
+   * 
+   * 
+   * @param head Linked list node pointer
+   * 
+   */
+  void print_linked_list(ListNode* head) {
+    if (!head) return;
+    while (head->next) {
+      std::cout << head->val << ", ";
+      head = head->next;
+    }
+    std::cout << head->val << std::endl;
+  }
+
+
+  /**
+   * @brief print 1D vector
+   * 
+   * @tparam T typename of std::vector<T>, operator<< must be defined for T
+   * 
+   * @param res const std::vector<T>&
+   * 
+   */
+  template<typename T>
+  void print_vector_1d(const std::vector<T>& res) {
+    copy(res.begin(), res.end(), std::ostream_iterator<T>(std::cout, ", "));
+    std::cout << std::endl;
+  }
+
 }
 
 #endif
