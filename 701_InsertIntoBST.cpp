@@ -1,5 +1,8 @@
-#include "DataStructure.h"
+#include "utils.hpp"
+#include <fstream>
 #include <cmath>
+
+using namespace std;
 
 class Solution {
   public:
@@ -24,3 +27,22 @@ class Solution {
       return root;
     }
 };
+
+int main() {
+  Solution sol;
+  vector<string> args;
+  TreeNode* root;
+  int val;
+
+  ifstream f("Inputs/701_InsertIntoBST.txt");
+  string line;
+  while (getline(f, line)) {
+    args = utils::string_split(line);
+    root = utils::parse_tree(args[0]);
+    val = stoi(args[1]);
+    sol.insertIntoBST(root, val);
+    utils::print_tree_horizontal(root);
+  }
+
+  return 0;
+}

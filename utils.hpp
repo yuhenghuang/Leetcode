@@ -14,18 +14,25 @@ namespace utils {
 
   template<typename T>
   T trans(const std::string& str) {
+    return str;
+  }
+
+  template<>
+  int trans(const std::string& str) {
     return stoi(str);
   }
 
   template<>
-  std::string trans(const std::string& str) {
-    return str;
+  char trans(const std::string& str) {
+    return str[0];
   }
 
   /**
    * @brief Parse string to 1D vector, e.g. "[3,2,7]", white spaces allowed.
    * 
-   * @tparam T typename, current supports int, std::string
+   * @tparam T typename, current supports int, char, std::string
+   * 
+   * @exception TypeNotSupported
    * 
    */
   template<typename T>
@@ -53,7 +60,7 @@ namespace utils {
   /**
    * @brief Parse string to 2D vector, e.g. "[[3,2,7],[3,7,9],[8,3,9]]", white spaces allowed.
    * 
-   * @tparam T typename, current supports int, std::string
+   * @tparam T typename, current supports int, char, std::string
    * 
    */
   template<typename T>
@@ -153,6 +160,29 @@ namespace utils {
     return root;
   }
 
+
+  /**
+   * @brief Split string by delimiter `char`, e.g. "substring a ; substring b"
+   * 
+   * @param str std::string, consists of multiple arguments, partitioned by a certain delimiter
+   * @param delim char, ';' by default
+   * 
+   * @return std::vector\\<std::string> 
+   */
+  std::vector<std::string> string_split(std::string& str, char delim=';') {
+    std::vector<std::string> out;
+
+    std::istringstream ss(str);
+    std::string part;
+
+    while (getline(ss, part, delim)) {
+      out.push_back(std::move(part));
+    }
+
+    return out;
+  }
+
+
   /**
    * @brief Print linked list
    * 
@@ -182,6 +212,40 @@ namespace utils {
   void print_vector_1d(const std::vector<T>& res) {
     copy(res.begin(), res.end(), std::ostream_iterator<T>(std::cout, ", "));
     std::cout << std::endl;
+  }
+
+
+  /**
+   * @brief print 2D vector
+   * 
+   * @tparam T typename of std::vector<std::vector<T>>, operator<< must be defined for T
+   * 
+   * @param res const std::vector<std::vector<T>>&
+   * 
+   */
+  template<typename T>
+  void print_vector_2d(const std::vector<std::vector<T>>& res) {
+    for (const std::vector<T>& row : res)
+      print_vector_1d(row);
+  }
+
+  /**
+   * @brief Print binray tree horizontally in terminal
+   * 
+   * 
+   * @param root Root of the tree
+   * @param is_left Flag of indicating left or right
+   * @param prefix String printed before value, please use default
+   * 
+   */
+  void print_tree_horizontal(const TreeNode* root, bool is_left=false, const std::string& prefix="") {
+    if (root) {
+      std::cout << prefix;
+      std::cout << (is_left ? "|-- " : "\\-- ");
+      std::cout << root->val << std::endl;
+      print_tree_horizontal(root->left, true, prefix + (is_left ? "|   " : "    "));
+      print_tree_horizontal(root->right, false, prefix + (is_left ? "|   " : "    "));
+    }
   }
 
 }
