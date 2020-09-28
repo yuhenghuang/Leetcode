@@ -11,3 +11,5 @@ Save my solutions to leecode problems
 
 * Able to print datatypes (`Tree`, `vector<T>`, `LinkedList`) without `operator<<` defined...
 
+* Add *./addinputs.sh* for convenience... e.g. `./addinputs.sh xxx_xxxx.cpp`
+

@@ -1,13 +1,16 @@
 #ifndef _UTILS_HPP
 #define _UTILS_HPP
 
+
+#include "DataStructure.h"
+
 #include <sstream>
 #include <iostream>
 #include <iterator>
 #include <vector>
 #include <queue>
 #include <bits/stdc++.h>
-#include "DataStructure.h"
+#include <fstream>
 
 
 namespace utils {
@@ -27,10 +30,15 @@ namespace utils {
     return str[0];
   }
 
+  template<>
+  double trans(const std::string& str) {
+    return stod(str);
+  }
+
   /**
    * @brief Parse string to 1D vector, e.g. "[3,2,7]", white spaces allowed.
    * 
-   * @tparam T typename, current supports int, char, std::string
+   * @tparam T typename, current supports int, double, char, std::string
    * 
    * @exception TypeNotSupported
    * 
@@ -45,7 +53,7 @@ namespace utils {
      */
     std::vector<T> operator()(std::string& row) {
       std::vector<T> out;
-      row = regex_replace(row, std::regex("[\\[\\]\\s]+"), "");
+      row = regex_replace(row, std::regex("[\\[\\]\\s\"]+"), "");
       std::istringstream ss(row);
 
       std::string element;
@@ -60,7 +68,7 @@ namespace utils {
   /**
    * @brief Parse string to 2D vector, e.g. "[[3,2,7],[3,7,9],[8,3,9]]", white spaces allowed.
    * 
-   * @tparam T typename, current supports int, char, std::string
+   * @tparam T typename, current supports int, double, char, std::string
    * 
    */
   template<typename T>
@@ -103,7 +111,7 @@ namespace utils {
     TreeNode* node;
     std::queue<TreeNode*> q;
 
-    line = regex_replace(line, std::regex("[\\[\\]\\s]+"), "");
+    line = regex_replace(line, std::regex("[\\[\\]\\s\"]+"), "");
     std::istringstream ss(line);
     std::string val;
     bool left=true;
@@ -142,7 +150,7 @@ namespace utils {
     ListNode* root = nullptr;
     ListNode* prev, * next;
 
-    line = regex_replace(line, std::regex("[\\[\\]\\s]+"), "");
+    line = regex_replace(line, std::regex("[\\[\\]\\s\"]+"), "");
     std::istringstream ss(line);
     std::string val;
     while (getline(ss, val, ',')) {
