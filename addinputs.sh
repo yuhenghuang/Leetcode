@@ -10,5 +10,6 @@ then
   if [ -x "$(command -v code)" ]
   then
     code $txtfile
+    code $cppfile
   fi
 fi

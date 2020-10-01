@@ -1,0 +1,5 @@
+"leetcode" ; ["leet", "code"]
+"applepenapple" ; ["apple", "pen"]
+"catsandog" ; ["cats", "dog", "sand", "and", "cat"]
+"goalspecial" ; ["go","goal","goals","special"]
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab" ; ["a","aa","aaa","aaaa","aaaaa","aaaaaa","aaaaaaa","aaaaaaaa","aaaaaaaaa","aaaaaaaaaa"]

@@ -184,6 +184,7 @@ namespace utils {
     std::string part;
 
     while (getline(ss, part, delim)) {
+      part = regex_replace(part, std::regex("\"|\\s+"), "");
       out.push_back(std::move(part));
     }
 
