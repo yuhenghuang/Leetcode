@@ -7,9 +7,12 @@ using namespace std;
 class Solution {
   private:
     int n;
-    bool dfs(int idx, string& s, unordered_map<int, unordered_set<string>*>& dict, vector<bool>& memo) {
-      if (idx==n || memo[idx])
+    bool dfs(int idx, string& s, unordered_map<int, unordered_set<string>*>& dict, vector<int>& memo) {
+      if (idx==n)
         return true;
+
+      if (memo[idx]!=0)
+        return memo[idx]>0;
 
       bool flag = false;
       for (auto& p: dict) {
@@ -19,12 +22,11 @@ class Solution {
         unordered_set<string>* ptr = p.second;
         if (ptr->find(s.substr(idx, len))!=ptr->end() && dfs(idx+len, s, dict, memo)) {
           flag = true;
-          memo[idx] = true;
           break;
         }
       }
 
-
+      memo[idx] = flag ? 1 : -1;
       return flag;
     }
   public:
@@ -40,7 +42,7 @@ class Solution {
         dict[len]->insert(w);
       }
 
-      vector<bool> memo(n);
+      vector<int> memo(n, 0);
       
       return dfs(0, s, dict, memo);
     }

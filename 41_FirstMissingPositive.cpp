@@ -1,5 +1,4 @@
 #include "utils.hpp"
-#include <climits>
 
 using namespace std;
 
@@ -8,11 +7,10 @@ class Solution {
     int firstMissingPositive(vector<int>& nums) {
       int n = nums.size();
       for (int i=0; i<n; ++i) {
-        if (nums[i]==INT_MIN) continue;
-        int idx = nums[i]-1;
-        while (nums[i]!=i+1 && (idx>=0 && idx<n && nums[idx]!=idx+1)) {
-          swap(nums[i], nums[idx]);
-          idx = nums[i] - 1;
+        int num = nums[i];
+        while (num!=i+1 && (num>0 && num<=n && nums[num-1]!=num)) {
+          swap(nums[i], nums[num-1]);
+          num = nums[i];
         }
       }
 

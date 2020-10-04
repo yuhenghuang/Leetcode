@@ -219,8 +219,15 @@ namespace utils {
    */
   template<typename T>
   void print_vector_1d(const std::vector<T>& res) {
-    copy(res.begin(), res.end(), std::ostream_iterator<T>(std::cout, ", "));
-    std::cout << std::endl;
+    int n=res.size();
+
+    std::cout << "[";
+    for (int i=0; i<n; ++i) {
+      std::cout << res[i];
+      if (i<n-1)
+        std::cout << ", ";
+    }
+    std::cout << "]";
   }
 
 
@@ -234,8 +241,20 @@ namespace utils {
    */
   template<typename T>
   void print_vector_2d(const std::vector<std::vector<T>>& res) {
-    for (const std::vector<T>& row : res)
-      print_vector_1d(row);
+    int n=res.size();
+
+    std::cout << "[";
+    for (int i=0; i<n; ++i) {
+      if (i>0)
+        std::cout << " ";
+
+      print_vector_1d(res[i]);
+      
+      if (i<n-1)
+        std::cout << "," << std::endl;
+    }
+    std::cout << "]" << std::endl;
+
   }
 
   /**
