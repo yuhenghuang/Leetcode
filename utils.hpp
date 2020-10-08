@@ -201,11 +201,12 @@ namespace utils {
    */
   void print_linked_list(ListNode* head) {
     if (!head) return;
+    std::cout << "[";
     while (head->next) {
       std::cout << head->val << ", ";
       head = head->next;
     }
-    std::cout << head->val << std::endl;
+    std::cout << head->val << "]" << std::endl;
   }
 
 
