@@ -13,6 +13,20 @@
 #include <fstream>
 
 
+/**
+ * @brief helper macro for reading lines from file
+ * 
+ * @param name string, file path
+ * 
+ * @exception plz use it in std namespace
+ * 
+ */
+#define readlines(name) \
+  ifstream f(name); \
+  string line; \
+  while (getline(f, line))
+
+
 namespace utils {
 
   template<typename T>
@@ -200,13 +214,17 @@ namespace utils {
    * 
    */
   void print_linked_list(ListNode* head) {
-    if (!head) return;
     std::cout << "[";
-    while (head->next) {
-      std::cout << head->val << ", ";
-      head = head->next;
+
+    if (head) {
+      while (head->next) {
+        std::cout << head->val << ", ";
+        head = head->next;
+      }
+      std::cout << head->val;
     }
-    std::cout << head->val << "]" << std::endl;
+    
+    std::cout << "]" << std::endl;
   }
 
 
@@ -279,4 +297,4 @@ namespace utils {
 
 }
 
-#endif
+#endif // _UTILS_HPP

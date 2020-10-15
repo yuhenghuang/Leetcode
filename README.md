@@ -13,3 +13,4 @@ Save my solutions to leecode problems
 
 * Add *./addinputs.sh* for convenience... e.g. `./addinputs.sh xxx_xxxx.cpp`
 
+* Add `readlines` macro for *cpp*, further simplifying reading parameters from files.
