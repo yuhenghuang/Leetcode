@@ -7,7 +7,6 @@
 #include <sstream>
 #include <iostream>
 #include <iterator>
-#include <vector>
 #include <queue>
 #include <bits/stdc++.h>
 #include <fstream>
@@ -246,7 +245,7 @@ namespace utils {
       if (i<n-1)
         std::cout << ", ";
     }
-    std::cout << "]";
+    std::cout << "]" << std::endl;
   }
 
 

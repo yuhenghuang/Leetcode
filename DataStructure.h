@@ -22,6 +22,7 @@ struct ListNode {
   ListNode(int x, ListNode *next) : val(x), next(next) {}
 };
 
+/*
 class Node {
 public:
     int val;
@@ -29,12 +30,14 @@ public:
     Node* next;
     Node* child;
 };
+*/
 
-/*
+#include <vector>
+
 class Node {
   public:
     int val;
-    vector<Node*> children;
+    std::vector<Node*> neighbors;
 
     Node() {}
 
@@ -42,10 +45,10 @@ class Node {
         val = _val;
     }
 
-    Node(int _val, vector<Node*> _children) {
+    Node(int _val, std::vector<Node*> _neighbors) {
         val = _val;
-        children = _children;
+        neighbors = _neighbors;
     }
 };
-*/
+
 #endif
