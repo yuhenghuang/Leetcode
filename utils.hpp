@@ -9,42 +9,30 @@
 #include <iterator>
 #include <queue>
 #include <bits/stdc++.h>
+#include <type_traits>
 #include <fstream>
 
-
-/**
- * @brief helper macro for reading lines from file
- * 
- * @param name string, file path
- * 
- * @exception plz use it in std namespace
- * 
- */
-#define readlines(name) \
-  ifstream f(name); \
-  string line; \
-  while (getline(f, line))
 
 
 namespace utils {
 
   template<typename T>
-  T trans(const std::string& str) {
+  T trans(std::string& str) {
     return str;
   }
 
   template<>
-  int trans(const std::string& str) {
+  int trans(std::string& str) {
     return stoi(str);
   }
 
   template<>
-  char trans(const std::string& str) {
+  char trans(std::string& str) {
     return str[0];
   }
 
   template<>
-  double trans(const std::string& str) {
+  double trans(std::string& str) {
     return stod(str);
   }
 
@@ -190,7 +178,7 @@ namespace utils {
    * 
    * @return std::vector\\<std::string> 
    */
-  std::vector<std::string> string_split(std::string& str, char delim=';') {
+  std::vector<std::string> string_split(const std::string& str, char delim=';') {
     std::vector<std::string> out;
 
     std::istringstream ss(str);
@@ -294,6 +282,210 @@ namespace utils {
     }
   }
 
+
+  // under construction
+
+  // universal parser
+  template<typename T>
+  struct universal_parser {
+    T operator()(std::string& str) {
+      return trans<T>(str);
+    }
+  };
+
+  template<>
+  TreeNode* trans(std::string& str) {
+    return parse_tree(str);
+  }
+
+  template<>
+  ListNode* trans(std::string& str) {
+    return parse_linked_list(str);
+  }
+
+  template<typename T>
+  struct universal_parser<std::vector<T>> {
+    std::vector<T> operator()(std::string& str) {
+      parse_vector_1d<T> parser;
+      return parser(str);
+    }
+  };
+
+  template<typename T>
+  struct universal_parser<std::vector<std::vector<T>>> { 
+    std::vector<std::vector<T>> operator()(std::string& str) {
+      parse_vector_2d<T> parser;
+      return parser(str);
+    }
+  };
+
+
+  // universal printer
+  template<typename T>
+  void universal_print(T res) {
+    std::cout << res << std::endl;
+  }
+
+  template<typename T>
+  void universal_print(const std::vector<T>& res) {
+    print_vector_1d(res);
+  }
+
+  template<typename T>
+  void universal_print(const std::vector<std::vector<T>>& res) {
+    print_vector_2d(res);
+  }
+
+  template<>
+  void universal_print(TreeNode* root) {
+    print_tree_horizontal(root);
+  }
+
+  template<>
+  void universal_print(ListNode* root) {
+    print_linked_list(root);
+  }
+
+
+  // input parameters
+  template <typename T>
+  class input_parameter {
+    private:
+      std::string& str;
+    public:
+      input_parameter(std::string& _s): str(_s) { }
+
+      inline operator T() { return universal_parser<T>()(str); }
+  };
+
+  template <typename T>
+  class input_parameter<T&> {
+    public:
+      typedef T& reference;
+      input_parameter(std::string& _s) {
+        data = universal_parser<T>()(_s);
+      }
+
+      inline operator reference() { return data; }
+
+    private:
+      T data;
+  };
+
+  template <typename T>
+  class input_parameter<T*> {
+    public:
+      typedef T* pointer;
+      input_parameter(std::string& _s) {
+        data = universal_parser<T*>()(_s);
+      }
+      ~input_parameter() {
+        delete data;
+      }
+
+      inline operator pointer() { return data; }
+
+    private:
+      pointer data;
+  };
+
+  template <typename T>
+  class input_parameter<const T&> {
+    public:
+      typedef const T& const_ref;
+      input_parameter(std::string& _s) {
+        data = universal_parser<T>()(_s);
+      }
+
+      inline operator const_ref() { return data; }
+
+    private:
+      T data;
+  };
+
+  template <typename T>
+  class input_parameter<const T> {
+    public:
+      typedef const T const_nonref;
+      input_parameter(std::string& _s) {
+        data = universal_parser<T>()(_s);
+      }
+
+      inline operator const_nonref() { return data; }
+
+    private:
+      T data;
+  };
+
+  // auto-generated
+  // #include "utils_generated.hpp"
+  #include "utils_generated_py.hpp"
+
+
+  std::string to_txt_file(const std::string& path) {
+    std::string file = path.substr(path.find_last_of('/')+1);
+    file.replace(file.size()-3, 3, "txt");
+    return file;
+  }
 }
+
+
+// auto-generated
+// left for debug purpose
+/*
+namespace utils {
+
+  template <class Solution, typename U0, typename Ret>
+  void run(Ret(Solution::*fn)(U0), std::string& line) {
+    std::vector<std::string> args = string_split(line);
+    input_parameter<U0> u0(args[0]);
+    Solution sol;
+    Ret res = (sol.*fn)(u0);
+    universal_print(res);
+  }
+
+  template <class Solution, typename U0, typename Ret, typename = std::enable_if_t<std::is_void<Ret>::value>>
+  void run(Ret(Solution::*fn)(U0), std::string& line) {
+    std::vector<std::string> args = string_split(line);
+    input_parameter<U0> u0(args[0]);
+    Solution sol;
+    (sol.*fn)(u0);
+    universal_print(U0(u0));
+  }
+
+  template <class Solution, typename U0, typename U1, typename Ret>
+  void run(Ret(Solution::*fn)(U0, U1), std::string& line) {
+    std::vector<std::string> args = string_split(line);
+    input_parameter<U0> u0(args[0]);
+    input_parameter<U1> u1(args[1]);
+    Solution sol;
+    Ret res = (sol.*fn)(u0, u1);
+    universal_print(res);
+  }
+}
+*/
+
+
+using namespace std;
+
+
+/**
+ * @brief helper macro for reading lines from file
+ * 
+ * @param name string, file path
+ * 
+ * @exception plz use it in std namespace
+ * 
+ */
+#define readlines(name) \
+  ifstream f(name); \
+  string line; \
+  while (getline(f, line))
+
+#define RUN(method) \
+  std::string path = "Inputs/" + utils::to_txt_file(__FILE__);  \
+  readlines(path) { \
+    utils::run(&method, line); \
+  }
 
 #endif // _UTILS_HPP
