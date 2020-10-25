@@ -1,7 +1,6 @@
 #ifndef _UTILS_HPP
 #define _UTILS_HPP
 
-
 #include "DataStructure.h"
 
 #include <sstream>
@@ -11,7 +10,6 @@
 #include <bits/stdc++.h>
 #include <type_traits>
 #include <fstream>
-
 
 
 namespace utils {
@@ -306,16 +304,14 @@ namespace utils {
   template<typename T>
   struct universal_parser<std::vector<T>> {
     std::vector<T> operator()(std::string& str) {
-      parse_vector_1d<T> parser;
-      return parser(str);
+      return parse_vector_1d<T>()(str);
     }
   };
 
   template<typename T>
   struct universal_parser<std::vector<std::vector<T>>> { 
     std::vector<std::vector<T>> operator()(std::string& str) {
-      parse_vector_2d<T> parser;
-      return parser(str);
+      return parse_vector_2d<T>()(str);
     }
   };
 
@@ -324,6 +320,11 @@ namespace utils {
   template<typename T>
   void universal_print(T res) {
     std::cout << res << std::endl;
+  }
+
+  template<>
+  void universal_print(bool res) {
+    std::cout << std::boolalpha << res << std::endl;
   }
 
   template<typename T>
@@ -362,11 +363,13 @@ namespace utils {
   class input_parameter<T&> {
     public:
       typedef T& reference;
+      typedef const T& const_ref;
       input_parameter(std::string& _s) {
         data = universal_parser<T>()(_s);
       }
 
       inline operator reference() { return data; }
+      inline operator const_ref() { return data; }
 
     private:
       T data;
@@ -377,15 +380,17 @@ namespace utils {
     public:
       typedef T* pointer;
       input_parameter(std::string& _s) {
-        data = universal_parser<T*>()(_s);
+        data = universal_parser<pointer>()(_s);
       }
       ~input_parameter() {
         delete data;
       }
 
+      // inline operator pointer() { return &data; }
       inline operator pointer() { return data; }
 
     private:
+      // T data
       pointer data;
   };
 
@@ -417,11 +422,16 @@ namespace utils {
       T data;
   };
 
-  // auto-generated
-  // #include "utils_generated.hpp"
+  // auto-generated, deprecated
   #include "utils_generated_py.hpp"
 
-
+  /**
+   * @brief parse __FILE__ to filename with "txt" ext.
+   * 
+   * @param path __FILE__
+   * 
+   * @return std::string, filename with "txt" extension name.
+   */
   std::string to_txt_file(const std::string& path) {
     std::string file = path.substr(path.find_last_of('/')+1);
     file.replace(file.size()-3, 3, "txt");
@@ -429,41 +439,96 @@ namespace utils {
   }
 }
 
-
-// auto-generated
-// left for debug purpose
-/*
+// under construction
 namespace utils {
 
-  template <class Solution, typename U0, typename Ret>
-  void run(Ret(Solution::*fn)(U0), std::string& line) {
-    std::vector<std::string> args = string_split(line);
-    input_parameter<U0> u0(args[0]);
+  // generate tuple type
+  // mostly remove const and reference
+  template <typename T=void, typename... Types>
+  struct tuple_type_gen {
+    typedef typename tuple_type_gen<Types...>::type rest;
+
+    typedef std::remove_reference_t<std::remove_cv_t<T>> _Tp;
+    using type = decltype(
+      std::tuple_cat(
+        std::declval<std::tuple<_Tp>>(),
+        std::declval<rest>()
+      )
+    );
+  };
+
+  template <>
+  struct tuple_type_gen<> {
+    typedef std::tuple<> type;
+  };
+
+
+  // put the end condition of the recursions first!!!
+  // the order matters!!!
+  template <size_t N, typename... Types>
+  std::enable_if_t< N == sizeof...(Types) > 
+  input_gen(std::tuple<Types...>& params, 
+            std::vector<std::string>::iterator iter) { }
+
+  template <size_t N=0, typename... Types>
+  std::enable_if_t< N < sizeof...(Types)> 
+  input_gen(std::tuple<Types...>& params, 
+            std::vector<std::string>::iterator iter) {
+
+    // assign to tuple recursively
+    std::get<N>(params) = universal_parser<
+                            std::tuple_element_t<N, 
+                              std::remove_reference_t<decltype(params)>
+                              >
+                            >()(*iter);
+    input_gen<N+1, Types...>(params, iter+1);
+  }
+
+
+  // when Ret != void
+  template <class Solution, typename Ret, typename... Types, std::size_t... Is>
+  void 
+  ufunc_call(Ret(Solution::*fn)(Types...), 
+             std::vector<std::string>::iterator iter, 
+             std::index_sequence<Is...>) {
+    // ...
+    // remove const and reference
+    typename tuple_type_gen<Types...>::type params;
+
+    // parse string to parameters
+    input_gen(params, iter);
+
     Solution sol;
-    Ret res = (sol.*fn)(u0);
+    Ret res = (sol.*fn)(std::get<Is...>(params));
     universal_print(res);
   }
 
-  template <class Solution, typename U0, typename Ret, typename = std::enable_if_t<std::is_void<Ret>::value>>
-  void run(Ret(Solution::*fn)(U0), std::string& line) {
-    std::vector<std::string> args = string_split(line);
-    input_parameter<U0> u0(args[0]);
+  // specialization for Ret = void, print first input parameter
+  template <class Solution, typename Ret, typename... Types, std::size_t... Is>
+  std::enable_if_t<std::is_void<Ret>::value> 
+  ufunc_call(Ret(Solution::*fn)(Types...), 
+             std::vector<std::string>::iterator iter, 
+             std::index_sequence<Is...>) {
+    // ...
+    typename tuple_type_gen<Types...>::type params;
+    input_gen(params, iter);
+
     Solution sol;
-    (sol.*fn)(u0);
-    universal_print(U0(u0));
+    (sol.*fn)(std::get<Is...>(params));
+    universal_print(std::get<0>(params));
   }
 
-  template <class Solution, typename U0, typename U1, typename Ret>
-  void run(Ret(Solution::*fn)(U0, U1), std::string& line) {
+
+  template <class Solution, typename Ret, typename... Types>
+  void ufunc(Ret(Solution::*fn)(Types...), std::string& line) {
+    // arguments to vector<string>
     std::vector<std::string> args = string_split(line);
-    input_parameter<U0> u0(args[0]);
-    input_parameter<U1> u1(args[1]);
-    Solution sol;
-    Ret res = (sol.*fn)(u0, u1);
-    universal_print(res);
-  }
+
+    // pass function pointer, string arguments iterator and tuple indeces
+    ufunc_call(fn, args.begin(), std::index_sequence_for<Types...>{});
+  };
+
 }
-*/
 
 
 using namespace std;
@@ -482,10 +547,32 @@ using namespace std;
   string line; \
   while (getline(f, line))
 
+
+/**
+ * @brief run method, all necessary work is done internally and implicitly
+ * 
+ * @param method class method, e.g. Solution::method_name
+ * 
+ * @deprecated generally replaced by UFUNC macro
+ * 
+ */
 #define RUN(method) \
-  std::string path = "Inputs/" + utils::to_txt_file(__FILE__);  \
+  string path = "Inputs/" + utils::to_txt_file(__FILE__);  \
   readlines(path) { \
     utils::run(&method, line); \
   }
+
+/**
+ * @brief updated version of RUN, code shrinks to 10% of the implementation of RUN with the help of variadic template and tuple
+ * 
+ * @param method class method, e.g. Solution::method_name
+ * 
+ */
+#define UFUNC(method) \
+  string path = "Inputs/" + utils::to_txt_file(__FILE__);  \
+  readlines(path) { \
+    utils::ufunc(&method, line); \
+  }
+
 
 #endif // _UTILS_HPP

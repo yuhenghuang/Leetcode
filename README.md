@@ -25,3 +25,7 @@ void main() {
   RUN(Solution::method_name);
 }
 ```
+
+* `RUN` is deprecated now. please use `UFUNC` instead.
+
+* *./addinputs.sh* will not check back to *cpp* or *java* file after input txt file is created.
