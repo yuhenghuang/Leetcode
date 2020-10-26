@@ -439,7 +439,9 @@ namespace utils {
   }
 }
 
-// under construction
+// construction complete
+#if __cplusplus >= 201403L // impl. of ufunc
+
 namespace utils {
 
   // generate tuple type
@@ -462,6 +464,20 @@ namespace utils {
     typedef std::tuple<> type;
   };
 
+#if __cplusplus >= 201703L
+
+  // ... use c++17 features, very convinient and fictional.
+  template <typename Tuple, std::size_t... Is>
+  void input_gen(Tuple& params, std::vector<std::string>::iterator iter, std::index_sequence<Is...>) {
+    ((std::get<Is>(params) = universal_parser<
+                                std::tuple_element_t<
+                                  Is, 
+                                  std::remove_reference_t<decltype(params)>
+                                  >
+                                >()(*iter++)), ...);
+  }
+
+#else
 
   // put the end condition of the recursions first!!!
   // the order matters!!!
@@ -470,25 +486,30 @@ namespace utils {
   input_gen(std::tuple<Types...>& params, 
             std::vector<std::string>::iterator iter) { }
 
-  template <size_t N=0, typename... Types>
-  std::enable_if_t< N < sizeof...(Types)> 
+  template <size_t N = 0, typename... Types>
+  std::enable_if_t< N < sizeof...(Types) > 
   input_gen(std::tuple<Types...>& params, 
             std::vector<std::string>::iterator iter) {
 
     // assign to tuple recursively
     std::get<N>(params) = universal_parser<
-                            std::tuple_element_t<N, 
+                            std::tuple_element_t<
+                              N, 
                               std::remove_reference_t<decltype(params)>
                               >
                             >()(*iter);
     input_gen<N+1, Types...>(params, iter+1);
   }
 
+#endif
+
+
+  /* Out-dated ufun_calls
 
   // when Ret != void
   template <class Solution, typename Ret, typename... Types, std::size_t... Is>
   void 
-  ufunc_call(Ret(Solution::*fn)(Types...), 
+  ufunc_call(Ret (Solution::*fn)(Types...), 
              std::vector<std::string>::iterator iter, 
              std::index_sequence<Is...>) {
     // ...
@@ -499,14 +520,14 @@ namespace utils {
     input_gen(params, iter);
 
     Solution sol;
-    Ret res = (sol.*fn)(std::get<Is...>(params));
+    Ret res = (sol.*fn)(std::get<Is>(params) ...);
     universal_print(res);
   }
 
   // specialization for Ret = void, print first input parameter
   template <class Solution, typename Ret, typename... Types, std::size_t... Is>
   std::enable_if_t<std::is_void<Ret>::value> 
-  ufunc_call(Ret(Solution::*fn)(Types...), 
+  ufunc_call(Ret (Solution::*fn)(Types...), 
              std::vector<std::string>::iterator iter, 
              std::index_sequence<Is...>) {
     // ...
@@ -514,21 +535,62 @@ namespace utils {
     input_gen(params, iter);
 
     Solution sol;
-    (sol.*fn)(std::get<Is...>(params));
+    (sol.*fn)(std::get<Is>(params) ....);
+    universal_print(std::get<0>(params));
+  }
+  */
+
+
+  template <class Solution, typename Ret, typename Tuple, typename... Types, std::size_t... Is>
+  void 
+  ufunc_call(Ret (Solution::*fn)(Types...), 
+             Tuple& params, 
+             std::index_sequence<Is...>) {
+    // ...
+
+    Solution sol;
+    Ret res = (sol.*fn)(std::get<Is>(params) ...);
+    universal_print(res);
+  }
+
+
+  template <class Solution, typename Ret, typename Tuple, typename... Types, std::size_t... Is>
+  std::enable_if_t<std::is_void<Ret>::value> 
+  ufunc_call(Ret (Solution::*fn)(Types...), 
+             Tuple& params, 
+             std::index_sequence<Is...>) {
+    // ...
+
+    Solution sol;
+    (sol.*fn)(std::get<Is>(params) ...);
     universal_print(std::get<0>(params));
   }
 
 
   template <class Solution, typename Ret, typename... Types>
-  void ufunc(Ret(Solution::*fn)(Types...), std::string& line) {
+  void ufunc(Ret (Solution::*fn)(Types...), std::string& line) {
     // arguments to vector<string>
     std::vector<std::string> args = string_split(line);
 
+    // out-dated
     // pass function pointer, string arguments iterator and tuple indeces
-    ufunc_call(fn, args.begin(), std::index_sequence_for<Types...>{});
+    // ufunc_call(fn, args.begin(), std::index_sequence_for<Types...>()); 
+    // or std::index_sequence_for<Types...>{} preferred by official documents
+
+    typename tuple_type_gen<Types...>::type params;
+
+#if __cplusplus >= 201703L
+    input_gen(params, args.begin(), std::index_sequence_for<Types...>{});
+#else
+    input_gen(params, args.begin());
+#endif
+
+    ufunc_call(fn, params, std::index_sequence_for<Types...>{});
   };
 
 }
+
+#endif // end of impl. of ufunc
 
 
 using namespace std;
@@ -553,7 +615,7 @@ using namespace std;
  * 
  * @param method class method, e.g. Solution::method_name
  * 
- * @deprecated generally replaced by UFUNC macro
+ * @deprecated generally replaced by UFUNC macro, for downward compatibility
  * 
  */
 #define RUN(method) \
@@ -561,6 +623,9 @@ using namespace std;
   readlines(path) { \
     utils::run(&method, line); \
   }
+
+
+#if __cplusplus >= 201403L
 
 /**
  * @brief updated version of RUN, code shrinks to 10% of the implementation of RUN with the help of variadic template and tuple
@@ -571,8 +636,15 @@ using namespace std;
 #define UFUNC(method) \
   string path = "Inputs/" + utils::to_txt_file(__FILE__);  \
   readlines(path) { \
-    utils::ufunc(&method, line); \
+    utils::ufunc( \
+      &method, line); \
   }
+
+#else
+
+#define UFUNC(method) RUN(method)
+
+#endif
 
 
 #endif // _UTILS_HPP

@@ -25,7 +25,7 @@ void run(Ret(Solution::*fn)(U0, U1), std::string& line) {
   input_parameter<U0> u0(args[0]);
   input_parameter<U1> u1(args[1]);
   Solution sol;
-  Ret res = (sol.*fn)(u0);
+  Ret res = (sol.*fn)(u0, u1);
   universal_print(res);
 }
   
@@ -35,7 +35,7 @@ void run(Ret(Solution::*fn)(U0, U1), std::string& line) {
   input_parameter<U0> u0(args[0]);
   input_parameter<U1> u1(args[1]);
   Solution sol;
-  (sol.*fn)(u0);
+  (sol.*fn)(u0, u1);
   universal_print(U0(u0));
 }
   
@@ -46,7 +46,7 @@ void run(Ret(Solution::*fn)(U0, U1, U2), std::string& line) {
   input_parameter<U1> u1(args[1]);
   input_parameter<U2> u2(args[2]);
   Solution sol;
-  Ret res = (sol.*fn)(u0);
+  Ret res = (sol.*fn)(u0, u1, u2);
   universal_print(res);
 }
   
@@ -57,7 +57,7 @@ void run(Ret(Solution::*fn)(U0, U1, U2), std::string& line) {
   input_parameter<U1> u1(args[1]);
   input_parameter<U2> u2(args[2]);
   Solution sol;
-  (sol.*fn)(u0);
+  (sol.*fn)(u0, u1, u2);
   universal_print(U0(u0));
 }
   
@@ -69,7 +69,7 @@ void run(Ret(Solution::*fn)(U0, U1, U2, U3), std::string& line) {
   input_parameter<U2> u2(args[2]);
   input_parameter<U3> u3(args[3]);
   Solution sol;
-  Ret res = (sol.*fn)(u0);
+  Ret res = (sol.*fn)(u0, u1, u2, u3);
   universal_print(res);
 }
   
@@ -81,7 +81,7 @@ void run(Ret(Solution::*fn)(U0, U1, U2, U3), std::string& line) {
   input_parameter<U2> u2(args[2]);
   input_parameter<U3> u3(args[3]);
   Solution sol;
-  (sol.*fn)(u0);
+  (sol.*fn)(u0, u1, u2, u3);
   universal_print(U0(u0));
 }
   
@@ -94,7 +94,7 @@ void run(Ret(Solution::*fn)(U0, U1, U2, U3, U4), std::string& line) {
   input_parameter<U3> u3(args[3]);
   input_parameter<U4> u4(args[4]);
   Solution sol;
-  Ret res = (sol.*fn)(u0);
+  Ret res = (sol.*fn)(u0, u1, u2, u3, u4);
   universal_print(res);
 }
   
@@ -107,7 +107,7 @@ void run(Ret(Solution::*fn)(U0, U1, U2, U3, U4), std::string& line) {
   input_parameter<U3> u3(args[3]);
   input_parameter<U4> u4(args[4]);
   Solution sol;
-  (sol.*fn)(u0);
+  (sol.*fn)(u0, u1, u2, u3, u4);
   universal_print(U0(u0));
 }
   

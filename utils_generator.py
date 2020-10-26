@@ -12,12 +12,12 @@ def p1(nargs):
 def p2(flag):
   return ", typename = std::enable_if_t<std::is_void<Ret>::value>" if flag else ""
 
-def p3(nargs):
+def p3(nargs, varbase='U'):
   s = ""
   for i in range(nargs):
-    s += "U{}, ".format(i)
+    s += "{}{}, ".format(varbase, i)
     
-  s += "U{}".format(nargs)
+  s += "{}{}".format(varbase, nargs)
   return s
 
 def p4(nargs):
@@ -30,11 +30,13 @@ def p4(nargs):
 
 def p5(flag, nargs=0):
   s = ""
+
+  args = p3(nargs, 'u')
   
   if flag:
-    s += "(sol.*fn)(u0);\n  universal_print(U{0}(u{0}));".format(nargs)
+    s += "(sol.*fn)({});\n  universal_print(U0(u0));".format(args)
   else:
-    s += "Ret res = (sol.*fn)(u{});\n  universal_print(res);".format(nargs)
+    s += "Ret res = (sol.*fn)({});\n  universal_print(res);".format(args)
 
   return s
 
@@ -67,7 +69,7 @@ void run(Ret(Solution::*fn)({p3}), std::string& line) {{
       p2 = p2(i%2!=0),
       p3 = p3(i//2),
       p4 = p4(i//2),
-      p5 = p5(i%2!=0)
+      p5 = p5(i%2!=0, i//2)
     ))
     
   fns.append("\n#endif")

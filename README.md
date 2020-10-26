@@ -18,14 +18,16 @@ Save my solutions to leecode problems
 
 ### Major update of *cpp*
 
-For majority of questions in leetcode , now can be run by simply
+For majority of questions in leetcode, now can be run by simply
 
 ```cpp
 void main() {
-  RUN(Solution::method_name);
+  UFUNC(Solution::method_name);
 }
 ```
 
-* `RUN` is deprecated now. please use `UFUNC` instead.
+* `RUN` is deprecated now. please ALWAYS use `UFUNC` instead.
+
+* `UFUNC` will call `RUN` internally if *cpp* is older than `c++14` for downward compatibility.
 
 * *./addinputs.sh* will not check back to *cpp* or *java* file after input txt file is created.
