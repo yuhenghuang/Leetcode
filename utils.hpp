@@ -444,6 +444,8 @@ namespace utils {
 
 namespace utils {
 
+  /* out-dated
+
   // generate tuple type
   // mostly remove const and reference
   template <typename T=void, typename... Types>
@@ -463,18 +465,18 @@ namespace utils {
   struct tuple_type_gen<> {
     typedef std::tuple<> type;
   };
+  */
 
 #if __cplusplus >= 201703L
 
   // ... use c++17 features, very convinient and fictional.
   template <typename Tuple, std::size_t... Is>
   void input_gen(Tuple& params, std::vector<std::string>::iterator iter, std::index_sequence<Is...>) {
-    ((std::get<Is>(params) = universal_parser<
-                                std::tuple_element_t<
-                                  Is, 
-                                  std::remove_reference_t<decltype(params)>
-                                  >
-                                >()(*iter++)), ...);
+    (
+      (std::get<Is>(params) = 
+        universal_parser<std::tuple_element_t<Is,Tuple>>()(*iter++)
+      ), 
+    ...);
   }
 
 #else
@@ -549,7 +551,7 @@ namespace utils {
     // ...
 
     Solution sol;
-    Ret res = (sol.*fn)(std::get<Is>(params) ...);
+    Ret res = (sol.*fn)(std::get<Is>(params), ...);
     universal_print(res);
   }
 
@@ -562,7 +564,7 @@ namespace utils {
     // ...
 
     Solution sol;
-    (sol.*fn)(std::get<Is>(params) ...);
+    (sol.*fn)(std::get<Is>(params), ...);
     universal_print(std::get<0>(params));
   }
 
@@ -577,11 +579,13 @@ namespace utils {
     // ufunc_call(fn, args.begin(), std::index_sequence_for<Types...>()); 
     // or std::index_sequence_for<Types...>{} preferred by official documents
 
-    typename tuple_type_gen<Types...>::type params;
+    // typename tuple_type_gen<Types...>::type params;
 
 #if __cplusplus >= 201703L
+    std::tuple<std::__remove_cvref_t<Types> ...> params;
     input_gen(params, args.begin(), std::index_sequence_for<Types...>{});
 #else
+    std::tuple<std::remove_const_t<std::remove_reference_t<Types> ...> params;
     input_gen(params, args.begin());
 #endif
 
@@ -625,7 +629,7 @@ using namespace std;
   }
 
 
-#if __cplusplus >= 201403L
+#if __cplusplus >= 201403L // start of UFUNC
 
 /**
  * @brief updated version of RUN, code shrinks to 10% of the implementation of RUN with the help of variadic template and tuple
@@ -644,7 +648,7 @@ using namespace std;
 
 #define UFUNC(method) RUN(method)
 
-#endif
+#endif // end of UFUNC
 
 
 #endif // _UTILS_HPP
