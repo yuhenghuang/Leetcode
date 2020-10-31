@@ -1,13 +1,11 @@
-#include <vector>
-#include <iostream>
-using namespace std;
+#include "utils.hpp"
 
 class Node {
   private:
     Node* left, * right;
   public:
-    pair<int, int> val;
-    int l, r;
+    pair<int, int> val; // length and number of longest increasing subsequences
+    int l, r; // range, inclusive on both sizes
     Node(int st, int ed): l(st), r(ed) {
       left = nullptr;
       right = nullptr;
@@ -44,6 +42,7 @@ class Solution {
     }
 
     void insert(Node* node, int& key, pair<int, int>& val) {
+      // update segment tree in log(n) time
       if (node->l == node->r) {
         node->val = merge(val, node->val);
         return;
@@ -56,6 +55,7 @@ class Solution {
     }
 
     pair<int, int> query(Node* node, int& key) {
+      // query segment tree in log(n) time
       if (node->l >= key) return pair<int, int>(0, 1);
       else if (node->r < key) return node->val;
       return merge(query(node->getLeft(), key), query(node->getRight(), key));
@@ -79,8 +79,6 @@ class Solution {
 };
 
 int main() {
-  vector<int> nums = {2,2,2,2,2};
-  Solution sol;
-  cout << sol.findNumberOfLIS(nums) << endl;
+  UFUNC(Solution::findNumberOfLIS);
   return 0;
 }

@@ -34,6 +34,7 @@ public:
 
 #include <vector>
 
+/*
 class Node {
   public:
     int val;
@@ -50,5 +51,6 @@ class Node {
         neighbors = _neighbors;
     }
 };
+*/
 
 #endif

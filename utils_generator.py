@@ -10,7 +10,7 @@ def p1(nargs):
   return s
 
 def p2(flag):
-  return ", typename = std::enable_if_t<std::is_void<Ret>::value>" if flag else ""
+  return "std::enable_if_t<std::is_void<Ret>::value>" if flag else "std::enable_if_t<!std::is_void<Ret>::value>"
 
 def p3(nargs, varbase='U'):
   s = ""
@@ -54,8 +54,9 @@ if __name__ == "__main__":
   fns.append("#define " + macro_def + '\n')
   
   template = '''
-template<class Solution, {p1}, typename Ret{p2}>
-void run(Ret(Solution::*fn)({p3}), std::string& line) {{
+template<class Solution, {p1}, typename Ret>
+{p2}
+run(Ret(Solution::*fn)({p3}), std::string& line) {{
   std::vector<std::string> args = string_split(line);
 {p4}
   Solution sol;

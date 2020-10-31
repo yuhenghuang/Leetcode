@@ -281,7 +281,6 @@ namespace utils {
   }
 
 
-  // under construction
 
   // universal parser
   template<typename T>
@@ -476,7 +475,8 @@ namespace utils {
       (std::get<Is>(params) = 
         universal_parser<std::tuple_element_t<Is,Tuple>>()(*iter++)
       ), 
-    ...);
+      ...
+    );
   }
 
 #else
@@ -506,55 +506,18 @@ namespace utils {
 #endif
 
 
-  /* Out-dated ufun_calls
-
-  // when Ret != void
-  template <class Solution, typename Ret, typename... Types, std::size_t... Is>
-  void 
+  template <class Solution, typename Ret, typename Tuple, typename... Types, std::size_t... Is>
+  std::enable_if_t<!std::is_void<Ret>::value> 
   ufunc_call(Ret (Solution::*fn)(Types...), 
-             std::vector<std::string>::iterator iter, 
+             Tuple& params, 
              std::index_sequence<Is...>) {
     // ...
-    // remove const and reference
-    typename tuple_type_gen<Types...>::type params;
-
-    // parse string to parameters
-    input_gen(params, iter);
 
     Solution sol;
     Ret res = (sol.*fn)(std::get<Is>(params) ...);
     universal_print(res);
   }
 
-  // specialization for Ret = void, print first input parameter
-  template <class Solution, typename Ret, typename... Types, std::size_t... Is>
-  std::enable_if_t<std::is_void<Ret>::value> 
-  ufunc_call(Ret (Solution::*fn)(Types...), 
-             std::vector<std::string>::iterator iter, 
-             std::index_sequence<Is...>) {
-    // ...
-    typename tuple_type_gen<Types...>::type params;
-    input_gen(params, iter);
-
-    Solution sol;
-    (sol.*fn)(std::get<Is>(params) ....);
-    universal_print(std::get<0>(params));
-  }
-  */
-
-
-  template <class Solution, typename Ret, typename Tuple, typename... Types, std::size_t... Is>
-  void 
-  ufunc_call(Ret (Solution::*fn)(Types...), 
-             Tuple& params, 
-             std::index_sequence<Is...>) {
-    // ...
-
-    Solution sol;
-    Ret res = (sol.*fn)(std::get<Is>(params), ...);
-    universal_print(res);
-  }
-
 
   template <class Solution, typename Ret, typename Tuple, typename... Types, std::size_t... Is>
   std::enable_if_t<std::is_void<Ret>::value> 
@@ -564,7 +527,7 @@ namespace utils {
     // ...
 
     Solution sol;
-    (sol.*fn)(std::get<Is>(params), ...);
+    (sol.*fn)(std::get<Is>(params) ...);
     universal_print(std::get<0>(params));
   }
 
@@ -574,17 +537,13 @@ namespace utils {
     // arguments to vector<string>
     std::vector<std::string> args = string_split(line);
 
-    // out-dated
-    // pass function pointer, string arguments iterator and tuple indeces
-    // ufunc_call(fn, args.begin(), std::index_sequence_for<Types...>()); 
-    // or std::index_sequence_for<Types...>{} preferred by official documents
-
-    // typename tuple_type_gen<Types...>::type params;
 
 #if __cplusplus >= 201703L
     std::tuple<std::__remove_cvref_t<Types> ...> params;
     input_gen(params, args.begin(), std::index_sequence_for<Types...>{});
 #else
+    // out-dated
+    // typename tuple_type_gen<Types...>::type params;
     std::tuple<std::remove_const_t<std::remove_reference_t<Types> ...> params;
     input_gen(params, args.begin());
 #endif

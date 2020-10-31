@@ -2,7 +2,8 @@
 #define UTILS_GENERATED_PY_HPP
 
 template<class Solution, typename U0, typename Ret>
-void run(Ret(Solution::*fn)(U0), std::string& line) {
+std::enable_if_t<!std::is_void<Ret>::value>
+run(Ret(Solution::*fn)(U0), std::string& line) {
   std::vector<std::string> args = string_split(line);
   input_parameter<U0> u0(args[0]);
   Solution sol;
@@ -10,8 +11,9 @@ void run(Ret(Solution::*fn)(U0), std::string& line) {
   universal_print(res);
 }
   
-template<class Solution, typename U0, typename Ret, typename = std::enable_if_t<std::is_void<Ret>::value>>
-void run(Ret(Solution::*fn)(U0), std::string& line) {
+template<class Solution, typename U0, typename Ret>
+std::enable_if_t<std::is_void<Ret>::value>
+run(Ret(Solution::*fn)(U0), std::string& line) {
   std::vector<std::string> args = string_split(line);
   input_parameter<U0> u0(args[0]);
   Solution sol;
@@ -20,7 +22,8 @@ void run(Ret(Solution::*fn)(U0), std::string& line) {
 }
   
 template<class Solution, typename U0, typename U1, typename Ret>
-void run(Ret(Solution::*fn)(U0, U1), std::string& line) {
+std::enable_if_t<!std::is_void<Ret>::value>
+run(Ret(Solution::*fn)(U0, U1), std::string& line) {
   std::vector<std::string> args = string_split(line);
   input_parameter<U0> u0(args[0]);
   input_parameter<U1> u1(args[1]);
@@ -29,8 +32,9 @@ void run(Ret(Solution::*fn)(U0, U1), std::string& line) {
   universal_print(res);
 }
   
-template<class Solution, typename U0, typename U1, typename Ret, typename = std::enable_if_t<std::is_void<Ret>::value>>
-void run(Ret(Solution::*fn)(U0, U1), std::string& line) {
+template<class Solution, typename U0, typename U1, typename Ret>
+std::enable_if_t<std::is_void<Ret>::value>
+run(Ret(Solution::*fn)(U0, U1), std::string& line) {
   std::vector<std::string> args = string_split(line);
   input_parameter<U0> u0(args[0]);
   input_parameter<U1> u1(args[1]);
@@ -40,7 +44,8 @@ void run(Ret(Solution::*fn)(U0, U1), std::string& line) {
 }
   
 template<class Solution, typename U0, typename U1, typename U2, typename Ret>
-void run(Ret(Solution::*fn)(U0, U1, U2), std::string& line) {
+std::enable_if_t<!std::is_void<Ret>::value>
+run(Ret(Solution::*fn)(U0, U1, U2), std::string& line) {
   std::vector<std::string> args = string_split(line);
   input_parameter<U0> u0(args[0]);
   input_parameter<U1> u1(args[1]);
@@ -50,8 +55,9 @@ void run(Ret(Solution::*fn)(U0, U1, U2), std::string& line) {
   universal_print(res);
 }
   
-template<class Solution, typename U0, typename U1, typename U2, typename Ret, typename = std::enable_if_t<std::is_void<Ret>::value>>
-void run(Ret(Solution::*fn)(U0, U1, U2), std::string& line) {
+template<class Solution, typename U0, typename U1, typename U2, typename Ret>
+std::enable_if_t<std::is_void<Ret>::value>
+run(Ret(Solution::*fn)(U0, U1, U2), std::string& line) {
   std::vector<std::string> args = string_split(line);
   input_parameter<U0> u0(args[0]);
   input_parameter<U1> u1(args[1]);
@@ -62,7 +68,8 @@ void run(Ret(Solution::*fn)(U0, U1, U2), std::string& line) {
 }
   
 template<class Solution, typename U0, typename U1, typename U2, typename U3, typename Ret>
-void run(Ret(Solution::*fn)(U0, U1, U2, U3), std::string& line) {
+std::enable_if_t<!std::is_void<Ret>::value>
+run(Ret(Solution::*fn)(U0, U1, U2, U3), std::string& line) {
   std::vector<std::string> args = string_split(line);
   input_parameter<U0> u0(args[0]);
   input_parameter<U1> u1(args[1]);
@@ -73,8 +80,9 @@ void run(Ret(Solution::*fn)(U0, U1, U2, U3), std::string& line) {
   universal_print(res);
 }
   
-template<class Solution, typename U0, typename U1, typename U2, typename U3, typename Ret, typename = std::enable_if_t<std::is_void<Ret>::value>>
-void run(Ret(Solution::*fn)(U0, U1, U2, U3), std::string& line) {
+template<class Solution, typename U0, typename U1, typename U2, typename U3, typename Ret>
+std::enable_if_t<std::is_void<Ret>::value>
+run(Ret(Solution::*fn)(U0, U1, U2, U3), std::string& line) {
   std::vector<std::string> args = string_split(line);
   input_parameter<U0> u0(args[0]);
   input_parameter<U1> u1(args[1]);
@@ -86,7 +94,8 @@ void run(Ret(Solution::*fn)(U0, U1, U2, U3), std::string& line) {
 }
   
 template<class Solution, typename U0, typename U1, typename U2, typename U3, typename U4, typename Ret>
-void run(Ret(Solution::*fn)(U0, U1, U2, U3, U4), std::string& line) {
+std::enable_if_t<!std::is_void<Ret>::value>
+run(Ret(Solution::*fn)(U0, U1, U2, U3, U4), std::string& line) {
   std::vector<std::string> args = string_split(line);
   input_parameter<U0> u0(args[0]);
   input_parameter<U1> u1(args[1]);
@@ -98,8 +107,9 @@ void run(Ret(Solution::*fn)(U0, U1, U2, U3, U4), std::string& line) {
   universal_print(res);
 }
   
-template<class Solution, typename U0, typename U1, typename U2, typename U3, typename U4, typename Ret, typename = std::enable_if_t<std::is_void<Ret>::value>>
-void run(Ret(Solution::*fn)(U0, U1, U2, U3, U4), std::string& line) {
+template<class Solution, typename U0, typename U1, typename U2, typename U3, typename U4, typename Ret>
+std::enable_if_t<std::is_void<Ret>::value>
+run(Ret(Solution::*fn)(U0, U1, U2, U3, U4), std::string& line) {
   std::vector<std::string> args = string_split(line);
   input_parameter<U0> u0(args[0]);
   input_parameter<U1> u1(args[1]);
