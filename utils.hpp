@@ -84,13 +84,16 @@ namespace utils {
       line = regex_replace(line, std::regex("\\s+"), "");
       line = regex_replace(line, std::regex("\\],\\["), ";");
 
-      std::istringstream ss(line);
       std::vector<std::vector<T>> out;
+      // empty 2d vector
+      if (line.size()==2) return out;
+
+      std::istringstream ss(line);
       parse_vector_1d<T> parser;
 
       std::string row;
       while (getline(ss, row, ';')) {
-        out.push_back(parser(row));
+          out.push_back(parser(row));
       }
 
       return out;
@@ -368,6 +371,8 @@ namespace utils {
       }
 
       inline operator reference() { return data; }
+
+      // for print purpose, not necessary
       inline operator const_ref() { return data; }
 
     private:
