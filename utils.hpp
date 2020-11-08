@@ -538,7 +538,7 @@ namespace utils {
 
 
   template <class Solution, typename Ret, typename... Types>
-  void ufunc(Ret (Solution::*fn)(Types...), std::string& line) {
+  void ufunc(Ret (Solution::*fn)(Types...), std::string& line, double& exec_time) {
     // arguments to vector<string>
     std::vector<std::string> args = string_split(line);
 
@@ -553,7 +553,13 @@ namespace utils {
     input_gen(params, args.begin());
 #endif
 
+    std::chrono::time_point<std::chrono::system_clock> start = std::chrono::system_clock::now();
+
     ufunc_call(fn, params, std::index_sequence_for<Types...>{});
+
+    std::chrono::time_point<std::chrono::system_clock> end = std::chrono::system_clock::now();
+    std::chrono::duration<double, std::milli> elapsed = end - start;
+    exec_time += elapsed.count();
   };
 
 }
@@ -588,9 +594,11 @@ using namespace std;
  */
 #define RUN(method) \
   string path = "Inputs/" + utils::to_txt_file(__FILE__);  \
+  double exec_time = 0; \
   readlines(path) { \
-    utils::run(&method, line); \
-  }
+    utils::run(&method, line, exec_time); \
+  } \
+  cout << "****** Execution time is: " << exec_time << " milliseconds. ******" << endl;
 
 
 #if __cplusplus >= 201403L // start of UFUNC
@@ -603,10 +611,11 @@ using namespace std;
  */
 #define UFUNC(method) \
   string path = "Inputs/" + utils::to_txt_file(__FILE__);  \
+  double exec_time = 0; \
   readlines(path) { \
-    utils::ufunc( \
-      &method, line); \
-  }
+    utils::ufunc(&method, line, exec_time); \
+  } \
+  cout << "****** Execution time is: " << exec_time << " milliseconds. ******" << endl;
 
 #else
 

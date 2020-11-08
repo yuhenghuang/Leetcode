@@ -56,11 +56,18 @@ if __name__ == "__main__":
   template = '''
 template<class Solution, {p1}, typename Ret>
 {p2}
-run(Ret(Solution::*fn)({p3}), std::string& line) {{
+run(Ret(Solution::*fn)({p3}), std::string& line, double& exec_time) {{
   std::vector<std::string> args = string_split(line);
 {p4}
+
+  std::chrono::time_point<std::chrono::system_clock> start = std::chrono::system_clock::now();
+
   Solution sol;
   {p5}
+
+  std::chrono::time_point<std::chrono::system_clock> end = std::chrono::system_clock::now();
+  std::chrono::duration<double, std::milli> elapsed = end - start;
+  exec_time += elapsed.count();
 }}
   '''  
   

@@ -31,3 +31,5 @@ void main() {
 * `UFUNC` will call `RUN` internally if *cpp* is older than `c++14` for downward compatibility.
 
 * *./addinputs.sh* will not check back to *cpp* or *java* file after input txt file is created.
+
+* Able to record execution time inside of `UFUNC`. ( not applied for downward compatible `RUN`).
