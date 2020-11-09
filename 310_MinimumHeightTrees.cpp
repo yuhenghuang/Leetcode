@@ -127,5 +127,8 @@ int main() {
   {
     UFUNC(Solution::findMinHeightTreesTS);
   }
+  {
+    UFUNC(Solution::findMinHeightTreesTLE);
+  }
   return 0;
 }

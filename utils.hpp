@@ -553,12 +553,12 @@ namespace utils {
     input_gen(params, args.begin());
 #endif
 
-    std::chrono::time_point<std::chrono::system_clock> start = std::chrono::system_clock::now();
+    std::chrono::time_point<std::chrono::system_clock> start( std::chrono::system_clock::now() );
 
     ufunc_call(fn, params, std::index_sequence_for<Types...>{});
 
-    std::chrono::time_point<std::chrono::system_clock> end = std::chrono::system_clock::now();
-    std::chrono::duration<double, std::milli> elapsed = end - start;
+    std::chrono::time_point<std::chrono::system_clock> end( std::chrono::system_clock::now() );
+    std::chrono::duration<double, std::milli> elapsed( end - start );
     exec_time += elapsed.count();
   };
 
@@ -598,7 +598,7 @@ using namespace std;
   readlines(path) { \
     utils::run(&method, line, exec_time); \
   } \
-  cout << "****** Execution time is: " << exec_time << " milliseconds. ******" << endl;
+  cout << "****** Execution time of `" << string(#method).substr(10) << "` is: " << exec_time << " milliseconds. ******" << endl;
 
 
 #if __cplusplus >= 201403L // start of UFUNC
@@ -615,7 +615,7 @@ using namespace std;
   readlines(path) { \
     utils::ufunc(&method, line, exec_time); \
   } \
-  cout << "****** Execution time is: " << exec_time << " milliseconds. ******" << endl;
+  cout << "****** Execution time of `" << string(#method).substr(10) << "` is: " << exec_time << " milliseconds. ******" << endl;
 
 #else
 

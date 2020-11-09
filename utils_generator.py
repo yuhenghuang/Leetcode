@@ -1,5 +1,4 @@
 import argparse
-import sys
 
 def p1(nargs):
   s = ""
@@ -10,7 +9,8 @@ def p1(nargs):
   return s
 
 def p2(flag):
-  return "std::enable_if_t<std::is_void<Ret>::value>" if flag else "std::enable_if_t<!std::is_void<Ret>::value>"
+  s_base = "std::enable_if_t<{}std::is_void<Ret>::value>"
+  return s_base.format('') if flag else s_base.format('!')
 
 def p3(nargs, varbase='U'):
   s = ""
@@ -42,7 +42,7 @@ def p5(flag, nargs=0):
 
 if __name__ == "__main__":
   parser = argparse.ArgumentParser(description="auto-generate ufuncs in namespace utils")
-  parser.add_argument("-n", "--nargs", default=4, type=int, help="Num. of the maximum arguments in generated version")
+  parser.add_argument("-n", "--nargs", default=4, type=int, help="Num. of the maximum arguments in generated version, default is 4")
   parser.add_argument("-f", "--file", default="utils_generated_py.hpp", type=str, help="Name of the generated .hpp file")
   
   kwargs = parser.parse_args()
@@ -60,13 +60,13 @@ run(Ret(Solution::*fn)({p3}), std::string& line, double& exec_time) {{
   std::vector<std::string> args = string_split(line);
 {p4}
 
-  std::chrono::time_point<std::chrono::system_clock> start = std::chrono::system_clock::now();
+  std::chrono::time_point<std::chrono::system_clock> start( std::chrono::system_clock::now() );
 
   Solution sol;
   {p5}
 
-  std::chrono::time_point<std::chrono::system_clock> end = std::chrono::system_clock::now();
-  std::chrono::duration<double, std::milli> elapsed = end - start;
+  std::chrono::time_point<std::chrono::system_clock> end( std::chrono::system_clock::now() );
+  std::chrono::duration<double, std::milli> elapsed( end - start );
   exec_time += elapsed.count();
 }}
   '''  
