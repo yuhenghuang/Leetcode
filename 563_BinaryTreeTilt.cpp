@@ -46,14 +46,18 @@ class Solution {
             else
               res += abs(m[super] - root->val);
           }
+
+          // avoid memory leaking as the iteration breaks up the tree
+          delete root;
         }
 
         if (!s.empty()) {
           root = s.top()->right;
           s.top()->right = nullptr;
         }
-        else
+        else {
           root = nullptr;
+        }
       }
 
       return res;

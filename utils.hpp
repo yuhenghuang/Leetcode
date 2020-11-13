@@ -234,7 +234,7 @@ namespace utils {
       if (i<n-1)
         std::cout << ", ";
     }
-    std::cout << "]" << std::endl;
+    std::cout << "]";
   }
 
 
@@ -332,6 +332,7 @@ namespace utils {
   template<typename T>
   void universal_print(const std::vector<T>& res) {
     print_vector_1d(res);
+    std::cout << std::endl;
   }
 
   template<typename T>
