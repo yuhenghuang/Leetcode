@@ -1,14 +1,20 @@
-#include "DataStructure.h"
+#include "utils.hpp"
 
 class Solution {
   public:
-    int rangeSumBST(TreeNode* root, int L, int R) {
+    int rangeSumBST(TreeNode* root, const int& low, const int& high) {
       if (!root) return 0;
-      else if (root->val<L)
-        return rangeSumBST(root->right, L, R);
-      else if (root->val>R)
-        return rangeSumBST(root->left, L, R);
+      else if (root->val<low)
+        return rangeSumBST(root->right, low, high);
+      else if (root->val>high)
+        return rangeSumBST(root->left, low, high);
       else
-        return root->val + rangeSumBST(root->left, L, R) + rangeSumBST(root->right, L, R);
+        return root->val + rangeSumBST(root->left, low, high) + rangeSumBST(root->right, low, high);
     }
-}; 
+};
+
+
+int main() {
+  UFUNC(Solution::rangeSumBST);
+  return 0;
+}

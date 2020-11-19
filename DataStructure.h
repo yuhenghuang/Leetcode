@@ -1,7 +1,6 @@
 #ifndef _DS_H
 #define _DS_H
 
-// #include <vector>
 
 struct TreeNode {
   int val;
@@ -13,7 +12,6 @@ struct TreeNode {
 };
 
 
-
 struct ListNode {
   int val;
   ListNode *next;
@@ -22,15 +20,24 @@ struct ListNode {
   ListNode(int x, ListNode *next) : val(x), next(next) {}
 };
 
-/*
+#ifdef PERFECT_BINARY_TREE_NODE
+
 class Node {
-public:
+  public:
     int val;
-    Node* prev;
+    Node* left;
+    Node* right;
     Node* next;
-    Node* child;
+
+    Node() : val(0), left(nullptr), right(nullptr), next(nullptr) {}
+
+    Node(int _val) : val(_val), left(nullptr), right(nullptr), next(nullptr) {}
+
+    Node(int _val, Node* _left, Node* _right, Node* _next)
+        : val(_val), left(_left), right(_right), next(_next) {}
 };
-*/
+
+#endif
 
 #include <vector>
 
@@ -53,4 +60,4 @@ class Node {
 };
 */
 
-#endif
+#endif // end of _DS_H
