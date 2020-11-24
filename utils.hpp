@@ -9,6 +9,7 @@
 #include <queue>
 #include <bits/stdc++.h>
 #include <type_traits>
+#include <stack>
 #include <fstream>
 
 
@@ -585,43 +586,33 @@ using namespace std;
   while (getline(f, line))
 
 
-/**
- * @brief run method, all necessary work is done internally and implicitly
- * 
- * @param method class method, e.g. Solution::method_name
- * 
- * @deprecated generally replaced by UFUNC macro, for downward compatibility
- * 
- */
-#define RUN(method) \
+#define UFUNC_BASE(method, impl) \
   string path = "Inputs/" + utils::to_txt_file(__FILE__);  \
   double exec_time = 0; \
   readlines(path) { \
-    utils::run(&method, line, exec_time); \
+    utils::impl(&method, line, exec_time); \
   } \
   cout << "****** Execution time of `" << string(#method).substr(10) << "` is: " << exec_time << " milliseconds. ******" << endl;
 
 
 #if __cplusplus >= 201403L // start of UFUNC
-
-/**
- * @brief updated version of RUN, code shrinks to 10% of the implementation of RUN with the help of variadic template and tuple
- * 
- * @param method class method, e.g. Solution::method_name
- * 
- */
-#define UFUNC(method) \
-  string path = "Inputs/" + utils::to_txt_file(__FILE__);  \
-  double exec_time = 0; \
-  readlines(path) { \
-    utils::ufunc(&method, line, exec_time); \
-  } \
-  cout << "****** Execution time of `" << string(#method).substr(10) << "` is: " << exec_time << " milliseconds. ******" << endl;
-
+  /**
+   * @brief updated version of RUN, code shrinks to 10% of the implementation of RUN with the help of variadic template and tuple
+   * 
+   * @param method class method, e.g. Solution::method_name
+   * 
+   */
+  #define UFUNC(method) UFUNC_BASE(method, ufunc)
 #else
-
-#define UFUNC(method) RUN(method)
-
+  /**
+   * @brief run method, all necessary work is done internally and implicitly
+   * 
+   * @param method class method, e.g. Solution::method_name
+   * 
+   * @deprecated implemented by deprecated utils::run for downward compatibility
+   * 
+   */ 
+  #define UFUNC(method) UFUNC_BASE(method, run)
 #endif // end of UFUNC
 
 

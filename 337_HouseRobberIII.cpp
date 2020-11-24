@@ -1,18 +1,16 @@
 #include "utils.hpp"
-#include <fstream>
-#include <iostream>
 
 using namespace std;
 
 class Solution {
   private:
-    int dfs(TreeNode* root, const bool& next = false, const bool& value = false) {
+    int dfs(TreeNode* root, bool skip = false, bool value = false) {
       if (!root) 
         return 0;
       else if (value) {
         return root->val;
       }
-      else if (next) {
+      else if (skip) {
         return dfs(root->left, false, true) + dfs(root->right, false, true);
       }
       else {
@@ -27,14 +25,6 @@ class Solution {
 };
 
 int main() {
-  Solution sol;
-
-  fstream f("Inputs/337_HouseRobberIII.txt");
-  string line;
-  TreeNode* root;
-  while (getline(f, line)) {
-    root = utils::parse_tree(line);
-    cout << sol.rob(root) << endl;
-  }
+  UFUNC(Solution::rob);
   return 0;
 }

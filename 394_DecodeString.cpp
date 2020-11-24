@@ -38,12 +38,11 @@ class Solution {
 
       int n = st.size();
       char res[n+1];
+      res[n] = '\0';
       for (int i=n-1; i>=0; --i) {
         res[i] = st.top();
         st.pop();
       }
-
-      res[n] = '\0';
       
       return string(res);
     }
