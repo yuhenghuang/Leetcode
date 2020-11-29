@@ -22,7 +22,7 @@ class Solution {
       char op = ops.top();
       ops.pop();
 
-      if (ops.empty() || op=='*' || op=='/' || ((ops.top()!='*' && ops.top()!='/') && (op=='+' || op=='-'))) {
+      if (ops.empty() || op=='*' || op=='/' || ops.top()=='+' || ops.top()=='-') {
         switch (op) {
           case ('+'):
             nums.top() += lhs; break;
@@ -44,7 +44,6 @@ class Solution {
 
   public:
     int calculate(string s) {
-      // s = regex_replace(s, regex("\\s"), "");
       stack<int> nums;
       stack<char> ops;
       istringstream oss(s);

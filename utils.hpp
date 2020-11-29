@@ -375,7 +375,7 @@ namespace utils {
       inline operator reference() { return data; }
 
       // for print purpose, not necessary
-      inline operator const_ref() { return data; }
+      inline operator const_ref() const { return data; }
 
     private:
       T data;
@@ -422,7 +422,7 @@ namespace utils {
         data = universal_parser<T>()(_s);
       }
 
-      inline operator const_nonref() { return data; }
+      inline operator const_nonref() const { return data; }
 
     private:
       T data;

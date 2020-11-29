@@ -1,7 +1,4 @@
-#include <vector>
-#include <iostream>
-#include <algorithm>
-using namespace std;
+#include "utils.hpp"
 
 static int emm = [](){
   ios::sync_with_stdio(false);
@@ -9,34 +6,37 @@ static int emm = [](){
   return 0;
 }();
 
+enum COLOR {
+  WHITE,
+  BLACK,
+  GREY
+};
+
 class Solution {
   private:
     int N, target;
-    vector<vector<int>> memo;
+    vector<vector<COLOR>> memo;
   public:
       bool canPartition(vector<int>& nums) {
       N = nums.size();
       if (N<2) return false;
 
-      int sum=0;
-      for (int i=0; i<N; ++i) {
-        sum += nums[i];
-      }
+      int sum = accumulate(nums.begin(), nums.end(), 0);
       if (sum%2!=0) return false;
       target = sum/2;
-      memo = vector<vector<int>>(N, vector<int>(target+1, -1));
+      memo = vector<vector<COLOR>>(N, vector<COLOR>(target+1, GREY));
       return dfs(0, 0, nums);
     }
 
     bool dfs(int idx, int sum, vector<int>& nums) {
-      if (sum>target || idx>=N) return false;
-      if (memo[idx][sum]!=-1) return memo[idx][sum]==1;
+      if (sum>target || idx==N) return false;
+      if (memo[idx][sum]!=GREY) return memo[idx][sum]==WHITE;
 
       if (sum==target) 
         return true;
       else {
         bool flag = dfs(idx+1, sum+nums[idx], nums) ||  dfs(idx+1, sum, nums);
-        memo[idx][sum] = flag?1:0;
+        memo[idx][sum] = flag ? WHITE : BLACK;
         return flag;
       }
     }
@@ -46,17 +46,14 @@ class Solution {
       if (N<2) return false;
 
       int sum=0;
-      for (int i=0; i<N; ++i) {
-        sum += nums[i];
-      }
+      for (int num : nums)
+        sum += num;
       if (sum%2!=0) return false;
 
-      // sort(nums.begin(), nums.end());
       int target = sum/2;
       vector<bool> dp(target+1, false);
       dp[0] = true;
-      for (int i=0; i<N; ++i) {
-        int num = nums[i];
+      for (int num : nums) {
         for (int j=target-num; j>=0; --j)
           if (dp[j])
             dp[j+num] = true;
@@ -66,8 +63,11 @@ class Solution {
 };
 
 int main() {
-  Solution sol;
-  vector<int> nums = {1,5,11,5};
-  cout << sol.canPartition(nums) << endl;
+  {
+    UFUNC(Solution::canPartition);
+  }
+  {
+    UFUNC(Solution::canPartitionSlow);
+  }
   return 0;
 }
