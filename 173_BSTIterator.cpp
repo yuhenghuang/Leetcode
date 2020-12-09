@@ -44,6 +44,35 @@ class BSTIterator {
     }
 };
 
+
+class BSTIter {
+  private:
+    stack<TreeNode*> s;
+
+    void pushLeft(TreeNode* root) {
+      while (root) {
+        s.push(root);
+        root = root->left;
+      }
+    }
+  public:
+    BSTIter(TreeNode* root) {
+      pushLeft(root);
+    }
+
+    int next() {
+      TreeNode* node = s.top();
+      s.pop();
+      pushLeft(node->right);
+      return node->val;
+    }
+
+    bool hasNext() {
+      return !s.empty();
+    }
+};
+
+
 int main() {
   TreeNode* root = new TreeNode(7);
   root->left = new TreeNode(3);

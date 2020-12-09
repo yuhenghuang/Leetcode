@@ -446,7 +446,7 @@ namespace utils {
 }
 
 // construction complete
-#if __cplusplus >= 201403L // impl. of ufunc
+#if __cplusplus >= 201402L // impl. of ufunc
 
 namespace utils {
 
@@ -595,7 +595,7 @@ using namespace std;
   cout << "****** Execution time of `" << string(#method).substr(10) << "` is: " << exec_time << " milliseconds. ******" << endl;
 
 
-#if __cplusplus >= 201403L // start of UFUNC
+#if __cplusplus >= 201402L // start of UFUNC
   /**
    * @brief updated version of RUN, code shrinks to 10% of the implementation of RUN with the help of variadic template and tuple
    * 
