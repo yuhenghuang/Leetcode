@@ -475,12 +475,12 @@ namespace utils {
 
 #if __cplusplus >= 201703L
 
-  // ... use c++17 features, very convinient and fictional.
+  // ... use c++17 features, very convenient and fictional.
   template <typename Tuple, std::size_t... Is>
   void input_gen(Tuple& params, std::vector<std::string>::iterator iter, std::index_sequence<Is...>) {
     (
       (std::get<Is>(params) = 
-        universal_parser<std::tuple_element_t<Is,Tuple>>()(*iter++)
+        universal_parser<std::tuple_element_t<Is, Tuple>>()(*iter++)
       ), 
       ...
     );
@@ -551,7 +551,7 @@ namespace utils {
 #else
     // out-dated
     // typename tuple_type_gen<Types...>::type params;
-    std::tuple<std::remove_const_t<std::remove_reference_t<Types> ...> params;
+    std::tuple<std::remove_const_t<std::remove_reference_t<Types>> ...> params;
     input_gen(params, args.begin());
 #endif
 
