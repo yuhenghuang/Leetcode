@@ -24,6 +24,7 @@ class Solution {
       int res=0;
       for (int d=1; d<=d_max; ++d) {
         int l=0, r=0;
+        // detected (ocurrence>0), counted (ocurrent>=k)
         int d_curr=0, c_curr=0;
         // reset_count(count);
         memset(count, 0, count_size);
