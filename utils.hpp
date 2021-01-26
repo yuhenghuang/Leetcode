@@ -171,6 +171,25 @@ namespace utils {
     return root;
   }
 
+  template <>
+  struct parse_vector_1d<ListNode*> {
+    std::vector<ListNode*> operator()(std::string& line) {
+      line = regex_replace(line, std::regex("\\s+"), "");
+      line = regex_replace(line, std::regex("\\],\\["), ";");
+
+      std::vector<ListNode*> out;
+      if (line.size()==2)
+        return out;
+
+      std::istringstream ss(line);
+      std::string row;
+      while (getline(ss, row, ';'))
+        out.push_back(parse_linked_list(row));
+
+      return out;
+    }
+  };
+
 
   /**
    * @brief Split string by delimiter `char`, e.g. "substring a ; substring b"

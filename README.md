@@ -3,6 +3,12 @@
 Save my solutions to leecode problems
 
 
+### Shift to `utils2`
+
+* Cleaner
+
+* etc.
+
 ### Features
 
 * past features ignored..
@@ -14,6 +20,8 @@ Save my solutions to leecode problems
 * Add *./addinputs.sh* for convenience... e.g. `./addinputs.sh xxx_xxxx.cpp`
 
 * Add `readlines` macro for *cpp*, further simplifying reading parameters from files.
+
+* Add `vector<ListNode*>` specialization
 
 
 ### Major update of *cpp*
@@ -33,3 +41,5 @@ void main() {
 * *./addinputs.sh* will not check back to *cpp* or *java* file after input txt file is created.
 
 * Able to record execution time inside of `UFUNC`. ( not applied for downward compatible `RUN`).
+
+* *./addpairs.sh* reads clipboard to create well-formatted *cpp* file as well as input file. Try it.
