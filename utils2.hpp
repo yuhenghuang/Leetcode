@@ -7,10 +7,11 @@
 #include <iostream>
 #include <iterator>
 #include <queue>
-#include <bits/stdc++.h>
+#include <regex>
 #include <type_traits>
 #include <stack>
 #include <fstream>
+#include <climits>
 
 namespace utils2 {
 
@@ -55,6 +56,21 @@ struct universal_parser<int> {
 
 
 template <>
+struct universal_parser<uint32_t> {
+  uint32_t operator()(const std::string& str) {
+    uint32_t res = 0;
+
+    for (char c : str) {
+      res <<= 1;
+      res |= c-'0';
+    }
+
+    return res;
+  }
+};
+
+
+template <>
 struct universal_parser<double> {
   double operator()(const std::string& str) {
     return stod(str);
@@ -77,7 +93,7 @@ struct universal_parser<TreeNode*> {
 
     TreeNode* root = nullptr;
     TreeNode* node;
-    
+
     std::queue<TreeNode*> q;
     bool left = true;
 
@@ -314,7 +330,7 @@ struct universal_print<std::vector<Tp>, true> {
     std::cout << "[";
     for (size_t i=0; i<n; ++i) {
       if (i>0)
-        std::cout << "\\s";
+        std::cout << " ";
 
       print(res[i]);
       
@@ -346,11 +362,39 @@ std::string to_txt_file(const std::string& path) {
   return file;
 }
 
-template <typename... Args>
-struct args_pack { };
+template <typename... Args> struct args_pack { };
 
-template <typename MemFn>
-struct mem_fn_traits;
+
+template <typename Tp>
+struct remove_rvalue_reference {
+  typedef Tp type;
+};
+
+template <typename Tp>
+struct remove_rvalue_reference<Tp&&> {
+  typedef Tp type;
+};
+
+
+template <bool... Preds> struct bool_dummies { };
+
+template <bool... Preds>
+struct all
+  : public std::is_same<bool_dummies<Preds ...>, bool_dummies<((void)Preds, true)...>> { };
+
+
+template <class From, class To> struct args_convertible;
+
+template <typename... Types, typename... Args>
+struct args_convertible<args_pack<Types...>, args_pack<Args...>> 
+  : public all<
+    std::is_convertible<Types, Args>::value ...
+  >
+{ };
+
+
+
+template <typename MemFn> struct mem_fn_traits;
 
 template <class Tp, typename Ret, typename... Args>
 struct mem_fn_traits<Ret (Tp::*)(Args...)>
@@ -359,11 +403,13 @@ struct mem_fn_traits<Ret (Tp::*)(Args...)>
   typedef Tp class_type;
   typedef Ret return_type;
   typedef args_pack<Args...> args_type;
+
   typedef std::tuple<
     typename std::remove_cv<
       typename std::remove_reference<Args>::type
     >::type ...
   > args_tuple_type;
+
 };
 
 
@@ -373,17 +419,23 @@ class bind_obj_impl {
     typedef MemFn mem_fn_ptr;
     typedef typename mem_fn_traits<MemFn>::class_type Tp;
     typedef typename mem_fn_traits<MemFn>::return_type Ret;
+    typedef typename mem_fn_traits<MemFn>::args_type args_type;
 
   protected:
     mem_fn_ptr fn;
     Tp* obj_ptr;
 
   public:
-    bind_obj_impl(mem_fn_ptr _fn, Tp* _obj_ptr): fn(_fn), obj_ptr(_obj_ptr) { }
+    explicit bind_obj_impl(mem_fn_ptr _fn, Tp* _obj_ptr): fn(_fn), obj_ptr(_obj_ptr) { }
 
     // works for both void and non-void return type
     template <typename... Types>
-    Ret operator()(Types&& ...args) {
+    std::enable_if_t<
+      args_convertible<args_pack<Types&& ...>, args_type>::value,
+      Ret
+    > 
+    operator()(Types&& ...args) {
+      // ...
       return (obj_ptr->*fn)(std::forward<Types>(args) ...);
     }
 };
@@ -479,7 +531,7 @@ void ufunc(bind_obj_impl<MemFn>& functor,
   // arguments to vector<string>
   std::vector<std::string> args = string_split(line);
 
-  // tuple of arguments without reference
+  // tuple of arguments without cv reference
   typename mem_fn_traits<MemFn>::args_tuple_type params;
 
   input_gen(params, args.begin(), std::make_index_sequence<mem_fn_traits<MemFn>::value>{});
@@ -488,7 +540,7 @@ void ufunc(bind_obj_impl<MemFn>& functor,
 }
 
 
-} // end of utils2
+} // end of namespace utils2
 
 
 using namespace std;
@@ -509,4 +561,4 @@ using namespace std;
   exec_time << " milliseconds. ******" << endl;
 
 
-#endif
+#endif // end of _UTILS2_HPP
