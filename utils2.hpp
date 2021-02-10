@@ -272,30 +272,45 @@ struct universal_print<TreeNode*, false> {
   void operator()(TreeNode* root) {
     std::cout << '[';
 
+    // count of non-null nodes in current and next level
+    int m, n = 0;
+
     std::queue<TreeNode*> q;
     if (root) {
       std::cout << root->val;
-      if (root->left || root->right) {
-        q.push(root->left);
-        q.push(root->right);
-      }
+
+      if (root->left) ++n;
+      if (root->right) ++n;
+
+      q.push(root->left);
+      q.push(root->right);
     }
 
-    while (q.size()>1 || (q.size()==1 && q.front())) {
-      std::cout << ", ";
 
-      root = q.front();
-      q.pop();
+    while (!q.empty()) {
+      m = n;
+      n = 0;
 
-      if (root) {
-        std::cout << root->val;
-        if (root->left || root->right) {
+      int N = q.size();
+      while (N--) {
+        root = q.front();
+        q.pop();
+
+        if (root) {
+          --m;
+
+          std::cout << ", " << root->val;
+
+          if (root->left) ++n;
+          if (root->right) ++n;
+
           q.push(root->left);
           q.push(root->right);
         }
+        else if (m>0 || n>0)
+          std::cout << ", null";
       }
-      else
-        std::cout << "null";
+
     }
 
     std::cout << ']';
