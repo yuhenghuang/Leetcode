@@ -16,7 +16,7 @@ then
 
     # create main() and flush
     template=$(xclip -selection c -o)
-    method=$(echo $template | sed 's/.* \([a-zA-Z]*\)(.*/\1/')
+    method=$(echo $template | sed -E 's/.*\s([a-zA-Z]+)\s*?\(.*/\1/')
     printf "\n\n\nint main() {\n  UFUNC(Solution::${method});\n  return 0;\n}" >> ${cppfile}
   fi
 

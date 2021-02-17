@@ -37,7 +37,8 @@ class Node {
         : val(_val), left(_left), right(_right), next(_next) {}
 };
 
-#endif
+#endif // end of PERFECT_BINARY_TREE_NODE
+
 
 #ifdef RANDOM_POINTER
 
@@ -50,7 +51,7 @@ class Node {
     Node(int _val): val(_val), next(nullptr), random(nullptr) { }
 };
 
-#endif
+#endif // end of RANDOM_POINTER
 
 #include <vector>
 

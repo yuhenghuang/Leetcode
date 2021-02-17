@@ -39,4 +39,36 @@ class Solution {
 
       return vec[0];
     }
+
+    Node* copyRandomListO1(Node* head) {
+      if (!head)
+        return nullptr;
+
+      unordered_map<Node*, Node*> m;
+      m[nullptr] = nullptr;
+
+      Node* res = new Node(head->val);
+      m[head] = res;
+
+      Node* p = head->next;
+      Node* q = res;
+      while (p) {
+        q->next = new Node(p->val);
+        m[p] = q->next;
+
+        p = p->next;
+        q = q->next;
+      }
+
+      p = head;
+      q = res;
+      while (p) {
+        q->random = m[p->random];
+
+        p = p->next;
+        q = q->next;
+      }
+
+      return res;
+    }
 };

@@ -1,6 +1,4 @@
-#include <vector>
-#include <queue>
-using namespace std;
+#include "utils2.hpp"
 
 class Solution {
   private:
@@ -8,28 +6,34 @@ class Solution {
       {1, 0}, {-1, 0}, {0, 1}, {0, -1},
       {-1, -1}, {-1, 1}, {1, -1}, {1, 1}
     };
+  
   public:
     int shortestPathBinaryMatrix(vector<vector<int>>& grid) {
       int m = grid.size(), n = m==0 ? 0 : grid[0].size();
-      if (n==0 || grid[0][0]) return -1;
-      // else if (m==1 && n==1) return 1;
+
+      // empty matrix of (0, 0) blocked
+      if (n==0 || grid[0][0]) 
+        return -1;
+
       vector<vector<bool>> visited(m, vector<bool>(n, false));
       queue<pair<int, int>> q;
+      q.emplace(-1, -1);
 
-      q.push({-1, -1});
-      // visited[0][0] = true;
       int res=1;
       while (!q.empty()) {
-        int N = q.size()+1;
-        while (--N) {
+        int N = q.size();
+        while (N--) {
           int cur_i = q.front().first, cur_j = q.front().second;
           q.pop();
           for (auto& move : dir) {
             int i = cur_i + move[0], j = cur_j + move[1];
-            if (i<0 || i>=m || j<0 || j>=n || grid[i][j] || visited[i][j]) continue;
-            if (i==m-1 && j==n-1) return res;
+            if (i<0 || i>=m || j<0 || j>=n || grid[i][j] || visited[i][j]) 
+              continue;
+            else if (i==m-1 && j==n-1) 
+              return res;
+            
             visited[i][j] = true;
-            q.push({i, j});
+            q.emplace(i, j);
           }
         }
         ++res;
@@ -38,3 +42,9 @@ class Solution {
       return -1;
     }
 };
+
+
+int main() {
+  UFUNC(Solution::shortestPathBinaryMatrix);
+  return 0;
+}

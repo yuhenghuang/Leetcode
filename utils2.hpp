@@ -197,6 +197,9 @@ struct universal_parser<std::vector<Tp>, true> {
 
 // print results
 
+// out-dated helper type traits
+/*
+
 template <typename Tp>
 struct is_element : public std::true_type { };
 
@@ -215,10 +218,12 @@ template <>
 struct is_element<TreeNode*> : public std::false_type { };
 #endif
 
+*/
+
 template <typename Tp, bool Is_2D = is_2d<Tp>::value>
 struct universal_print {
   void operator()(const Tp res) {
-    std::cout << res << std::endl;
+    std::cout << res;
   }
 };
 
@@ -226,7 +231,7 @@ struct universal_print {
 template <>
 struct universal_print<bool> {
   void operator()(const bool res) {
-    std::cout << std::boolalpha << res << std::endl;
+    std::cout << std::boolalpha << res;
   }
 };
 
@@ -323,11 +328,13 @@ template <typename Tp>
 struct universal_print<std::vector<Tp>, false> {
   void operator()(const std::vector<Tp>& res) {
     size_t n=res.size();
+    universal_print<Tp> print;
 
     std::cout << "[";
     for (size_t i=0; i<n; ++i) {
-      std::cout << res[i];
-      if (i+1<n)
+      print(res[i]);
+
+      if (i<n-1)
         std::cout << ", ";
     }
     std::cout << "]";
@@ -352,7 +359,7 @@ struct universal_print<std::vector<Tp>, true> {
       if (i<n-1)
         std::cout << ',' << std::endl;
     }
-    std::cout << "]" << std::endl;
+    std::cout << "]";
   }
 };
 
@@ -395,7 +402,7 @@ template <bool... Preds> struct bool_dummies { };
 
 template <bool... Preds>
 struct all
-  : public std::is_same<bool_dummies<Preds ...>, bool_dummies<((void)Preds, true)...>> { };
+  : public std::is_same<bool_dummies<Preds...>, bool_dummies<((void)Preds, true)...>> { };
 
 
 template <class From, class To> struct args_convertible;
@@ -431,6 +438,7 @@ struct mem_fn_traits<Ret (Tp::*)(Args...)>
 template <class MemFn>
 class bind_obj_impl {
   public:
+    typedef bind_obj_impl<MemFn> self;
     typedef MemFn mem_fn_ptr;
     typedef typename mem_fn_traits<MemFn>::class_type Tp;
     typedef typename mem_fn_traits<MemFn>::return_type Ret;
@@ -440,15 +448,25 @@ class bind_obj_impl {
     mem_fn_ptr fn;
     Tp* obj_ptr;
 
+  private:
+    template <class MF> friend 
+    bind_obj_impl<MF> bind_obj(MF, typename mem_fn_traits<MF>::class_type&);
+
+    bind_obj_impl(mem_fn_ptr _fn, Tp* _obj_ptr): fn(_fn), obj_ptr(_obj_ptr) { }
+
   public:
-    explicit bind_obj_impl(mem_fn_ptr _fn, Tp* _obj_ptr): fn(_fn), obj_ptr(_obj_ptr) { }
+    bind_obj_impl(const self&) = default;
+    self& operator=(const self&) = default;
+
+    bind_obj_impl(self&&) = default;
+    self& operator=(self&&) = default;
 
     // works for both void and non-void return type
     template <typename... Types>
-    std::enable_if_t<
+    typename std::enable_if<
       args_convertible<args_pack<Types&& ...>, args_type>::value,
       Ret
-    > 
+    >::type
     operator()(Types&& ...args) {
       // ...
       return (obj_ptr->*fn)(std::forward<Types>(args) ...);
@@ -504,8 +522,8 @@ ufunc_call(bind_obj_impl<MemFn>& functor,
   universal_print<Ret>()(res);
 
   // new line for 1D vector, Tree and LinkedList
-  if constexpr (!is_element<Ret>::value)
-    std::cout << std::endl;
+  // if constexpr (!is_element<Ret>::value)
+  std::cout << std::endl;
 }
 
 
@@ -532,8 +550,8 @@ ufunc_call(bind_obj_impl<MemFn>& functor,
 
   universal_print<Arg0>()(std::get<0>(params));
 
-  if constexpr (!is_element<Arg0>::value)
-    std::cout << std::endl;
+  // if constexpr (!is_element<Arg0>::value)
+  std::cout << std::endl;
 }
 
 
