@@ -6,3 +6,4 @@
 "" ; "******"
 "abcabczzzde" ; "*abc???de*"
 "aaabbbaabaaaaababaabaaabbabbbbbbbbaabababbabbbaaaaba" ; "a*******b"
+"babaaababaabababbbbbbaabaabbabababbaababbaaabbbaaab" ; "***bba**a*bbba**aab**b"

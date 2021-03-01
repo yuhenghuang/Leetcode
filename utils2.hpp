@@ -327,7 +327,7 @@ struct universal_print<TreeNode*, false> {
 template <typename Tp>
 struct universal_print<std::vector<Tp>, false> {
   void operator()(const std::vector<Tp>& res) {
-    size_t n=res.size();
+    size_t n = res.size();
     universal_print<Tp> print;
 
     std::cout << "[";
@@ -383,6 +383,7 @@ std::string to_txt_file(const std::string& path) {
   file.replace(file.size()-3, 3, "txt");
   return file;
 }
+
 
 template <typename... Args> struct args_pack { };
 
@@ -450,7 +451,7 @@ class bind_obj_impl {
 
   private:
     template <class MF> friend 
-    bind_obj_impl<MF> bind_obj(MF, typename mem_fn_traits<MF>::class_type&);
+    bind_obj_impl<MF> bind_obj(MF, typename mem_fn_traits<MF>::class_type*);
 
     bind_obj_impl(mem_fn_ptr _fn, Tp* _obj_ptr): fn(_fn), obj_ptr(_obj_ptr) { }
 
@@ -471,13 +472,18 @@ class bind_obj_impl {
       // ...
       return (obj_ptr->*fn)(std::forward<Types>(args) ...);
     }
+
+    ~bind_obj_impl() {
+      if (obj_ptr)
+        delete obj_ptr;
+    }
 };
 
 
 template <class MemFn>
 bind_obj_impl<MemFn>
-bind_obj(MemFn fn, typename mem_fn_traits<MemFn>::class_type& obj) {
-  return bind_obj_impl<MemFn>(fn, &obj);
+bind_obj(MemFn fn, typename mem_fn_traits<MemFn>::class_type* obj) {
+  return bind_obj_impl<MemFn>(fn, obj);
 }
 
 
@@ -580,7 +586,7 @@ using namespace std;
 
 
 #define UFUNC(method) \
-  Solution sol; \
+  Solution* sol = new Solution(); \
   auto functor = utils2::bind_obj(&method, sol); \
   string path = "Inputs/" + utils2::to_txt_file(__FILE__);  \
   double exec_time = 0; \
