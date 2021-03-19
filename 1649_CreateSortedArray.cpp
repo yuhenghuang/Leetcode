@@ -65,12 +65,12 @@ class Solution {
       if (!root)
         return new BSTNode(val);
 
-      BSTNode* node = static_cast<BSTNode*>(root);
+      BSTNode* node = reinterpret_cast<BSTNode*>(root);
       if (val < node->val) {
         node->left = insert(node->left, val);
         ++node->small;
       }
-      else if (val > root->val) {
+      else if (val > node->val) {
         node->right = insert(node->right, val);
       }
       else
@@ -83,7 +83,7 @@ class Solution {
       if (!root)
         return 0;
 
-      BSTNode* node = static_cast<BSTNode*>(root);
+      BSTNode* node = reinterpret_cast<BSTNode*>(root);
       if (val < node->val)
         return query(node->left, val);
       else if (val > node->val)
@@ -135,8 +135,7 @@ class Solution {
         if (num > m)
           m = num;
 
-      ++m;
-      int* tree = new int[m];
+      int* tree = new int[++m];
       memset(tree, 0, m*sizeof(int));
 
       int n = instructions.size();

@@ -31,11 +31,11 @@ class Solution {
 
 class PathSumIII {
   public:
-    int pathSum(TreeNode* root, int& sum) {
+    int pathSum(TreeNode* root, int sum) {
       if (root==nullptr) return 0;
       return dfs(root, 0, sum) + pathSum(root->left, sum) + pathSum(root->right, sum);
     }
-    int dfs(TreeNode* root, int currSum, int& sum) {
+    int dfs(TreeNode* root, int currSum, int sum) {
       if (root==nullptr) return 0;
       currSum+=root->val;
       return dfs(root->left, currSum, sum) + dfs(root->right, currSum, sum) + (currSum==sum?1:0);

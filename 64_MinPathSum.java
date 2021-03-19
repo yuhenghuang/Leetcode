@@ -1,6 +1,6 @@
 class MinPathSum {
   public int minPathSum(int[][] grid) {
-    int m=grid.length, n= m==0?0:grid[0].length;
+    int m = grid.length, n = m==0? 0 : grid[0].length;
     if (m==0 || n==0) return 0;
     //int[][] dp = new int[m][n];
     //dp[0][0] = grid[0][0];
@@ -18,8 +18,8 @@ class MinPathSum {
   int m, n;
   int[][] memo, grid;
   public int minPathSumRec(int[][] grid) {
-    m=grid.length;
-    n= m==0?0:grid[0].length;
+    m = grid.length;
+    n = m==0 ? 0 : grid[0].length;
     if (m==0 || n==0) return 0;
 
     this.grid = grid;

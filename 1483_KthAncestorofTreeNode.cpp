@@ -1,5 +1,7 @@
 #include "DataStructure.h"
 #include <vector>
+#include <iostream>
+
 using namespace std;
 
 class TreeAncestor {
@@ -14,7 +16,7 @@ class TreeAncestor {
 
       // please bear the 'C' order in mind
       // better to have long row than column
-      spmat = vector<vector<int>>(h, vector<int>(n, -1));
+      spmat.assign(h, vector<int>(n, -1));
       
       spmat[0] = parent;
 
@@ -44,6 +46,6 @@ class TreeAncestor {
 int main() {
   vector<int> vec = {-1,0,0,1,2,0,1,3,6,1};
   TreeAncestor obj(10, vec);
-  obj.getKthAncestor(1,1);
+  cout << obj.getKthAncestor(1,1) << endl;
   return 0;
 }

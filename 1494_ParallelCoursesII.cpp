@@ -41,6 +41,8 @@ class Solution {
               courses.push_back(i);
 
           vector<int> next;
+
+          // find all combinations of size k if there're more than k courses
           if (courses.size()>k) 
             get_next(0, k, v, next, courses);
           else {

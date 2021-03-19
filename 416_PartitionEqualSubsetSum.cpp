@@ -1,3 +1,4 @@
+#include <numeric>
 #include "utils.hpp"
 
 static int emm = [](){
