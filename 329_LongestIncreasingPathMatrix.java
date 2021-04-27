@@ -17,7 +17,7 @@ class LongestIncreasingPathMatrix {
   }
 
   public int dfs(int num, int i, int j) {
-    if (i<0 || i>=m || j<0 || j>=n || visiting[i][j]|| matrix[i][j]<=num) return 0;
+    if (i<0 || i>=m || j<0 || j>=n || visiting[i][j] || matrix[i][j]<=num) return 0;
     if (memo[i][j]>0) return memo[i][j];
 
     visiting[i][j] = true;

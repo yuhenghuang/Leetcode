@@ -55,11 +55,17 @@ class Node {
 
 #include <vector>
 
-/*
+#ifdef NARY_NODE
+
 class Node {
   public:
     int val;
+
+#ifdef NARY_TREE_NODE
+    std::vector<Node*> children;
+#else
     std::vector<Node*> neighbors;
+#endif
 
     Node() {}
 
@@ -67,11 +73,16 @@ class Node {
         val = _val;
     }
 
-    Node(int _val, std::vector<Node*> _neighbors) {
+    Node(int _val, std::vector<Node*>& nodes) {
         val = _val;
-        neighbors = _neighbors;
+#ifdef NARY_TREE_NODE
+        children = nodes;
+#else
+        neighbors = nodes;
+#endif
     }
 };
-*/
+
+#endif // end of NARY_NODE
 
 #endif // end of _DS_H

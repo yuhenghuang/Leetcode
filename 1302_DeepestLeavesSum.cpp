@@ -1,7 +1,27 @@
-#include "DataStructure.h"
+#include "utils2.hpp"
 
 class Solution {
 public:
+    int deepestLeavesSumBFS(TreeNode* root) {
+      queue<TreeNode*> q;
+      if (root) q.push(root);
+
+      int res = 0;
+      while (!q.empty()) {
+        res = 0;
+        int n = q.size();
+        while (n--) {
+          root = q.front(); q.pop();
+          res += root->val;
+
+          if (root->left) q.push(root->left);
+          if (root->right) q.push(root->right);
+        }
+      }
+
+      return res;
+    }
+
     int deepestLeavesSum(TreeNode* root) {
       int depth = 0;
       return dfs(root, depth);
@@ -27,3 +47,14 @@ public:
       }
     }
 };
+
+
+int main() {
+  {
+    UFUNC(Solution::deepestLeavesSum);
+  }
+  {
+    UFUNC(Solution::deepestLeavesSumBFS);
+  }
+  return 0;
+}

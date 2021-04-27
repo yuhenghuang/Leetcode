@@ -1,0 +1,3 @@
+["hello","leetcode"] ; "hlabcdefgijkmnopqrstuvwxyz"
+["word","world","row"] ; "worldabcefghijkmnpqstuvxyz"
+["apple","app"] ; "abcdefghijklmnopqrstuvwxyz"

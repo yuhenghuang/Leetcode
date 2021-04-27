@@ -1,5 +1,4 @@
-#include <vector>
-using namespace std;
+#include "utils2.hpp"
 
 class Solution {
   private:
@@ -40,7 +39,7 @@ class Solution {
           dfs(cur, next);
           lowlink[cur] = min(lowlink[cur], lowlink[next]);
         }
-        else 
+        else // circle detected
           lowlink[cur] = min(lowlink[cur], index[next]);
 
         if (index[cur] < lowlink[next])
@@ -48,3 +47,9 @@ class Solution {
       }
     }
 };
+
+
+int main() {
+  UFUNC(Solution::criticalConnections);
+  return 0;
+}

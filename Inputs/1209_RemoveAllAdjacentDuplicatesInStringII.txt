@@ -1,0 +1,4 @@
+"abcd" ; 2
+"deeedbbcccbdaa" ; 3
+"pbbcggttciiippooaais" ; 2
+"yfttttfbbbbnnnnffbgffffgbbbbgssssgthyyyy" ; 4
