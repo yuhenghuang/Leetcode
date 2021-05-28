@@ -1,12 +1,7 @@
-#include "DataStructure.h"
-#include <iostream>
-using namespace std;
+#include "utils2.hpp"
 
 class Solution {
-  public:
-    void flatten(TreeNode* root) {
-      dfs(root);
-    }
+  private:
     TreeNode* dfs(TreeNode* node) {
       if (!node) return nullptr;
       TreeNode* l = dfs(node->left);
@@ -28,23 +23,43 @@ class Solution {
         return r;
       }
     }
+  public:
+    void flattenRecursive(TreeNode* root) {
+      dfs(root);
+    }
+
+    void flatten(TreeNode* root) {
+      // iteration
+
+      stack<TreeNode*> s;
+      s.push(nullptr);
+
+      while (root) {
+
+        if (root->left) {
+          if (root->right)
+            s.push(root->right);
+
+          root->right = root->left;
+          root->left = nullptr;
+        }
+        else if (!root->right) {
+          root->right = s.top();
+          s.pop();
+        }
+
+        root = root->right;
+      }
+    }
 };
 
 int main() {
-  TreeNode* root = new TreeNode(1);
-  root->left = new TreeNode(2);
-  root->right = new TreeNode(5);
-  root->left->left = new TreeNode(3);
-  root->left->right = new TreeNode(4);
-  root->right->right = new TreeNode(6);
-
-  Solution sol;
-  sol.flatten(root);
-
-  TreeNode* node = root;
-  while (node) {
-    cout << node->val << endl;
-    node = node->right;
+  {
+    UFUNC(Solution::flattenRecursive);
   }
+  {
+    UFUNC(Solution::flatten);
+  }
+
   return 0;
 }

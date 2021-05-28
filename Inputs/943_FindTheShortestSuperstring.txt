@@ -1,0 +1,3 @@
+["alex","loves","leetcode"]
+["catg","ctaagt","gcta","ttca","atgcatc"]
+["uhozqhxcqmkifljvcie","epuhozqhxcqmkifljvci","ugmqnepuhozqhxcqm","iexdudtvurjkrovrhmpa","rovrhmpaasblgaosw","qmkifljvciexdudtv","zsgtuowskyzphybeugm","uowskyzphybeugmq","qhxcqmkifljvciex"]
