@@ -42,7 +42,8 @@ struct universal_parser;
 template <>
 struct universal_parser<std::string> {
   std::string operator()(const std::string& str) {
-    return str;
+    // remove quotes
+    return str.substr(1, str.size() - 2);
   }
 };
 
@@ -153,7 +154,9 @@ struct universal_parser<ListNode*> {
 template <typename Tp>
 struct universal_parser<std::vector<Tp>, false> {
   std::vector<Tp> operator()(const std::string& str) {
-    std::string line = regex_replace(str, std::regex("[\\[\\]\\s\"]+"), "");
+    std::string line = regex_replace(str, std::regex("^\\s*\\[\\s*"), "");
+    line = regex_replace(line, std::regex("\\s*\\]\\s*$"), "");
+    line = regex_replace(line, std::regex("\\s*,\\s*"), ",");
 
     size_t n = std::count(line.begin(), line.end(), ',') + 1;
 
@@ -176,8 +179,11 @@ struct universal_parser<std::vector<Tp>, false> {
 template <typename Tp>
 struct universal_parser<std::vector<Tp>, true> {
   std::vector<Tp> operator()(const std::string& str) {
-    std::string line = regex_replace(str, std::regex("\\s+"), "");
-    line = regex_replace(line, std::regex("\\],\\["), ";");
+    std::string line = regex_replace(str, std::regex("^\\s*\\[\\s*"), "");
+    line = regex_replace(line, std::regex("\\s*\\]\\s*$"), "");
+
+    // "],[" as delimiter for 2D arrays
+    line = regex_replace(line, std::regex("\\s*\\]\\s*,\\s*\\[\\s*"), ";");
 
     std::vector<Tp> out;
     // empty 2d vector
@@ -224,6 +230,14 @@ template <typename Tp, bool Is_2D = is_2d<Tp>::value>
 struct universal_print {
   void operator()(const Tp res) {
     std::cout << res;
+  }
+};
+
+
+template <>
+struct universal_print<std::string> {
+  void operator()(const std::string& res) {
+    std::cout << '\"' << res << '\"';
   }
 };
 
@@ -371,7 +385,8 @@ std::vector<std::string> string_split(const std::string& str, char delim=';') {
   std::string part;
 
   while (getline(ss, part, delim)) {
-    part = regex_replace(part, std::regex("\"|\\s+"), "");
+    // remove spaces in the start and end
+    part = regex_replace(part, std::regex("^\\s+|\\s+$"), "");
     out.push_back(std::move(part));
   }
 
@@ -380,7 +395,8 @@ std::vector<std::string> string_split(const std::string& str, char delim=';') {
 
 std::string to_txt_file(const std::string& path) {
   std::string file = path.substr(path.find_last_of('/')+1);
-  file.replace(file.size()-3, 3, "txt");
+  // replace ext by .txt
+  file = regex_replace(file, std::regex("\\..*$"), ".txt");
   return file;
 }
 

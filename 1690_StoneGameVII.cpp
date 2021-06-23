@@ -17,7 +17,7 @@ namespace utils2 {
 
   // derived +
   template <typename Tp>
-  struct plus : binary_function<Tp, Tp, Tp> {
+  struct plus : public binary_function<Tp, Tp, Tp> {
     virtual Tp operator()(const Tp& x, const Tp& y) const {
       return x + y;
     }
@@ -25,7 +25,7 @@ namespace utils2 {
 
   // derived -
   template <typename Tp>
-  struct minus : binary_function<Tp, Tp, Tp> {
+  struct minus : public binary_function<Tp, Tp, Tp> {
     virtual Tp operator()(const Tp& x, const Tp& y) const {
       return x - y;
     }
