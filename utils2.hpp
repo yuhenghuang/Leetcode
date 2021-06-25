@@ -87,6 +87,8 @@ struct universal_parser<char> {
 };
 
 
+/* out-dated parser of tree
+
 template <>
 struct universal_parser<TreeNode*> {
   TreeNode* operator()(const std::string& str) {
@@ -124,6 +126,66 @@ struct universal_parser<TreeNode*> {
   }
 };
 
+*/
+
+template <>
+struct universal_parser<TreeNode*> {
+  TreeNode* operator()(const std::string& str) {
+    std::string line = regex_replace(str, std::regex("[\\[\\]\\s\"]+"), "");
+
+    if (line.size() == 0)
+      return nullptr;
+
+    // size of tree
+    size_t n = std::count(line.begin(), line.end(), ',') + 1UL;
+
+    // size of null node
+    size_t u = std::count(line.begin(), line.end(), 'u');
+
+    // only array new non-null nodes
+    // prepare for further plan of memory management (smart pointer)
+    TreeNode* root = new TreeNode[n - u];
+
+    // iterator over non-null nodes
+    TreeNode* node = root;
+
+    // array of null and non-null nodes in the order of input
+    TreeNode* nodes[n];
+
+    // iterator over nodes
+    TreeNode** iter;
+
+    std::istringstream ss(line);
+    std::string val;
+    for (iter = &nodes[0]; getline(ss, val, ','); ++iter) {
+      if (val != "null") {
+        node->val = stoi(val);
+        *iter = node++;
+      }
+      else
+        *iter = nullptr;
+    }
+
+    iter = &nodes[0];
+    bool left = true;
+    for (size_t i = 1; i < n; ++i) {
+      // this loop is always valid because it runs slower than `i`
+      while (*iter == nullptr)
+        ++iter;
+
+      if (left)
+        (*iter)->left = nodes[i];
+      else 
+        (*iter++)->right = nodes[i];
+
+      left = !left;
+    }
+
+    return root;
+  }
+};
+
+/* out-dated parser of linked list
 
 template <>
 struct universal_parser<ListNode*> {
@@ -144,6 +206,40 @@ struct universal_parser<ListNode*> {
         prev->next = next;
         prev = next;
       }
+    }
+
+    return root;
+  }
+};
+
+*/
+
+template <>
+struct universal_parser<ListNode*> {
+  ListNode* operator()(const std::string& str) {
+    std::string line = regex_replace(str, std::regex("[\\[\\]\\s\"]+"), "");
+
+    if (line.size() == 0)
+      return nullptr;
+
+    // size of linked list
+    size_t n = std::count(line.begin(), line.end(), ',') + 1UL;
+
+    // array new to save memory
+    // prepare for further plan of memory management (smart pointer)
+    ListNode* root = new ListNode[n];
+
+    ListNode* node = root;
+
+    std::istringstream ss(line);
+    std::string val;
+
+    for (size_t i = 0; i < n; ++i, ++node) {
+      getline(ss, val, ',');
+      node->val = stoi(val);
+
+      if (i < n - 1) 
+        node->next = node + 1;
     }
 
     return root;
@@ -179,6 +275,7 @@ struct universal_parser<std::vector<Tp>, false> {
 template <typename Tp>
 struct universal_parser<std::vector<Tp>, true> {
   std::vector<Tp> operator()(const std::string& str) {
+    // remove "[" and "]" in the start and end
     std::string line = regex_replace(str, std::regex("^\\s*\\[\\s*"), "");
     line = regex_replace(line, std::regex("\\s*\\]\\s*$"), "");
 
@@ -186,8 +283,8 @@ struct universal_parser<std::vector<Tp>, true> {
     line = regex_replace(line, std::regex("\\s*\\]\\s*,\\s*\\[\\s*"), ";");
 
     std::vector<Tp> out;
-    // empty 2d vector
-    if (line.size()==2) return out;
+    // empty 2d vector, "[]" after the preprocessing
+    if (line.size() == 2) return out;
 
     universal_parser<Tp> parser;
 
@@ -337,7 +434,6 @@ struct universal_print<TreeNode*, false> {
 };
 
 
-
 template <typename Tp>
 struct universal_print<std::vector<Tp>, false> {
   void operator()(const std::vector<Tp>& res) {
@@ -393,12 +489,71 @@ std::vector<std::string> string_split(const std::string& str, char delim=';') {
   return out;
 }
 
+
 std::string to_txt_file(const std::string& path) {
   std::string file = path.substr(path.find_last_of('/')+1);
   // replace ext by .txt
   file = regex_replace(file, std::regex("\\..*$"), ".txt");
   return file;
 }
+
+
+// for non-pointer types
+template <typename Tp>
+class input_parameter {
+  public:
+    typedef typename std::remove_const<
+      typename std::remove_reference<Tp>::type
+    >::type type;
+
+  private:
+    type par;
+
+  public:
+    inline operator Tp() {
+      return static_cast<Tp&&>(par);
+    }
+
+    template <
+      typename Up,
+      typename = typename std::enable_if<std::is_convertible<Up&&, type>::value>::type
+    >
+    type& operator=(Up&& _par) {
+      par = std::forward<Up>(_par);
+
+      return par;
+    }
+};
+
+
+// for pointers (of objects saved in heap)
+template <typename Tp>
+class input_parameter<Tp*> {
+  public:
+    typedef typename std::remove_const<Tp>::type* type;
+
+  private:
+    type par;
+
+  public:
+    input_parameter(): par(nullptr) { }
+
+    inline operator Tp*() {
+      return par;
+    }
+
+    // must be assigned by non const pointer
+    type& operator=(type _par) {
+      par = _par;
+
+      return par;
+    }
+
+    ~input_parameter() {
+      if (par != nullptr)
+        delete[] par;
+    }
+};
 
 
 template <typename... Args> struct args_pack { };
@@ -432,7 +587,7 @@ struct args_convertible<args_pack<Types...>, args_pack<Args...>>
 { };
 
 
-
+// class member function traits
 template <typename MemFn> struct mem_fn_traits;
 
 template <class Tp, typename Ret, typename... Args>
@@ -448,6 +603,11 @@ struct mem_fn_traits<Ret (Tp::*)(Args...)>
       typename std::remove_reference<Args>::type
     >::type ...
   > args_tuple_type;
+
+  // reference must be removed before removing const and volatile
+  typedef std::tuple<
+    input_parameter<Args>...
+  > args_tuple_param_type;
 
 };
 
@@ -511,7 +671,7 @@ void input_gen(Tuple& params,
   (
     (std::get<Is>(params) = 
       universal_parser<
-        std::tuple_element_t<Is, Tuple>
+        typename std::tuple_element_t<Is, Tuple>::type
       >()(*iter++)
     ), 
     ...
@@ -560,7 +720,7 @@ ufunc_call(bind_obj_impl<MemFn>& functor,
            double& exec_time,
            std::index_sequence<Is...>) {
   // ...
-  typedef std::tuple_element_t<0, Tuple> Arg0;
+  typedef typename std::tuple_element_t<0, Tuple>::type Arg0;
 
   std::chrono::time_point<std::chrono::system_clock> start( std::chrono::system_clock::now() );
 
@@ -586,8 +746,8 @@ void ufunc(bind_obj_impl<MemFn>& functor,
   // arguments to vector<string>
   std::vector<std::string> args = string_split(line);
 
-  // tuple of arguments without cv reference
-  typename mem_fn_traits<MemFn>::args_tuple_type params;
+  // tuple of arguments without cv and wrapped by input_parameter class
+  typename mem_fn_traits<MemFn>::args_tuple_param_type params;
 
   input_gen(params, args.begin(), std::make_index_sequence<mem_fn_traits<MemFn>::value>{});
 

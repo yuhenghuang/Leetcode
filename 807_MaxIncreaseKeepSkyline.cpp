@@ -1,4 +1,4 @@
-#include "utils.hpp"
+#include "utils2.hpp"
 
 class Solution {
   public:
@@ -33,8 +33,6 @@ class Solution {
 
 
 int main() {
-
-  RUN(Solution::maxIncreaseKeepingSkyline);
-
+  UFUNC(Solution::maxIncreaseKeepingSkyline);
   return 0;
 }

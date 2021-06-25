@@ -5,25 +5,23 @@ class UnionFind {
     vector<int> parent, rank;
 
   public:
-    UnionFind(int n) {
-      rank.resize(n);
-      parent.resize(n);
-      for (int i=1; i<n; ++i)
+    UnionFind(int n): parent(n), rank(n) {
+      for (int i = 1; i < n; ++i)
         parent[i] = i;
     }
 
     int find(int p) {
-      if (parent[p]!=p)
-        parent[p] = find(parent[p]);
-      
-      return parent[p];
+      if (parent[p] == p)
+        return p;
+        
+      return parent[p] = find(parent[p]);
     }
 
     bool join(int p, int q) {
       p = find(p);
       q = find(q);
 
-      if (p==q)
+      if (p == q)
         return false;
       else {
         if (rank[p] > rank[q])

@@ -2,7 +2,7 @@
 
 class Solution {
   public:
-    int minimumEffortPath(vector<vector<int>>& heights) {
+    int minimumEffortPath(const vector<vector<int>>& heights) {
       const int m = heights.size(), n = m==0 ? 0 : heights[0].size();
 
       bool seen[m][n];

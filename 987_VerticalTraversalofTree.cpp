@@ -27,7 +27,7 @@ class Solution {
 
         auto inner_end = outer_iter->second.end();
         for (auto inner_iter = outer_iter->second.begin(); inner_iter!=inner_end; ++inner_iter)
-          vec.emplace_back(inner_iter->second);
+          vec.push_back(inner_iter->second);
       }
 
       return res;
