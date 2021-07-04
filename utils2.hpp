@@ -283,8 +283,9 @@ struct universal_parser<std::vector<Tp>, true> {
     line = regex_replace(line, std::regex("\\s*\\]\\s*,\\s*\\[\\s*"), ";");
 
     std::vector<Tp> out;
-    // empty 2d vector, "[]" after the preprocessing
-    if (line.size() == 2) return out;
+
+    if (line.size() == 0) 
+      return out;
 
     universal_parser<Tp> parser;
 
@@ -498,7 +499,8 @@ std::string to_txt_file(const std::string& path) {
 }
 
 
-// for non-pointer types
+// wrapper of input parameters
+// for non-pointer types (including references and const)
 template <typename Tp>
 class input_parameter {
   public:
@@ -511,7 +513,20 @@ class input_parameter {
 
   public:
     inline operator Tp() {
-      return static_cast<Tp&&>(par);
+      /*
+      par is lvalue before cast.
+
+      if Tp is non-reference type, then copy construction will be called
+      to create a new object of Tp as prvalue.
+
+      > For non-reference new_type, the result object of the static_cast 
+      > prvalue expression is what's direct-initialized.
+
+      this behavior is to be expected and
+      compiler will optimize redandunt copy constructions
+      (only one copy construction will happen)
+      */
+      return static_cast<Tp>(par);
     }
 
     template <
@@ -543,7 +558,7 @@ class input_parameter<Tp*> {
     }
 
     // must be assigned by non const pointer
-    type& operator=(type _par) {
+    Tp* operator=(type _par) {
       par = _par;
 
       return par;
@@ -552,6 +567,39 @@ class input_parameter<Tp*> {
     ~input_parameter() {
       if (par != nullptr)
         delete[] par;
+    }
+};
+
+
+// for array of pointers
+// TODO: how to generalize the const and ref of vector, or const pointer?
+template <typename Tp>
+class input_parameter<std::vector<Tp*>&> {
+  public:
+    typedef std::vector<Tp*> type;
+
+  private:
+    type par;
+
+  public:
+    inline operator type&() {
+      return par;
+    }
+
+    template <
+      typename Up,
+      typename = typename std::enable_if<std::is_convertible<Up&&, type>::value>::type
+    >
+    type& operator=(Up&& _par) {
+      par = std::forward<Up>(_par);
+
+      return par;
+    }
+
+    ~input_parameter() {
+      for (Tp* ptr : par)
+        if (ptr != nullptr)
+          delete[] ptr;
     }
 };
 
@@ -605,9 +653,7 @@ struct mem_fn_traits<Ret (Tp::*)(Args...)>
   > args_tuple_type;
 
   // reference must be removed before removing const and volatile
-  typedef std::tuple<
-    input_parameter<Args>...
-  > args_tuple_param_type;
+  typedef std::tuple<input_parameter<Args> ...> args_tuple_param_type;
 
 };
 
@@ -671,7 +717,7 @@ void input_gen(Tuple& params,
   (
     (std::get<Is>(params) = 
       universal_parser<
-        typename std::tuple_element_t<Is, Tuple>::type
+        typename std::tuple_element_t<Is, Tuple>::type // tuple_element_t<> = input_parameter
       >()(*iter++)
     ), 
     ...
@@ -679,19 +725,19 @@ void input_gen(Tuple& params,
 }
 
 
-template <class MemFn, typename Tuple, std::size_t... Is>
+template <class Functor, typename Tuple, std::size_t... Is>
 std::enable_if_t<
   !std::is_void<
-    typename mem_fn_traits<MemFn>::return_type
+    typename Functor::Ret
   >::value
 > 
-ufunc_call(bind_obj_impl<MemFn>& functor,
+ufunc_call(Functor& functor,
            Tuple& params,
            double& exec_time,
            std::index_sequence<Is...>) {
   // ...
 
-  typedef typename mem_fn_traits<MemFn>::return_type Ret;
+  typedef typename Functor::Ret Ret;
 
   std::chrono::time_point<std::chrono::system_clock> start( std::chrono::system_clock::now() );
 
@@ -709,13 +755,13 @@ ufunc_call(bind_obj_impl<MemFn>& functor,
 }
 
 
-template <class MemFn, typename Tuple, std::size_t... Is>
+template <class Functor, typename Tuple, std::size_t... Is>
 std::enable_if_t<
   std::is_void<
-    typename mem_fn_traits<MemFn>::return_type
+    typename Functor::Ret
   >::value
 > 
-ufunc_call(bind_obj_impl<MemFn>& functor,
+ufunc_call(Functor& functor,
            Tuple& params,
            double& exec_time,
            std::index_sequence<Is...>) {
@@ -746,12 +792,12 @@ void ufunc(bind_obj_impl<MemFn>& functor,
   // arguments to vector<string>
   std::vector<std::string> args = string_split(line);
 
-  // tuple of arguments without cv and wrapped by input_parameter class
+  // tuple of arguments wrapped by input_parameter class
   typename mem_fn_traits<MemFn>::args_tuple_param_type params;
 
   input_gen(params, args.begin(), std::make_index_sequence<mem_fn_traits<MemFn>::value>{});
 
-  ufunc_call(functor, params, exec_time, std::make_index_sequence<mem_fn_traits<MemFn>::value>());
+  ufunc_call(functor, params, exec_time, std::make_index_sequence<mem_fn_traits<MemFn>::value>{});
 }
 
 

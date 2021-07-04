@@ -1,7 +1,4 @@
-#include "utils.hpp"
-#include <algorithm>
-
-using namespace std;
+#include "utils2.hpp"
 
 class Solution {
   public:
@@ -31,31 +28,50 @@ class Solution {
       iter_type lower = lower_bound(arr.begin(), arr.end(), x-l);
 
       iter_type iter = low - min(max(k - (high - low), 0L), low - lower);
-      while (k>0) {
-        res.push_back(*iter);
-        ++iter;
-        --k;
+      while (k--) {
+        res.push_back(*iter++);
       }
 
       return res;
     }
+
+    vector<int> findClosestElementsTwoPointers(vector<int>& arr, int k, int x) {
+      int n = arr.size();
+
+      int i = 0, j = n;
+      while (j - i > k) {
+        if (x - arr[i] > arr[j-1] - x)
+          ++i;
+        else
+          --j;
+      }
+
+      return {arr.begin() + i, arr.begin() + j};
+    }
+
+    vector<int> findClosestElementsBS(vector<int>& arr, int k, int x) {
+      int l = 0, r = arr.size() - k;
+      while (l < r) {
+        int m = l + (r - l) / 2;
+        if (x - arr[m] > arr[m + k] - x)
+          l = m + 1;
+        else
+          r = m;
+      }
+
+      return {arr.begin() + l, arr.begin() + l + k};
+    }
 };
 
 int main() {
-  Solution sol;
-
-  vector<int> arr, res;
-  utils::parse_vector_1d<int> parser;
-  string line;
-  int k, x;
-  while (getline(cin, line)) {
-    arr = parser(line);
-    cin >> k >> x;
-
-    res = sol.findClosestElements(arr, k, x);
-    utils::print_vector_1d(res);
-    cin.get();
+  {
+    UFUNC(Solution::findClosestElements);
   }
-
+  {
+    UFUNC(Solution::findClosestElementsTwoPointers);
+  }
+  {
+    UFUNC(Solution::findClosestElementsBS);
+  }
   return 0;
 }
