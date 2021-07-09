@@ -499,10 +499,115 @@ std::string to_txt_file(const std::string& path) {
 }
 
 
+// check if Tp is a vector of pointers
+template <typename Tp>
+struct is_vector_of_pointers_impl: public std::false_type { };
+
+template <typename Tp>
+struct is_vector_of_pointers_impl<std::vector<Tp*>>: public std::true_type { };
+
+template <typename Tp>
+struct is_vector_of_pointers: 
+  public is_vector_of_pointers_impl<
+    typename std::remove_const<
+      typename std::remove_reference<Tp>::type
+    >::type
+  > {
+
+};
+
+
+// remove const in pointer
+template <typename Tp>
+struct remove_const_pointer {
+  typedef Tp type;
+};
+
+template <typename Tp>
+struct remove_const_pointer<Tp*> {
+  typedef typename std::remove_const<Tp>::type* type;
+};
+
+
+// apply cv lvalue reference
+// from clang std
+
+template <bool ApplyLV, bool ApplyConst, bool ApplyVolatile>
+struct apply_cv_mf;
+
+template <>
+struct apply_cv_mf<false, false, false> {
+  template <class T> using apply = T;
+};
+
+template <>
+struct apply_cv_mf<true, false, false> {
+  template <class T> using apply = T&;
+};
+
+template <>
+struct apply_cv_mf<true, true, false> {
+  template <class T> using apply = const T&;
+};
+
+template <>
+struct apply_cv_mf<true, false, true> {
+  template <class T> using apply = volatile T&;
+};
+
+template <>
+struct apply_cv_mf<true, true, true> {
+  template <class T> using apply = const volatile T&;
+};
+
+
+template <>
+struct apply_cv_mf<false, true, false> {
+  template <class T> using apply = const T;
+};
+
+template <>
+struct apply_cv_mf<false, false, true> {
+  template <class T> using apply = volatile T;
+};
+
+template <>
+struct apply_cv_mf<false, true, true> {
+  template <class T> using apply = const volatile T;
+};
+
+// apply const, volatile and lreference
+template <class T, class Raw = typename std::remove_reference<T>::type>
+using apply_cv_t = apply_cv_mf<
+                     std::is_lvalue_reference<T>::value,
+                     std::is_const<Raw>::value,
+                     std::is_volatile<Raw>::value
+                   >;
+
+
+/* memo:
+Although it's possible to implement vector versions by recursion, 
+currently feasible ideas will result in considerable amount of 
+unnecessary copies during implicit conversion in practice.
+
+It's gone far beyond the scope when the input parameters are actually
+quite limited (only three types, i.e. primitive types, lvalue reference and pointer).
+The necessity to handle rvalue reference, const properly and 
+to collect garbage in heap memory (in case of pointers) is
+in fact not really significant.
+
+If might not be a good idea to make GP infinitely general...
+bear this in mind
+*/
+
+template <typename Tp, bool Is_Vector_of_Pointers = is_vector_of_pointers<Tp>::value>
+class input_parameter;
+
+
 // wrapper of input parameters
 // for non-pointer types (including references and const)
 template <typename Tp>
-class input_parameter {
+class input_parameter<Tp, false> {
   public:
     typedef typename std::remove_const<
       typename std::remove_reference<Tp>::type
@@ -516,24 +621,25 @@ class input_parameter {
       /*
       par is lvalue before cast.
 
-      if Tp is non-reference type, then copy construction will be called
-      to create a new object of Tp as prvalue.
+      if Tp is non-reference type, then copy construction (not move because par is lvalue) 
+      will be called to create a new object of Tp as prvalue since c++17.
 
       > For non-reference new_type, the result object of the static_cast 
       > prvalue expression is what's direct-initialized.
 
       this behavior is to be expected and
       compiler will optimize redandunt copy constructions
-      (only one copy construction will happen)
+      (copy construction will happen only once)
       */
       return static_cast<Tp>(par);
     }
 
     template <
       typename Up,
-      typename = typename std::enable_if<std::is_convertible<Up&&, type>::value>::type
+      typename = typename std::enable_if<std::is_assignable<type&, Up&&>::value>::type
     >
-    type& operator=(Up&& _par) {
+    type& operator=(Up&& _par)
+    noexcept(std::is_nothrow_assignable<type&, Up&&>::value) {
       par = std::forward<Up>(_par);
 
       return par;
@@ -543,7 +649,7 @@ class input_parameter {
 
 // for pointers (of objects saved in heap)
 template <typename Tp>
-class input_parameter<Tp*> {
+class input_parameter<Tp*, false> {
   public:
     typedef typename std::remove_const<Tp>::type* type;
 
@@ -557,9 +663,16 @@ class input_parameter<Tp*> {
       return par;
     }
 
-    // must be assigned by non const pointer
-    Tp* operator=(type _par) {
-      par = _par;
+
+    // ~~TODO: support polymorphis~~
+    // Done!
+    template <
+      typename Up,
+      typename = typename std::enable_if<std::is_assignable<type&, Up&&>::value>::type
+    >
+    type operator=(Up&& _par)
+    noexcept(std::is_nothrow_assignable<type&, Up&&>::value) {
+      par = std::forward<Up>(_par);
 
       return par;
     }
@@ -571,33 +684,74 @@ class input_parameter<Tp*> {
 };
 
 
-// for array of pointers
-// TODO: how to generalize the const and ref of vector, or const pointer?
+// for vector of pointers
+// ~~TODO: how to generalize the const and ref of vector~~
+// ~~TODO: how to handle const pointer?~~
+// Done!
+// This approach can be generalized to all types of arrays, with the help of array adapter.
 template <typename Tp>
-class input_parameter<std::vector<Tp*>&> {
-  public:
-    typedef std::vector<Tp*> type;
-
+class input_parameter<Tp, true> {
   private:
-    type par;
+    typedef typename std::remove_reference<Tp>::type::value_type pointer;
+    typedef typename remove_const_pointer<pointer>::type nonconst_pointer;
+
+    std::vector<pointer> par;
 
   public:
-    inline operator type&() {
-      return par;
+    // type is not the type of par
+    // in order to be in line with parser
+    typedef std::vector<nonconst_pointer> type;
+
+    inline operator Tp() {
+      return static_cast<Tp>(par);
     }
 
     template <
       typename Up,
-      typename = typename std::enable_if<std::is_convertible<Up&&, type>::value>::type
+      typename std::enable_if<std::is_assignable<std::vector<pointer>&, Up&&>::value, bool>::type = true
     >
-    type& operator=(Up&& _par) {
+    std::vector<pointer>& operator=(Up&& _par) 
+    noexcept(std::is_nothrow_assignable<std::vector<pointer>&, Up&&>::value) {
       par = std::forward<Up>(_par);
 
       return par;
     }
 
+    // over load when Up&& is not assignable but elements are constructible (or assignable?)
+    // Future work: differentiate copy and move construction of elements
+    template <
+      typename Up,
+      typename std::enable_if<
+        !std::is_assignable<std::vector<pointer>&, Up&&>::value
+        &&
+        std::is_constructible<
+          pointer, 
+          typename apply_cv_t<Up&&>::template apply<typename std::remove_reference<Up>::type::value_type>&&
+        >::value,
+        bool
+      >::type = false
+    >
+    std::vector<pointer>& operator=(Up&& _par) 
+    noexcept(
+      std::is_nothrow_constructible<
+        pointer, 
+        typename apply_cv_t<Up&&>::template apply<typename std::remove_reference<Up>::type::value_type>&&
+      >::value
+    ) {
+      using element_type = typename apply_cv_t<Up&&>::template apply<
+        typename std::remove_reference<Tp>::type::value_type
+      >&&;
+
+      par.clear();
+      par.reserve(_par.size());
+      for (auto& e : _par)
+        par.emplace_back(static_cast<element_type>(e));
+
+      return par;
+    }
+
     ~input_parameter() {
-      for (Tp* ptr : par)
+      for (pointer ptr : par)
         if (ptr != nullptr)
           delete[] ptr;
     }

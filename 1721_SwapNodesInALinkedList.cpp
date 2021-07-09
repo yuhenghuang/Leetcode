@@ -11,18 +11,18 @@ class Solution {
   
   public:
     ListNode* swapNodes(ListNode* head, int k) {
-      ListNode* dummy = new ListNode(0, head);
+      ListNode dummy(0, head);
       
       int n = 0;
-      ListNode* p = dummy;
+      ListNode* p = &dummy;
       while (p) {
         p = p->next;
         ++n;
       }
       
       // faster to use for or while loop to find node by index
-      p = findByIndex(dummy, k-1);
-      ListNode* q = findByIndex(dummy, n-k-1);
+      p = findByIndex(&dummy, k-1);
+      ListNode* q = findByIndex(&dummy, n-k-1);
 
       // swap values
       // swap(p->next->val, q->next->val);
@@ -39,7 +39,7 @@ class Solution {
         q->next->next = tmp;
       }
       
-      return dummy->next;
+      return dummy.next;
     }
 };
 

@@ -11,7 +11,7 @@ then
   then
 
     # flush header and clipboard
-    printf "#include \"utils2.hpp\"\n\n" >> ${cppfile}
+    printf "#include \"utils2.hpp\"\n\n\n" >> ${cppfile}
     xclip -selection c -o >> ${cppfile}
 
     # create main() and flush

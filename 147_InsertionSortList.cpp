@@ -1,4 +1,4 @@
-#include "utils.hpp"
+#include "utils2.hpp"
 
 class Solution {
   private:
@@ -12,22 +12,22 @@ class Solution {
     }
   public:
     ListNode* insertionSortList(ListNode* head) {
-      ListNode *dummy = new ListNode(INT_MIN, head);
+      ListNode dummy(INT_MIN, head);
 
-      head = dummy;
+      head = &dummy;
 
       while (head->next) {
         if (head->val > head->next->val) {
           ListNode *p = head->next;
           head->next = p->next;
-          insert(dummy, p);
+          insert(&dummy, p);
         }
         else {
           head = head->next;
         }
       }
       
-      return dummy->next;
+      return dummy.next;
     }
 };
 
