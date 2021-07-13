@@ -82,7 +82,8 @@ struct universal_parser<double> {
 template <>
 struct universal_parser<char> {
   char operator()(const std::string& str) {
-    return str[0];
+    // skip '\'' at index 0
+    return str[1];
   }
 };
 
@@ -131,7 +132,7 @@ struct universal_parser<TreeNode*> {
 template <>
 struct universal_parser<TreeNode*> {
   TreeNode* operator()(const std::string& str) {
-    std::string line = regex_replace(str, std::regex("[\\[\\]\\s\"]+"), "");
+    std::string line = regex_replace(str, std::regex("[\\[\\]\\s]+"), "");
 
     if (line.size() == 0)
       return nullptr;
@@ -217,7 +218,7 @@ struct universal_parser<ListNode*> {
 template <>
 struct universal_parser<ListNode*> {
   ListNode* operator()(const std::string& str) {
-    std::string line = regex_replace(str, std::regex("[\\[\\]\\s\"]+"), "");
+    std::string line = regex_replace(str, std::regex("[\\[\\]\\s]+"), "");
 
     if (line.size() == 0)
       return nullptr;
@@ -333,6 +334,14 @@ struct universal_print {
 
 
 template <>
+struct universal_print<char> {
+  void operator()(const std::string& res) {
+    std::cout << '\'' << res << '\'';
+  }
+};
+
+
+template <>
 struct universal_print<std::string> {
   void operator()(const std::string& res) {
     std::cout << '\"' << res << '\"';
@@ -441,14 +450,14 @@ struct universal_print<std::vector<Tp>, false> {
     size_t n = res.size();
     universal_print<Tp> print;
 
-    std::cout << "[";
-    for (size_t i=0; i<n; ++i) {
+    std::cout << '[';
+    for (size_t i = 0; i < n; ++i) {
       print(res[i]);
 
-      if (i<n-1)
+      if (i < n - 1)
         std::cout << ", ";
     }
-    std::cout << "]";
+    std::cout << ']';
   }
 };
 
@@ -460,17 +469,17 @@ struct universal_print<std::vector<Tp>, true> {
     size_t n = res.size();
     universal_print<Tp, false> print;
 
-    std::cout << "[";
-    for (size_t i=0; i<n; ++i) {
-      if (i>0)
-        std::cout << " ";
+    std::cout << '[';
+    for (size_t i = 0; i < n; ++i) {
+      if (i > 0)
+        std::cout << ' ';
 
       print(res[i]);
       
-      if (i<n-1)
+      if (i < n - 1)
         std::cout << ',' << std::endl;
     }
-    std::cout << "]";
+    std::cout << ']';
   }
 };
 
@@ -614,9 +623,16 @@ class input_parameter<Tp, false> {
     >::type type;
 
   private:
+    typedef input_parameter<Tp, false> self;
+
     type par;
 
   public:
+    input_parameter() = default;
+
+    input_parameter(self&& x): par(std::move(x.par)) { }
+    self& operator=(self&& x) { par = std::move(x.par); }
+
     inline operator Tp() {
       /*
       par is lvalue before cast.
@@ -638,11 +654,11 @@ class input_parameter<Tp, false> {
       typename Up,
       typename = typename std::enable_if<std::is_assignable<type&, Up&&>::value>::type
     >
-    type& operator=(Up&& _par)
+    self& operator=(Up&& _par)
     noexcept(std::is_nothrow_assignable<type&, Up&&>::value) {
       par = std::forward<Up>(_par);
 
-      return par;
+      return *this;
     }
 };
 
@@ -654,10 +670,25 @@ class input_parameter<Tp*, false> {
     typedef typename std::remove_const<Tp>::type* type;
 
   private:
+    typedef input_parameter<Tp*, false> self;
+
     type par;
 
+    void release_memory() {
+      if (par != nullptr)
+        delete[] par;
+    }
+
   public:
+    // copy ctor / assignment is not supported
+    // because copy of tree / linkedlist is not defined
+    input_parameter(const self&) = delete;
+    self& operator=(const self&) = delete;
+
     input_parameter(): par(nullptr) { }
+
+    input_parameter(self&& x) { swap(par, x.par); }
+    self& operator=(self&& x) { swap(par, x.par); }    
 
     inline operator Tp*() {
       return par;
@@ -670,16 +701,17 @@ class input_parameter<Tp*, false> {
       typename Up,
       typename = typename std::enable_if<std::is_assignable<type&, Up&&>::value>::type
     >
-    type operator=(Up&& _par)
+    self& operator=(Up&& _par)
     noexcept(std::is_nothrow_assignable<type&, Up&&>::value) {
+      release_memory();
+
       par = std::forward<Up>(_par);
 
-      return par;
+      return *this;
     }
 
     ~input_parameter() {
-      if (par != nullptr)
-        delete[] par;
+      release_memory();
     }
 };
 
@@ -687,7 +719,7 @@ class input_parameter<Tp*, false> {
 // for vector of pointers
 // ~~TODO: how to generalize the const and ref of vector~~
 // ~~TODO: how to handle const pointer?~~
-// Done!
+// Done! Done!
 // This approach can be generalized to all types of arrays, with the help of array adapter.
 template <typename Tp>
 class input_parameter<Tp, true> {
@@ -695,12 +727,29 @@ class input_parameter<Tp, true> {
     typedef typename std::remove_reference<Tp>::type::value_type pointer;
     typedef typename remove_const_pointer<pointer>::type nonconst_pointer;
 
+    typedef input_parameter<Tp, true> self;
+
     std::vector<pointer> par;
+
+    void release_memory() {
+      for (pointer ptr : par)
+        if (ptr != nullptr)
+          delete[] ptr;
+    }
 
   public:
     // type is not the type of par
     // in order to be in line with parser
     typedef std::vector<nonconst_pointer> type;
+
+    input_parameter() = default;
+
+    input_parameter(const self&) = delete;
+    self& operator=(const self&) = delete;
+
+    // no need to handle memory at ctor
+    input_parameter(self&& x): par(std::move(x.par)) {  }
+    self& operator=(self&& x) { par.swap(x.par); }
 
     inline operator Tp() {
       return static_cast<Tp>(par);
@@ -710,50 +759,53 @@ class input_parameter<Tp, true> {
       typename Up,
       typename std::enable_if<std::is_assignable<std::vector<pointer>&, Up&&>::value, bool>::type = true
     >
-    std::vector<pointer>& operator=(Up&& _par) 
+    self& operator=(Up&& _par) 
     noexcept(std::is_nothrow_assignable<std::vector<pointer>&, Up&&>::value) {
+      if (!par.empty())
+        release_memory();
+
       par = std::forward<Up>(_par);
 
-      return par;
+      return *this;
     }
 
     // over load when Up&& is not assignable but elements are constructible (or assignable?)
     // Future work: differentiate copy and move construction of elements
     template <
       typename Up,
+      typename Element = typename std::remove_reference<Up>::type::value_type,
       typename std::enable_if<
         !std::is_assignable<std::vector<pointer>&, Up&&>::value
         &&
         std::is_constructible<
           pointer, 
-          typename apply_cv_t<Up&&>::template apply<typename std::remove_reference<Up>::type::value_type>&&
+          typename apply_cv_t<Up>::template apply<Element>&&
         >::value,
         bool
       >::type = false
     >
-    std::vector<pointer>& operator=(Up&& _par) 
+    self& operator=(Up&& _par) 
     noexcept(
       std::is_nothrow_constructible<
         pointer, 
-        typename apply_cv_t<Up&&>::template apply<typename std::remove_reference<Up>::type::value_type>&&
+        typename apply_cv_t<Up&&>::template apply<Element>&&
       >::value
     ) {
-      using element_type = typename apply_cv_t<Up&&>::template apply<
-        typename std::remove_reference<Tp>::type::value_type
-      >&&;
+      if (!par.empty())
+        release_memory();
+
+      using element_type = typename apply_cv_t<Up>::template apply<Element>&&;
 
       par.clear();
       par.reserve(_par.size());
       for (auto& e : _par)
         par.emplace_back(static_cast<element_type>(e));
 
-      return par;
+      return *this;
     }
 
     ~input_parameter() {
-      for (pointer ptr : par)
-        if (ptr != nullptr)
-          delete[] ptr;
+      release_memory();
     }
 };
 
@@ -790,10 +842,11 @@ struct args_convertible<args_pack<Types...>, args_pack<Args...>>
 
 
 // class member function traits
-template <typename MemFn> struct mem_fn_traits;
+template <typename MemFn> struct fn_ptr_traits;
 
+// specialization for member function
 template <class Tp, typename Ret, typename... Args>
-struct mem_fn_traits<Ret (Tp::*)(Args...)>
+struct fn_ptr_traits<Ret (Tp::*)(Args...)>
   : public std::integral_constant<size_t, sizeof...(Args)> {
   // ...
   typedef Tp class_type;
@@ -811,15 +864,34 @@ struct mem_fn_traits<Ret (Tp::*)(Args...)>
 
 };
 
+// for normal function
+template <typename Ret, typename... Args>
+struct fn_ptr_traits<Ret (*)(Args...)>
+  : public std::integral_constant<size_t, sizeof...(Args)> {
+  // ...
+  typedef Ret return_type;
+  typedef args_pack<Args...> args_type;
+
+  // deprecated
+  // reference must be removed before removing const and volatile
+  typedef std::tuple<
+    typename std::remove_cv<
+      typename std::remove_reference<Args>::type
+    >::type ...
+  > args_tuple_type;
+
+  typedef std::tuple<input_parameter<Args> ...> args_tuple_param_type;
+};
+
 
 template <class MemFn>
 class bind_obj_impl {
   public:
     typedef bind_obj_impl<MemFn> self;
     typedef MemFn mem_fn_ptr;
-    typedef typename mem_fn_traits<MemFn>::class_type Tp;
-    typedef typename mem_fn_traits<MemFn>::return_type Ret;
-    typedef typename mem_fn_traits<MemFn>::args_type args_type;
+    typedef typename fn_ptr_traits<MemFn>::class_type Tp;
+    typedef typename fn_ptr_traits<MemFn>::return_type Ret;
+    typedef typename fn_ptr_traits<MemFn>::args_type args_type;
 
   protected:
     mem_fn_ptr fn;
@@ -827,7 +899,7 @@ class bind_obj_impl {
 
   private:
     template <class MF> friend 
-    bind_obj_impl<MF> bind_obj(MF, typename mem_fn_traits<MF>::class_type*);
+    bind_obj_impl<MF> bind_obj(MF, typename fn_ptr_traits<MF>::class_type*);
 
     bind_obj_impl(mem_fn_ptr _fn, Tp* _obj_ptr): fn(_fn), obj_ptr(_obj_ptr) { }
 
@@ -858,7 +930,7 @@ class bind_obj_impl {
 
 template <class MemFn>
 bind_obj_impl<MemFn>
-bind_obj(MemFn fn, typename mem_fn_traits<MemFn>::class_type* obj) {
+bind_obj(MemFn fn, typename fn_ptr_traits<MemFn>::class_type* obj) {
   return bind_obj_impl<MemFn>(fn, obj);
 }
 
@@ -947,18 +1019,21 @@ void ufunc(bind_obj_impl<MemFn>& functor,
   std::vector<std::string> args = string_split(line);
 
   // tuple of arguments wrapped by input_parameter class
-  typename mem_fn_traits<MemFn>::args_tuple_param_type params;
+  typename fn_ptr_traits<MemFn>::args_tuple_param_type params;
 
-  input_gen(params, args.begin(), std::make_index_sequence<mem_fn_traits<MemFn>::value>{});
+  input_gen(params, args.begin(), std::make_index_sequence<fn_ptr_traits<MemFn>::value>{});
 
-  ufunc_call(functor, params, exec_time, std::make_index_sequence<mem_fn_traits<MemFn>::value>{});
+  ufunc_call(functor, params, exec_time, std::make_index_sequence<fn_ptr_traits<MemFn>::value>{});
 }
 
 
 } // end of namespace utils2
 
 
+// for downward compatibility that utils2 can work by itself
+#ifndef _UTILS2_HPP_NO_STD
 using namespace std;
+#endif
 
 
 #define UFUNC(method) \

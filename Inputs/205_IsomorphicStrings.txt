@@ -1,0 +1,5 @@
+"egg" ; "add"
+"foo" ; "bar"
+"paper" ; "title"
+"badc" ; "baba"
+"13" ; "42"

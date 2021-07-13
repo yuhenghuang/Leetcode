@@ -1,8 +1,5 @@
-#include "DataStructure.h"
-#include <vector>
-#include <iostream>
+#include "utils3.hpp"
 
-using namespace std;
 
 class TreeAncestor {
   private:
@@ -43,9 +40,13 @@ class TreeAncestor {
     }
 };
 
+
+TreeAncestor* class_factory(int n, vector<int>& parent) {
+  return new TreeAncestor(n, parent);
+}
+
+
 int main() {
-  vector<int> vec = {-1,0,0,1,2,0,1,3,6,1};
-  TreeAncestor obj(10, vec);
-  cout << obj.getKthAncestor(1,1) << endl;
+  UFUNCX(&TreeAncestor::getKthAncestor);
   return 0;
 }
