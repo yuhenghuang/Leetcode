@@ -889,32 +889,32 @@ class bind_obj_impl {
   public:
     typedef bind_obj_impl<MemFn> self;
     typedef MemFn mem_fn_ptr;
-    typedef typename fn_ptr_traits<MemFn>::class_type Tp;
-    typedef typename fn_ptr_traits<MemFn>::return_type Ret;
+    typedef typename fn_ptr_traits<MemFn>::class_type class_type;
+    typedef typename fn_ptr_traits<MemFn>::return_type return_type;
     typedef typename fn_ptr_traits<MemFn>::args_type args_type;
 
   protected:
     mem_fn_ptr fn;
-    Tp* obj_ptr;
+    class_type* obj_ptr;
 
   private:
     template <class MF> friend 
     bind_obj_impl<MF> bind_obj(MF, typename fn_ptr_traits<MF>::class_type*);
 
-    bind_obj_impl(mem_fn_ptr _fn, Tp* _obj_ptr): fn(_fn), obj_ptr(_obj_ptr) { }
+    bind_obj_impl(mem_fn_ptr _fn, class_type* _obj_ptr): fn(_fn), obj_ptr(_obj_ptr) { }
 
   public:
-    bind_obj_impl(const self&) = default;
-    self& operator=(const self&) = default;
+    bind_obj_impl(const self&) = delete;
+    self& operator=(const self&) = delete;
 
-    bind_obj_impl(self&&) = default;
-    self& operator=(self&&) = default;
+    bind_obj_impl(self&& x): fn(x.fn), obj_ptr(x.obj_ptr) { x.obj_ptr = nullptr; }
+    self& operator=(self&& x) { fn = x.fn; swap(obj_ptr, x.obj_ptr); }
 
     // works for both void and non-void return type
     template <typename... Types>
     typename std::enable_if<
       args_convertible<args_pack<Types&& ...>, args_type>::value,
-      Ret
+      return_type
     >::type
     operator()(Types&& ...args) {
       // ...
@@ -954,7 +954,7 @@ void input_gen(Tuple& params,
 template <class Functor, typename Tuple, std::size_t... Is>
 std::enable_if_t<
   !std::is_void<
-    typename Functor::Ret
+    typename Functor::return_type
   >::value
 > 
 ufunc_call(Functor& functor,
@@ -963,17 +963,17 @@ ufunc_call(Functor& functor,
            std::index_sequence<Is...>) {
   // ...
 
-  typedef typename Functor::Ret Ret;
+  typedef typename Functor::return_type return_type;
 
   std::chrono::time_point<std::chrono::system_clock> start( std::chrono::system_clock::now() );
 
-  Ret res = functor(std::get<Is>(params) ...);
+  return_type res = functor(std::get<Is>(params) ...);
 
   std::chrono::time_point<std::chrono::system_clock> end( std::chrono::system_clock::now() );
   std::chrono::duration<double, std::milli> elapsed( end - start );
   exec_time += elapsed.count();
 
-  universal_print<Ret>()(res);
+  universal_print<return_type>()(res);
 
   // new line for 1D vector, Tree and LinkedList
   // if constexpr (!is_element<Ret>::value)
@@ -984,7 +984,7 @@ ufunc_call(Functor& functor,
 template <class Functor, typename Tuple, std::size_t... Is>
 std::enable_if_t<
   std::is_void<
-    typename Functor::Ret
+    typename Functor::return_type
   >::value
 > 
 ufunc_call(Functor& functor,

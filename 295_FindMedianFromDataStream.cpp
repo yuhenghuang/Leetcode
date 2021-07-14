@@ -48,13 +48,9 @@ class MedianFinder {
 };
 
 
-MedianFinder* class_factory() {
-  return new MedianFinder();
-}
-
-
 int main() {
   UFUNCX(
+    FACTORY(MedianFinder),
     &MedianFinder::addNum,
     &MedianFinder::findMedian
   );

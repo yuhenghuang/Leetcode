@@ -1,4 +1,4 @@
-#include "utils.hpp"
+#include "utils3.hpp"
 
 class Solution {
   private:
@@ -28,10 +28,5 @@ class Solution {
 
 
 int main() {
-  /*
-  readlines("Inputs/1510_StoneGameIV.txt") {
-    utils::ufunc(&Solution::winnerSquareGame, line);
-  }
-  */
-  UFUNC(Solution::winnerSquareGame);
+  UFUNCS(Solution::winnerSquareGame);
 }

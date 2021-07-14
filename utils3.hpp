@@ -8,6 +8,12 @@
 
 namespace utils3 {
 
+
+template <typename Tp, typename... Types>
+Tp* class_factory(Types&&... args) {
+  return new Tp(std::forward<Types>(args) ...);
+}
+
 // helper traits
 // different from the one in std lib
 template <typename Tp> struct is_scalar : public std::true_type { };
@@ -18,7 +24,7 @@ template <> struct is_scalar<ListNode*> : public std::false_type { };
 
 // is_scalar = true
 inline void find_end_of_arg(size_t& j, const std::string& s, std::true_type) {
-  while (j < s.size() && s[j] != ' ' && s[j] != ',')
+  while (j < s.size() && s[j] != ' ' && s[j] != ',' && s[j] != ';')
     ++j;
 }
 
@@ -76,7 +82,7 @@ std::vector<std::string> parse_argss(const std::string& s) {
 // parse from left to right
 template <typename Tp>
 inline Tp universal_parser_helper(size_t& j , const std::string& s) {
-  while (j < s.size() && (s[j] == ' ' || s[j] == ','))
+  while (j < s.size() && (s[j] == ' ' || s[j] == ',' || s[j] == ';'))
     ++j;
 
   size_t i = j;
@@ -108,17 +114,15 @@ void input_gen(Tuple& params,
 template <typename Tp>
 class MethodClassBase {
   private:
+    typedef MethodClassBase<Tp> self;
     typedef Tp class_type;
 
   public:
-    virtual std::string getName() {
-      return "null";
-    }
+    virtual std::string getName() const = 0;
 
-    virtual double operator()(class_type*, const std::string&) {
-      throw(std::runtime_error("Method Not Defined!"));
-      return double();
-    }
+    virtual double operator()(class_type*, const std::string&) const = 0;
+
+    virtual self* clone() const = 0;
 
     virtual ~MethodClassBase() { }
 };
@@ -146,7 +150,7 @@ class MethodClass : public MethodClassBase<typename utils2::fn_ptr_traits<MemFn>
     double ufun_call(class_type* ptr, 
                      args_tuple_param_type& params, 
                      std::true_type, 
-                     std::index_sequence<Is...>) {
+                     std::index_sequence<Is...>) const {
       // void type
       std::chrono::time_point<std::chrono::system_clock> start( std::chrono::system_clock::now() );
 
@@ -155,7 +159,7 @@ class MethodClass : public MethodClassBase<typename utils2::fn_ptr_traits<MemFn>
       std::chrono::time_point<std::chrono::system_clock> end( std::chrono::system_clock::now() );
       std::chrono::duration<double, std::milli> elapsed( end - start );
 
-      std::cout << ", null";
+      std::cout << "null";
 
       return elapsed.count();
     }
@@ -164,7 +168,7 @@ class MethodClass : public MethodClassBase<typename utils2::fn_ptr_traits<MemFn>
     double ufun_call(class_type* ptr, 
                      args_tuple_param_type& params, 
                      std::false_type, 
-                     std::index_sequence<Is...>) {
+                     std::index_sequence<Is...>) const {
       // non-void type
       std::chrono::time_point<std::chrono::system_clock> start( std::chrono::system_clock::now() );
 
@@ -173,7 +177,6 @@ class MethodClass : public MethodClassBase<typename utils2::fn_ptr_traits<MemFn>
       std::chrono::time_point<std::chrono::system_clock> end( std::chrono::system_clock::now() );
       std::chrono::duration<double, std::milli> elapsed( end - start );
 
-      std::cout << ", ";
       utils2::universal_print<return_type>()(res);
 
       return elapsed.count();
@@ -183,15 +186,14 @@ class MethodClass : public MethodClassBase<typename utils2::fn_ptr_traits<MemFn>
     MethodClass(mem_fn_ptr _fn, const std::string& _nm)
       : fn(_fn), name(_nm) { }
 
-    virtual std::string getName() {
-      return name;
-    }
+    virtual std::string getName() const { return name; }
 
-    virtual double operator()(class_type* ptr, const std::string& s) {
+    virtual double operator()(class_type* ptr, const std::string& s) const {
       args_tuple_param_type params;
 
       input_gen(params, s, std::make_index_sequence<args_size>{});
 
+      // only const member functions can be called inside const member function
       return ufun_call(
         ptr,
         params, 
@@ -199,6 +201,8 @@ class MethodClass : public MethodClassBase<typename utils2::fn_ptr_traits<MemFn>
         std::make_index_sequence<args_size>{}
       );
     }
+
+    virtual self* clone() const { return new self(*this); }
 
     virtual ~MethodClass() { }
 };
@@ -236,21 +240,49 @@ class Wrapper {
         delete ptr; 
     }
 
+    void release_memory() {
+      release_object();
+
+      // be careful of memory leak...
+      for (auto m : methods)
+        if (m) delete m;
+
+      methods.clear();
+    }
+
   public:
     Wrapper() = delete;
 
     explicit Wrapper(Func _fn): ptr(nullptr), fn(_fn) { }
 
-    Wrapper(const self&) = delete;
-    self& operator=(const self&) = delete;
+    Wrapper(const self& x): fn(x.fn), inputs(x.inputs) {
+      ptr = new class_type(*x.ptr);
+      for (auto m : x.methods) 
+        methods.push_back(m->clone());
+    }
+
+    self& operator=(const self& x) {
+      release_memory();
+
+      ptr = new class_type(*x.ptr);
+      for (auto m : x.methods) 
+        methods.push_back(m->clone());
+
+      fn = x.fn;
+      inputs = x.inputs;
+    }
 
     // manage pointer carefully
-    Wrapper(self&& x): ptr(x.ptr), inputs(std::move(x.inputs)) {
+    Wrapper(self&& x): ptr(x.ptr), inputs(std::move(x.inputs)), fn(x.fn) {
       x.ptr = nullptr;
+      swap(methods, x.methods);
     }
 
     self& operator=(self&& x) {
       swap(ptr, x.ptr);
+      swap(methods, x.methods);
+
+      fn = x.fn;
       inputs = std::move(x.inputs);
     }
 
@@ -260,9 +292,6 @@ class Wrapper {
       input_gen(inputs, s, std::make_index_sequence<args_size>{});
       
       factoryHelper(std::make_index_sequence<args_size>{});
-
-      // ctro prints nothing
-      std::cout << "null";
     }
 
     template <typename Ret, typename... Args>
@@ -284,13 +313,7 @@ class Wrapper {
       return method ? method->operator()(ptr, args) : 0.0;
     }
 
-    ~Wrapper() { 
-      release_object(); 
-
-      // be careful of memory leak...
-      for (auto m : methods)
-        if (m) delete m;
-    }
+    ~Wrapper() { release_memory(); }
 };
 
 /**
@@ -323,7 +346,7 @@ void ufuncx(const std::string& path,
   }
 
   // although template deduction works,
-  // explicit type helps static compiler...
+  // explicit typing helps static compiler...
   Wrapper<Func> w(factory);
 
   // add methods and names to wrapper
@@ -343,12 +366,15 @@ void ufuncx(const std::string& path,
 
     std::vector<std::string> argss = parse_argss(line.substr(j));
 
-    std::cout << '[';
-
     w.initializeOrReplace(argss.front());
 
-    for (size_t i = 1; i < methods.size(); ++i)
+    // ctro prints nothing
+    std::cout << "[null";
+
+    for (size_t i = 1; i < methods.size(); ++i) {
+      std::cout << ", ";
       exec_time += w.callMethod(methods[i], argss[i]);
+    }
 
     std::cout << ']' << std::endl;
 
@@ -360,21 +386,75 @@ void ufuncx(const std::string& path,
 }
 
 
+template <typename Func, typename MemFn>
+void ufuncs(const std::string& path,
+            Func factory,
+            const std::string& method_name_raw,
+            MemFn mem_fn) {
+  // ...
+  // parse method name
+  std::string method_name = 
+    method_name_raw.substr(method_name_raw.find_last_of(':') + 1);
+
+  // although template deduction works,
+  // explicit typing helps static compiler...
+  Wrapper<Func> w(factory);
+
+  // add method and name to wrapper
+  w.addMethod(mem_fn, method_name);
+
+  w.initializeOrReplace("");
+
+  std::ifstream f(path);
+  std::string line;
+  double exec_time = 0; // execution time
+  while (getline(f, line)) {
+
+    exec_time += w.callMethod(method_name, line);
+
+    std::cout << std::endl;
+
+  } // end of while loop
+
+  std::cout << "****** Execution time of `" << method_name \
+  << "` is: " << exec_time << " milliseconds. ******" << std::endl;
+}
+
+
 } // end of namespace utils3
 
-using namespace std;
+
+#define FACTORY(...) utils3::class_factory<__VA_ARGS__>
 
 /**
  * @brief 
  * 
- * class_factory is a conventional name!!! plz fix to this.
+ * class_factory is a conventional name!!! plz stick to this function pointer name.
  * 
  */
-#define UFUNCX(...) \
+#define UFUNCX(FUNC, ...) \
   utils3::ufuncx( \
     "Inputs/" + utils2::to_txt_file(__FILE__), \
-    class_factory, #__VA_ARGS__, __VA_ARGS__ \
+    FUNC, #__VA_ARGS__, __VA_ARGS__ \
   );
-  
+
+
+/**
+ * @brief updated version of UFUNC... 
+ * a special case of UFUNCX... 
+ * 
+ * no & before member function pointer is 
+ * for the purpose of following predecessor
+ * 
+ */
+#define UFUNCS(METHOD) \
+  utils3::ufuncs( \
+    "Inputs/" + utils2::to_txt_file(__FILE__), \
+    FACTORY(Solution), #METHOD, &METHOD \
+  );
+
+
+
+using namespace std;
 
 #endif

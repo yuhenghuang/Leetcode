@@ -41,12 +41,10 @@ class TreeAncestor {
 };
 
 
-TreeAncestor* class_factory(int n, vector<int>& parent) {
-  return new TreeAncestor(n, parent);
-}
-
-
 int main() {
-  UFUNCX(&TreeAncestor::getKthAncestor);
+  UFUNCX(
+    FACTORY(TreeAncestor, int, vector<int>&),
+    &TreeAncestor::getKthAncestor
+  );
   return 0;
 }
