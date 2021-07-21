@@ -1,0 +1,1 @@
+["Solution", "shuffle", "reset", "shuffle"] ; [[[1, 2, 3]], [], [], []]

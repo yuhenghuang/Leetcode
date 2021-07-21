@@ -1,4 +1,4 @@
-#include "utils2.hpp"
+#include "utils3.hpp"
 
 class Solution {
   private:
@@ -101,20 +101,19 @@ class Solution {
 
       return root;
     }
+
+
+    int lowestCommonAncestor(TreeNode* root, int p, int q) {
+      return lowestCommonAncestor(
+        root,
+        utils3::find_node_in_tree(root, p),
+        utils3::find_node_in_tree(root, q)
+      )->val;
+    }
 };
 
 
 int main() {
-
-  TreeNode* root = utils2::universal_parser<TreeNode*>()("[3,5,1,6,2,0,8,null,null,7,4]");
-  TreeNode* p = root->left; // 5
-  TreeNode* q = root->left->right->right; // 4
-
-  utils2::universal_print<TreeNode*>()(root);
-
-  Solution sol;
-  cout << sol.lowestCommonAncestor(root, p, q)->val << '\n';
-  cout << sol.lowestCommonAncestorFailed(root, p, q)->val << endl;
-
+  UFUNCR(Solution::lowestCommonAncestor, int, TreeNode*, int, int);
   return 0;
 }

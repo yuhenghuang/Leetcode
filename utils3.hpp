@@ -14,6 +14,38 @@ Tp* class_factory(Types&&... args) {
   return new Tp(std::forward<Types>(args) ...);
 }
 
+
+
+TreeNode* find_node_in_arbitrary_tree(TreeNode* root, int val) {
+  if (!root)
+    return nullptr;
+  else if (root->val == val)
+    return root;
+
+  TreeNode* node = find_node_in_arbitrary_tree(root->left, val);
+
+  return node ? node : find_node_in_arbitrary_tree(root->right, val);
+}
+
+
+TreeNode* find_node_in_bst(TreeNode* root, int val) {
+  if (!root)
+    return nullptr;
+
+  if (root->val > val)
+    return find_node_in_bst(root->left, val);
+  else if (root->val < val)
+    return find_node_in_bst(root->right, val);
+  else
+    return root;
+}
+
+
+TreeNode* find_node_in_tree(TreeNode* root, int val, bool is_bst = false) {
+  return is_bst ? find_node_in_bst(root, val) : find_node_in_arbitrary_tree(root, val);
+}
+
+
 // helper traits
 // different from the one in std lib
 template <typename Tp> struct is_scalar : public std::true_type { };
@@ -98,7 +130,7 @@ void input_gen(Tuple& params,
                const std::string& s, 
                std::index_sequence<Is...>) {
   // ...
-  // j is a global index of s
+  // j is a global index of s, indicating end of an argument
   size_t j = 0;
   (
     (std::get<Is>(params) = 
@@ -177,6 +209,10 @@ class MethodClass : public MethodClassBase<typename utils2::fn_ptr_traits<MemFn>
       std::chrono::time_point<std::chrono::system_clock> end( std::chrono::system_clock::now() );
       std::chrono::duration<double, std::milli> elapsed( end - start );
 
+      // tackle non-scalar return type when printing results
+      if constexpr (!is_scalar<return_type>::value)
+        std::cout << "\n ";
+
       utils2::universal_print<return_type>()(res);
 
       return elapsed.count();
@@ -186,9 +222,9 @@ class MethodClass : public MethodClassBase<typename utils2::fn_ptr_traits<MemFn>
     MethodClass(mem_fn_ptr _fn, const std::string& _nm)
       : fn(_fn), name(_nm) { }
 
-    virtual std::string getName() const { return name; }
+    virtual std::string getName() const override { return name; }
 
-    virtual double operator()(class_type* ptr, const std::string& s) const {
+    virtual double operator()(class_type* ptr, const std::string& s) const override {
       args_tuple_param_type params;
 
       input_gen(params, s, std::make_index_sequence<args_size>{});
@@ -202,12 +238,18 @@ class MethodClass : public MethodClassBase<typename utils2::fn_ptr_traits<MemFn>
       );
     }
 
-    virtual self* clone() const { return new self(*this); }
+    virtual self* clone() const override { return new self(*this); }
 
     virtual ~MethodClass() { }
 };
 
 
+/**
+ * @brief wraps everything (factory and method) up
+ * 
+ * @tparam Func type of pointer to class factory
+ * 
+ */
 template <class Func>
 class Wrapper {
   private:
@@ -224,14 +266,14 @@ class Wrapper {
     // at least as long as the object they created
     args_tuple_param_type inputs;
 
-    // pointer used in all methods
+    // pointer to class used in all methods
     class_type* ptr;
 
     class_factory_ptr fn;
     std::vector<MethodClassBase<class_type>*> methods;
 
     template <size_t... Is>
-    void factoryHelper(std::index_sequence<Is...>) {
+    void factory_helper(std::index_sequence<Is...>) {
       ptr = (*fn)(std::get<Is>(inputs) ...);
     }
 
@@ -264,7 +306,7 @@ class Wrapper {
     self& operator=(const self& x) {
       release_memory();
 
-      ptr = new class_type(*x.ptr);
+      ptr = new class_type(*(x.ptr));
       for (auto m : x.methods) 
         methods.push_back(m->clone());
 
@@ -286,12 +328,14 @@ class Wrapper {
       inputs = std::move(x.inputs);
     }
 
-    void initializeOrReplace(const std::string& s) {
+    self& initializeOrReplace(const std::string& s) {
       release_object();
 
       input_gen(inputs, s, std::make_index_sequence<args_size>{});
       
-      factoryHelper(std::make_index_sequence<args_size>{});
+      factory_helper(std::make_index_sequence<args_size>{});
+
+      return *this;
     }
 
     template <typename Ret, typename... Args>
@@ -316,42 +360,62 @@ class Wrapper {
     ~Wrapper() { release_memory(); }
 };
 
+
+// check if all Types are the same
+template <typename... Types> struct all_same;
+
+template <typename Tp>
+struct all_same<Tp> : public std::true_type { typedef Tp type; };
+
+template <typename Tp, typename Up, typename... Types>
+struct all_same<Tp, Up, Types...> : public std::false_type { };
+
+template <typename Tp, typename... Types>
+struct all_same<Tp, Tp, Types...> : public all_same<Tp, Types...> { };
+
+
 /**
- * @brief construct class by factory and call methods by
+ * @brief construct class by specified ctor and call methods by
  * parsing the input file located at path as parameters (and method names)
  * 
- * @tparam Func pointer to class factory function
+ * @tparam Args argument types for a specific ctor, 
+ *   must be explicitly specified (no deduction available from parameters)
  * @tparam MemFns pointers to member functions
  * 
  * @param path path to input file
- * @param factory pointer to class factory function
- * @param method_names_raw member function names generated by MACRO #__VA_ARGS__
+ * @param method_names member function names generated by MACRO #__VA_ARGS__
  * @param mem_fns pointers to member functions
  * 
  */
-template <typename Func, typename... MemFns>
+template <typename... Args, typename... MemFns>
 void ufuncx(const std::string& path,
-            Func factory,
-            const std::string& method_names_raw,
+            const std::string& method_names,
             MemFns... mem_fns) {
   // ...
-  // parse method names
-  std::vector<std::string> method_names;
-  std::istringstream iss(method_names_raw);
-  std::string name;
-  while (getline(iss, name, ',')) {
-    method_names.push_back(
-      name.substr(name.find_last_of(':') + 1)
-    );
-  }
+  // also works as enable_if
+  // type is not defined 
+  // if member functions do not belong to the same class
+  typedef typename all_same<
+    typename utils2::fn_ptr_traits<MemFns>::class_type ...
+  >::type class_type;
+
+  typedef class_type* (*factory_type)(Args&& ...);
+
+  factory_type factory = class_factory<class_type, Args ...>;
+
+  // parse method names by regex iterator
+  std::regex re("&(\\w+)::(\\w+)");
+  auto iter = std::sregex_iterator(method_names.begin(), method_names.end(), re);
+
+  std::string class_name = iter->str(1);
 
   // although template deduction works,
   // explicit typing helps static compiler...
-  Wrapper<Func> w(factory);
+  Wrapper<factory_type> w(factory);
 
   // add methods and names to wrapper
-  std::vector<std::string>::iterator iter = method_names.begin();
-  ( w.addMethod(mem_fns, *iter++), ... );
+  // skip class name matches
+  ( w.addMethod(mem_fns, iter++->str(2)), ... );
 
   std::ifstream f(path);
   std::string line;
@@ -368,7 +432,7 @@ void ufuncx(const std::string& path,
 
     w.initializeOrReplace(argss.front());
 
-    // ctro prints nothing
+    // ctor prints nothing
     std::cout << "[null";
 
     for (size_t i = 1; i < methods.size(); ++i) {
@@ -380,30 +444,35 @@ void ufuncx(const std::string& path,
 
   } // end of while loop
 
-  std::cout << "****** Execution time of `" << \
-  method_names_raw.substr(1, method_names_raw.find_first_of(':') - 1)  \
+  std::cout << "****** Execution time of `" << class_name  \
   << "` is: " << exec_time << " milliseconds. ******" << std::endl;
 }
 
 
-template <typename Func, typename MemFn>
+template <typename MemFn>
 void ufuncs(const std::string& path,
-            Func factory,
             const std::string& method_name_raw,
             MemFn mem_fn) {
   // ...
+
+  typedef typename utils2::fn_ptr_traits<MemFn>::class_type class_type;
+  // assert default ctor
+  static_assert(std::is_default_constructible<class_type>::value, "no default ctor");
+
+  typedef class_type* (*factory_type)();
+
+  factory_type factory = class_factory<class_type>;
+
+  // although template deduction works,
+  // explicit typing helps static compiler...
+  Wrapper<factory_type> w(factory);
+
   // parse method name
   std::string method_name = 
     method_name_raw.substr(method_name_raw.find_last_of(':') + 1);
 
-  // although template deduction works,
-  // explicit typing helps static compiler...
-  Wrapper<Func> w(factory);
-
-  // add method and name to wrapper
-  w.addMethod(mem_fn, method_name);
-
-  w.initializeOrReplace("");
+  // create instance and add method and name to wrapper
+  w.initializeOrReplace("").addMethod(mem_fn, method_name);
 
   std::ifstream f(path);
   std::string line;
@@ -424,19 +493,18 @@ void ufuncs(const std::string& path,
 } // end of namespace utils3
 
 
-#define FACTORY(...) utils3::class_factory<__VA_ARGS__>
+#define BIND(...) __VA_ARGS__
+
 
 /**
- * @brief 
- * 
- * class_factory is a conventional name!!! plz stick to this function pointer name.
+ * @brief ctro argument types and variable lengths of class methods needed
  * 
  */
-#define UFUNCX(FUNC, ...) \
-  utils3::ufuncx( \
+#define UFUNCX(CTOR_ARGS, ...) \
+  utils3::ufuncx<CTOR_ARGS>( \
     "Inputs/" + utils2::to_txt_file(__FILE__), \
-    FUNC, #__VA_ARGS__, __VA_ARGS__ \
-  );
+    #__VA_ARGS__, __VA_ARGS__ \
+  )
 
 
 /**
@@ -450,10 +518,20 @@ void ufuncs(const std::string& path,
 #define UFUNCS(METHOD) \
   utils3::ufuncs( \
     "Inputs/" + utils2::to_txt_file(__FILE__), \
-    FACTORY(Solution), #METHOD, &METHOD \
-  );
+    #METHOD, &METHOD \
+  )
 
 
+/**
+ * @brief explicitly specify the type of member function pointer
+ *   to handle override correctly
+ * 
+ */
+#define UFUNCR(METHOD, RETURN, ...) \
+  utils3::ufuncs<RETURN (Solution::*)(__VA_ARGS__)>( \
+    "Inputs/" + utils2::to_txt_file(__FILE__), \
+    #METHOD, &METHOD \
+  )
 
 using namespace std;
 

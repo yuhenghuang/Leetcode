@@ -841,7 +841,7 @@ struct args_convertible<args_pack<Types...>, args_pack<Args...>>
 { };
 
 
-// class member function traits
+// function / class member function traits
 template <typename MemFn> struct fn_ptr_traits;
 
 // specialization for member function

@@ -50,7 +50,7 @@ class MedianFinder {
 
 int main() {
   UFUNCX(
-    FACTORY(MedianFinder),
+    BIND(),
     &MedianFinder::addNum,
     &MedianFinder::findMedian
   );
