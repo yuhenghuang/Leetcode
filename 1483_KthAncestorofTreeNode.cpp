@@ -43,7 +43,7 @@ class TreeAncestor {
 
 int main() {
   UFUNCX(
-    BIND(int, vector<int>&),
+    CTOR(int, vector<int>&),
     &TreeAncestor::getKthAncestor
   );
   return 0;

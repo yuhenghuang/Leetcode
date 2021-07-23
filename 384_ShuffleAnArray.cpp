@@ -29,7 +29,7 @@ class Solution {
 
 int main() {
   UFUNCX(
-    BIND(vector<int>&),
+    CTOR(vector<int>&),
     &Solution::reset,
     &Solution::shuffle
   );

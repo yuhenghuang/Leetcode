@@ -9,9 +9,11 @@
 namespace utils3 {
 
 
-template <typename Tp, typename... Types>
-Tp* class_factory(Types&&... args) {
-  return new Tp(std::forward<Types>(args) ...);
+template <typename Cp, typename... Args>
+Cp* class_factory(Args&&... args) 
+noexcept(std::is_nothrow_constructible<Cp, Args...>::value)
+{
+  return new Cp(std::forward<Args>(args) ...);
 }
 
 
@@ -143,11 +145,11 @@ void input_gen(Tuple& params,
 }
 
 
-template <typename Tp>
+template <typename Cp>
 class MethodClassBase {
   private:
-    typedef MethodClassBase<Tp> self;
-    typedef Tp class_type;
+    typedef MethodClassBase<Cp> self;
+    typedef Cp class_type;
 
   public:
     virtual std::string getName() const = 0;
@@ -178,11 +180,11 @@ class MethodClass : public MethodClassBase<typename utils2::fn_ptr_traits<MemFn>
 
     mem_fn_ptr fn;
 
-    template <size_t... Is>
-    double ufun_call(class_type* ptr, 
-                     args_tuple_param_type& params, 
-                     std::true_type, 
-                     std::index_sequence<Is...>) const {
+    template <typename Tp = return_type, size_t... Is>
+    typename std::enable_if<std::is_void<Tp>::value, double>::type 
+    ufunc_call(class_type* ptr, 
+              args_tuple_param_type& params, 
+              std::index_sequence<Is...>) const {
       // void type
       std::chrono::time_point<std::chrono::system_clock> start( std::chrono::system_clock::now() );
 
@@ -191,16 +193,27 @@ class MethodClass : public MethodClassBase<typename utils2::fn_ptr_traits<MemFn>
       std::chrono::time_point<std::chrono::system_clock> end( std::chrono::system_clock::now() );
       std::chrono::duration<double, std::milli> elapsed( end - start );
 
-      std::cout << "null";
+
+// in case nontrivial default ctor of Solution is unavoidable 
+#ifndef _NONTRIVIAL_SOLUTION_CTOR
+      // differentiate ufuncx and ufuncs by verifying 
+      // whether class_type is trivially default constructible
+      if constexpr (!std::is_trivially_default_constructible<class_type>::value)
+        std::cout << "null";
+      else
+#endif
+        utils2::universal_print<
+          typename std::tuple_element_t<0, args_tuple_param_type>::type
+        >()(std::get<0>(params));
 
       return elapsed.count();
     }
 
-    template <size_t... Is>
-    double ufun_call(class_type* ptr, 
-                     args_tuple_param_type& params, 
-                     std::false_type, 
-                     std::index_sequence<Is...>) const {
+    template <typename Tp = return_type, size_t... Is>
+    typename std::enable_if<!std::is_void<Tp>::value, double>::type 
+    ufunc_call(class_type* ptr, 
+              args_tuple_param_type& params, 
+              std::index_sequence<Is...>) const {
       // non-void type
       std::chrono::time_point<std::chrono::system_clock> start( std::chrono::system_clock::now() );
 
@@ -209,11 +222,20 @@ class MethodClass : public MethodClassBase<typename utils2::fn_ptr_traits<MemFn>
       std::chrono::time_point<std::chrono::system_clock> end( std::chrono::system_clock::now() );
       std::chrono::duration<double, std::milli> elapsed( end - start );
 
-      // tackle non-scalar return type when printing results
-      if constexpr (!is_scalar<return_type>::value)
-        std::cout << "\n ";
 
-      utils2::universal_print<return_type>()(res);
+// in case nontrivial default ctor of Solution is unavoidable 
+#ifndef _NONTRIVIAL_SOLUTION_CTOR
+      // tackle non-scalar return type when printing results
+      // differentiate ufuncx and ufuncs by verifying
+      // whether class_type is trivially constructible
+      if constexpr (!is_scalar<return_type>::value && !std::is_trivially_default_constructible<class_type>::value) {
+        std::cout << "\n ";
+        // print 2D array flatly
+        utils2::universal_print<return_type, false>()(res);
+      }
+      else
+#endif
+        utils2::universal_print<return_type>()(res);
 
       return elapsed.count();
     }
@@ -230,12 +252,7 @@ class MethodClass : public MethodClassBase<typename utils2::fn_ptr_traits<MemFn>
       input_gen(params, s, std::make_index_sequence<args_size>{});
 
       // only const member functions can be called inside const member function
-      return ufun_call(
-        ptr,
-        params, 
-        std::is_void<return_type>{}, 
-        std::make_index_sequence<args_size>{}
-      );
+      return ufunc_call(ptr, params, std::make_index_sequence<args_size>{});
     }
 
     virtual self* clone() const override { return new self(*this); }
@@ -298,20 +315,24 @@ class Wrapper {
     explicit Wrapper(Func _fn): ptr(nullptr), fn(_fn) { }
 
     Wrapper(const self& x): fn(x.fn), inputs(x.inputs) {
+      static_assert(std::is_copy_constructible<class_type>::value, "copy ctor not available");
+
       ptr = new class_type(*x.ptr);
       for (auto m : x.methods) 
         methods.push_back(m->clone());
     }
 
     self& operator=(const self& x) {
+      static_assert(std::is_copy_constructible<class_type>::value, "copy ctor not available");
+
       release_memory();
+
+      fn = x.fn;
+      inputs = x.inputs;
 
       ptr = new class_type(*(x.ptr));
       for (auto m : x.methods) 
         methods.push_back(m->clone());
-
-      fn = x.fn;
-      inputs = x.inputs;
     }
 
     // manage pointer carefully
@@ -321,11 +342,11 @@ class Wrapper {
     }
 
     self& operator=(self&& x) {
-      swap(ptr, x.ptr);
-      swap(methods, x.methods);
-
       fn = x.fn;
       inputs = std::move(x.inputs);
+      
+      swap(ptr, x.ptr);
+      swap(methods, x.methods);
     }
 
     self& initializeOrReplace(const std::string& s) {
@@ -338,10 +359,10 @@ class Wrapper {
       return *this;
     }
 
-    template <typename Ret, typename... Args>
-    self& addMethod(Ret (class_type::*fn)(Args...), const std::string& s) {
+    template <typename Tp, typename... Args>
+    self& addMethod(Tp (class_type::*fn)(Args...), const std::string& s) {
       methods.push_back(
-        new MethodClass<Ret (class_type::*)(Args...)>(fn, s)
+        new MethodClass<Tp (class_type::*)(Args...)>(fn, s)
       );
       return *this;
     }
@@ -399,13 +420,15 @@ void ufuncx(const std::string& path,
     typename utils2::fn_ptr_traits<MemFns>::class_type ...
   >::type class_type;
 
+  static_assert(std::is_constructible<class_type, Args...>::value, "no specified ctor exists!");
+
   typedef class_type* (*factory_type)(Args&& ...);
 
   factory_type factory = class_factory<class_type, Args ...>;
 
   // parse method names by regex iterator
   std::regex re("&(\\w+)::(\\w+)");
-  auto iter = std::sregex_iterator(method_names.begin(), method_names.end(), re);
+  std::sregex_iterator iter(method_names.begin(), method_names.end(), re);
 
   std::string class_name = iter->str(1);
 
@@ -413,7 +436,7 @@ void ufuncx(const std::string& path,
   // explicit typing helps static compiler...
   Wrapper<factory_type> w(factory);
 
-  // add methods and names to wrapper
+  // add methods and names to wrapper (feature since c++17)
   // skip class name matches
   ( w.addMethod(mem_fns, iter++->str(2)), ... );
 
@@ -493,7 +516,7 @@ void ufuncs(const std::string& path,
 } // end of namespace utils3
 
 
-#define BIND(...) __VA_ARGS__
+#define CTOR(...) __VA_ARGS__
 
 
 /**

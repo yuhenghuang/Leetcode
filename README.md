@@ -13,9 +13,17 @@ Try
 
 ```cpp
 void main() {
-  UFUNCX(&cls::method1, &cls::method2, ...);
+  UFUNCX(
+    CTOR(...)
+    &cls::method1, 
+    &cls::method2, 
+    ...
+  );
 }
 ```
+
+, where `CTOR()` wraps up the input types of constructor.
+
 
 See problem *295* for example!
 

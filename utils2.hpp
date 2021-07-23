@@ -681,14 +681,14 @@ class input_parameter<Tp*, false> {
 
   public:
     // copy ctor / assignment is not supported
-    // because copy of tree / linkedlist is not defined
+    // because copy of tree / linkedlist is undefined
     input_parameter(const self&) = delete;
     self& operator=(const self&) = delete;
 
     input_parameter(): par(nullptr) { }
 
-    input_parameter(self&& x) { swap(par, x.par); }
-    self& operator=(self&& x) { swap(par, x.par); }    
+    input_parameter(self&& x): par(x.par) { x.par = nullptr; }
+    self& operator=(self&& x) { swap(par, x.par); }
 
     inline operator Tp*() {
       return par;
@@ -845,12 +845,12 @@ struct args_convertible<args_pack<Types...>, args_pack<Args...>>
 template <typename MemFn> struct fn_ptr_traits;
 
 // specialization for member function
-template <class Tp, typename Ret, typename... Args>
-struct fn_ptr_traits<Ret (Tp::*)(Args...)>
+template <typename Tp, class Cp, typename... Args>
+struct fn_ptr_traits<Tp (Cp::*)(Args...)>
   : public std::integral_constant<size_t, sizeof...(Args)> {
   // ...
-  typedef Tp class_type;
-  typedef Ret return_type;
+  typedef Tp return_type;
+  typedef Cp class_type;
   typedef args_pack<Args...> args_type;
 
   typedef std::tuple<
@@ -865,11 +865,11 @@ struct fn_ptr_traits<Ret (Tp::*)(Args...)>
 };
 
 // for normal function
-template <typename Ret, typename... Args>
-struct fn_ptr_traits<Ret (*)(Args...)>
+template <typename Tp, typename... Args>
+struct fn_ptr_traits<Tp (*)(Args...)>
   : public std::integral_constant<size_t, sizeof...(Args)> {
   // ...
-  typedef Ret return_type;
+  typedef Tp return_type;
   typedef args_pack<Args...> args_type;
 
   // deprecated
