@@ -17,6 +17,302 @@ noexcept(std::is_nothrow_constructible<Cp, Args...>::value)
 }
 
 
+// extract children type of different implementations of nary trees
+// also works as enable_if
+template <typename Tp> struct children_type;
+
+template <typename Tp>
+struct children_type<std::vector<Tp>> { typedef Tp type; };
+
+template <typename Tp, typename Key>
+struct children_type<std::unordered_map<Key, Tp>> { typedef Tp type; };
+
+// no need to consider array of variable length
+template <typename Tp, size_t N>
+struct children_type<Tp[N]> { typedef Tp type; };
+
+template <typename Tp, size_t N>
+struct children_type<std::array<Tp, N>> { typedef Tp type; };
+
+
+// extend std::is_array
+template <typename Tp>
+struct is_array: public std::is_array<Tp> { };
+
+template <typename Tp, size_t N>
+struct is_array<std::array<Tp, N>> : public std::true_type { };
+
+
+// extend std::remove_extent
+template <typename Tp>
+struct remove_extent: public std::remove_extent<Tp> { };
+
+template <typename Tp, size_t N>
+struct remove_extent<std::array<Tp, N>> { typedef Tp type; };
+
+
+// is array (c or c++11) or std::vector of pointers
+template <typename Tp>
+struct is_array_of_pointers: 
+  public std::__or_<
+    utils2::is_vector_of_pointers_impl<Tp>,
+    std::__and_<
+      is_array<Tp>,
+      std::is_pointer<typename remove_extent<Tp>::type>
+    >
+  > 
+{ };
+
+// an alternative of using enum and index to represent graph types
+// will reduce the definition of those helper tags
+// while increase codes in other places (e.g. do_graph_category_impl)...
+// thus, let's stick to this old-fashioned style
+
+struct linked_list_tag { };
+struct binary_tree_tag { };
+struct quad_tree_tag { };
+struct nary_tree_tag { };
+// undirected
+struct nary_graph_tag { };
+// or has non-trivial destructor
+struct single_node_tag { };
+
+struct do_graph_category_impl {
+  template <
+    typename Tp,
+    typename = typename std::enable_if<
+      std::is_same<Tp, decltype(std::declval<Tp&>()->next)>::value
+    >::type
+  >
+  static linked_list_tag test(int);
+
+  template <
+    typename Tp, 
+    typename = typename std::enable_if<
+      std::__and_<
+        std::is_same<Tp, decltype(std::declval<Tp&>()->left)>,
+        std::is_same<Tp, decltype(std::declval<Tp&>()->right)>
+      >::value
+    >::type
+  >
+  static binary_tree_tag test(long);
+
+  template <
+    typename Tp, 
+    typename = typename std::enable_if<
+      std::__and_<
+        std::is_same<Tp, decltype(std::declval<Tp&>()->topLeft)>,
+        std::is_same<Tp, decltype(std::declval<Tp&>()->topRight)>,
+        std::is_same<Tp, decltype(std::declval<Tp&>()->bottomLeft)>,
+        std::is_same<Tp, decltype(std::declval<Tp&>()->bottomRight)>
+      >::value
+    >::type
+  >
+  static quad_tree_tag test(long long);
+
+  template <
+    typename Tp, 
+    typename = typename std::enable_if<
+      std::is_same<
+        Tp,
+        typename children_type<decltype(std::declval<Tp&>()->children)>::type
+      >::value
+    >::type
+  >
+  static nary_tree_tag test(uint32_t);
+
+  template <
+    typename Tp,
+    typename Up = decltype(std::declval<Tp&>()->neighbors),
+    typename = typename std::enable_if<
+      std::__and_<
+        is_array<Up>,
+        std::is_same<Tp, typename children_type<Up>::type>
+      >::value
+    >::type
+  >
+  static nary_graph_tag test(size_t);
+
+  template <typename>
+  static single_node_tag test(...);
+};
+
+
+template <typename Tp>
+struct graph_category_impl: public do_graph_category_impl {
+  typedef decltype(test<Tp>(0)) type;
+};
+
+
+// inherits graph category of Tp
+template <typename Tp>
+struct graph_category: public graph_category_impl<Tp>::type {
+  typedef typename graph_category_impl<Tp>::type graph_category_tag;
+};
+
+
+// single pointer
+template <typename Tp>
+void destroy_impl(Tp* ptr, single_node_tag) {
+  if (ptr)
+    delete ptr;
+}
+
+
+// linked list
+template <typename Tp>
+void destroy_impl(Tp* head, linked_list_tag) {
+  Tp* p;
+  while (head) {
+    p = head->next;
+    delete head;
+    head = p;
+  }
+}
+
+
+// binary tree
+template <typename Tp>
+void destroy_impl(Tp* root, binary_tree_tag tag) {
+  if (!root)
+    return;
+
+  destroy_impl(root->left, tag);
+  destroy_impl(root->right, tag);
+  delete root;
+}
+
+
+// quad tree
+template <typename Tp>
+void destroy_impl(Tp* root, quad_tree_tag tag) {
+  if (!root)
+    return;
+
+  destroy_impl(root->topLeft, tag);
+  destroy_impl(root->topRight, tag);
+  destroy_impl(root->bottomLeft, tag);
+  destroy_impl(root->bottomRight, tag);
+  delete root;
+}
+
+
+// general nary tree
+template <typename Tp>
+typename std::enable_if<
+  is_array_of_pointers<
+    decltype(std::declval<Tp*&>()->children)
+  >::value
+>::type
+destroy_impl(Tp* root, nary_tree_tag tag) {
+  if (!root)
+    return;
+  
+  for (Tp* p : root->children)
+    destroy_impl(p, tag);
+
+  delete root;
+}
+
+
+// trie
+template <typename Tp>
+typename std::enable_if<
+  !is_array_of_pointers<
+    decltype(std::declval<Tp*&>()->children)
+  >::value
+>::type
+destroy_impl(Tp* root, nary_tree_tag tag) {
+  if (!root)
+    return;
+  
+  for (auto& p : root->children)
+    destroy_impl(p.second, tag);
+
+  delete root;
+}
+
+
+// undirected graph
+template <typename Tp>
+void destroy_impl(Tp* root, nary_graph_tag tag) {
+  if (!root)
+    return;
+  
+  // for the purpose of coping with undirected cyclic graph
+  // cut edges from neighbors to root
+  // act as if the graph is directed
+  for (Tp* p : root->neighbors) {
+    if (p != nullptr) {
+      // use auto and std::begin (end) to handle three types of arrays
+      auto iter = std::find(std::begin(p->neighbors), std::end(p->neighbors), root);
+      if (iter != std::end(p->neighbors))
+        *iter = nullptr;
+      else {
+        std::cerr << "input undirected cyclic graph is not well-defined" << std::endl;
+        abort();
+      }
+    }
+  }
+
+  for (Tp* p : root->neighbors)
+    destroy_impl(p, tag);
+
+  delete root;
+}
+
+/**
+ * @brief helper function for releasing memories
+ * 
+ * @tparam NodeType type that pointer root points to
+ * 
+ * @param root NodeType*
+ * 
+ */
+template <typename NodeType> 
+void destroy(NodeType* root) { 
+  typedef typename std::remove_cv<NodeType>::type no_cv_nodetype;
+
+  destroy_impl(
+    const_cast<no_cv_nodetype *>(root), 
+    graph_category<no_cv_nodetype *>{}
+  ); 
+}
+
+// do nothing for non-pointer types
+// specializations to handle 
+// pointers / vector of pointers / ...
+template<typename Tp>
+struct universal_destroyer {
+  void operator()(Tp&) {
+    // do nothing...
+  }
+};
+
+template <typename Tp>
+struct universal_destroyer<Tp*> {
+  void operator()(Tp* ptr) {
+    destroy(ptr);
+  }
+};
+
+template <typename Tp>
+struct universal_destroyer<std::vector<Tp*>> {
+  void operator()(std::vector<Tp*>& vec) {
+    for (Tp* ptr : vec)
+      destroy(ptr);
+  }
+};
+
+template <typename Tp>
+struct universal_destroyer<std::vector<std::vector<Tp*>>> {
+  void operator()(std::vector<std::vector<Tp*>>& mat) {
+    for (auto& vec : mat)
+      for (Tp* ptr : vec)
+        destroy(ptr);
+  }
+};
+
 
 TreeNode* find_node_in_arbitrary_tree(TreeNode* root, int val) {
   if (!root)
@@ -43,8 +339,18 @@ TreeNode* find_node_in_bst(TreeNode* root, int val) {
 }
 
 
+// find a tree node given root and value
 TreeNode* find_node_in_tree(TreeNode* root, int val, bool is_bst = false) {
   return is_bst ? find_node_in_bst(root, val) : find_node_in_arbitrary_tree(root, val);
+}
+
+
+// find a linked list node given head and value
+ListNode* find_node_in_linked_list(ListNode* head, int val) {
+  while (head && head->val != val)
+    head = head->next;
+
+  return head;
 }
 
 
@@ -180,12 +486,13 @@ class MethodClass : public MethodClassBase<typename utils2::fn_ptr_traits<MemFn>
 
     mem_fn_ptr fn;
 
+    // void return type
     template <typename Tp = return_type, size_t... Is>
     typename std::enable_if<std::is_void<Tp>::value, double>::type 
     ufunc_call(class_type* ptr, 
-              args_tuple_param_type& params, 
-              std::index_sequence<Is...>) const {
-      // void type
+               args_tuple_param_type& params, 
+               std::index_sequence<Is...>) const {
+      // ...
       std::chrono::time_point<std::chrono::system_clock> start( std::chrono::system_clock::now() );
 
       (ptr->*fn)(std::get<Is>(params) ...);
@@ -209,12 +516,13 @@ class MethodClass : public MethodClassBase<typename utils2::fn_ptr_traits<MemFn>
       return elapsed.count();
     }
 
+    // non-void return type
     template <typename Tp = return_type, size_t... Is>
     typename std::enable_if<!std::is_void<Tp>::value, double>::type 
     ufunc_call(class_type* ptr, 
-              args_tuple_param_type& params, 
-              std::index_sequence<Is...>) const {
-      // non-void type
+               args_tuple_param_type& params, 
+               std::index_sequence<Is...>) const {
+      // ...
       std::chrono::time_point<std::chrono::system_clock> start( std::chrono::system_clock::now() );
 
       return_type res = (ptr->*fn)(std::get<Is>(params) ...);
@@ -236,6 +544,12 @@ class MethodClass : public MethodClassBase<typename utils2::fn_ptr_traits<MemFn>
       else
 #endif
         utils2::universal_print<return_type>()(res);
+
+// in case returned pointer type should be deleted here
+// to avoid memory leak error
+#ifdef _DELETE_RETURN_POINTER
+      universal_destroyer<return_type>()(res);
+#endif
 
       return elapsed.count();
     }
@@ -336,12 +650,17 @@ class Wrapper {
     }
 
     // manage pointer carefully
-    Wrapper(self&& x): ptr(x.ptr), inputs(std::move(x.inputs)), fn(x.fn) {
+    Wrapper(self&& x)
+      noexcept(std::is_move_constructible<args_tuple_param_type>::value)
+      : ptr(x.ptr), inputs(std::move(x.inputs)), fn(x.fn) {
+      // ...
       x.ptr = nullptr;
       swap(methods, x.methods);
     }
 
-    self& operator=(self&& x) {
+    self& operator=(self&& x)
+      noexcept(std::is_move_assignable<args_tuple_param_type>::value) {
+      // ...
       fn = x.fn;
       inputs = std::move(x.inputs);
       
@@ -374,8 +693,13 @@ class Wrapper {
           method = m;
           break;
         }
+
+      if (!method) {
+        std::cerr << "class method " << name << " is not found (added)";
+        abort();
+      }
       
-      return method ? method->operator()(ptr, args) : 0.0;
+      return method->operator()(ptr, args);
     }
 
     ~Wrapper() { release_memory(); }
@@ -456,11 +780,12 @@ void ufuncx(const std::string& path,
     w.initializeOrReplace(argss.front());
 
     // ctor prints nothing
-    std::cout << "[null";
+    std::cout << "[null" << std::flush;
 
     for (size_t i = 1; i < methods.size(); ++i) {
       std::cout << ", ";
       exec_time += w.callMethod(methods[i], argss[i]);
+      std::cout << std::flush;
     }
 
     std::cout << ']' << std::endl;

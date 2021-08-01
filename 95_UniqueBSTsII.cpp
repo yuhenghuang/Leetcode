@@ -1,4 +1,4 @@
-#include <numeric>
+#define _DELETE_RETURN_POINTER
 #include "utils3.hpp"
 
 class Solution {
@@ -19,7 +19,6 @@ class Solution {
 
   public:
     vector<TreeNode*> generateTrees(int n) {
-      // memory leaking aru aru
       return dfs(1, n);
     }
 };

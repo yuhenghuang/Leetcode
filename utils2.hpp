@@ -28,8 +28,8 @@ template <>
 struct is_2d<std::vector<TreeNode*>> : public std::true_type { };
 
 // for indicating print tree in 1D or 2D
-// default is 2D horizontally
-#ifndef PRINT_TREE_1D
+// default is 1D horizontally
+#ifdef PRINT_TREE_2D
 template <>
 struct is_2d<TreeNode*> : public std::true_type { };
 #endif
@@ -88,47 +88,6 @@ struct universal_parser<char> {
 };
 
 
-/* out-dated parser of tree
-
-template <>
-struct universal_parser<TreeNode*> {
-  TreeNode* operator()(const std::string& str) {
-    std::string line = regex_replace(str, std::regex("[\\[\\]\\s\"]+"), "");
-
-    TreeNode* root = nullptr;
-    TreeNode* node;
-
-    std::queue<TreeNode*> q;
-    bool left = true;
-
-    std::istringstream ss(line);
-    std::string val;
-    while (getline(ss, val, ',')) {
-      node = (val.compare("null")==0) ? nullptr : new TreeNode(stoi(val));
-
-      if (node)
-        q.push(node);
-      
-      if (root==nullptr) {
-        root = node;
-      }
-      else {
-        if (left)
-          q.front()->left = node;
-        else {
-          q.front()->right = node;
-          q.pop();
-        }
-        left = !left;
-      }
-    }
-
-    return root;
-  }
-};
-
-*/
-
 template <>
 struct universal_parser<TreeNode*> {
   TreeNode* operator()(const std::string& str) {
@@ -186,34 +145,6 @@ struct universal_parser<TreeNode*> {
   }
 };
 
-/* out-dated parser of linked list
-
-template <>
-struct universal_parser<ListNode*> {
-  ListNode* operator()(const std::string& str) {
-    ListNode* root = nullptr;
-    ListNode* prev, * next;
-
-    std::string line = regex_replace(str, std::regex("[\\[\\]\\s\"]+"), "");
-    std::istringstream ss(line);
-    std::string val;
-    while (getline(ss, val, ',')) {
-      next = new ListNode(stoi(val));
-      if (root==nullptr) {
-        prev = next;
-        root = prev;
-      }
-      else {
-        prev->next = next;
-        prev = next;
-      }
-    }
-
-    return root;
-  }
-};
-
-*/
 
 template <>
 struct universal_parser<ListNode*> {
@@ -300,34 +231,49 @@ struct universal_parser<std::vector<Tp>, true> {
 };
 
 
+struct do_is_printable_impl {
+  template <typename Tp, typename = decltype(std::cout << std::declval<Tp&>())>
+  static std::true_type test(int);
+
+  template <typename>
+  static std::false_type test(...);
+};
+
+template <typename Tp>
+struct is_printable_impl: public do_is_printable_impl {
+  typedef decltype(test<Tp>(0)) type;
+};
+
+// is operator<< defined?
+template <typename Tp>
+struct is_printable : 
+  public std::__and_<
+    typename is_printable_impl<Tp>::type,
+    std::__not_<std::is_pointer<Tp>>
+  >
+{ };
+
+
 // print results
-
-// out-dated helper type traits
-/*
-
-template <typename Tp>
-struct is_element : public std::true_type { };
-
-template <typename Tp>
-struct is_element<std::vector<std::vector<Tp>>> : public std::true_type { };
-
-template <>
-struct is_element<ListNode*> : public std::false_type { };
-
-template <typename Tp>
-struct is_element<std::vector<Tp>> : public std::false_type { };
-
-// add line end if tree is set to print in 1D
-#ifdef PRINT_TREE_1D
-template <>
-struct is_element<TreeNode*> : public std::false_type { };
-#endif
-
-*/
-
 template <typename Tp, bool Is_2D = is_2d<Tp>::value>
 struct universal_print {
-  void operator()(const Tp res) {
+  // flag to help only print info once
+  inline static bool flag = true;
+
+  template <typename Up = Tp>
+  typename std::enable_if<!is_printable<Up>::value>::type
+  operator()(const Tp&) {
+    // ...
+    if (flag) {
+      std::cout << "no available function/operator<< to print the result\n" \
+        << "please define the specialization of universal_print<> by yourself if you'd like";
+      flag = false;
+    }
+  }
+
+  template <typename Up = Tp>
+  typename std::enable_if<is_printable<Up>::value>::type
+  operator()(const Tp res) {
     std::cout << res;
   }
 };
@@ -444,6 +390,69 @@ struct universal_print<TreeNode*, false> {
 };
 
 
+#ifdef QUAD_NODE
+
+template <>
+struct universal_print<Node*, false> {
+  void operator()(Node* root) {
+    std::cout << '[';
+
+    // count of non-null nodes in current and next level
+    int m, n = 0;
+
+    std::queue<Node*> q;
+    if (root) {
+      std::cout << "[" << root->isLeaf \
+        << ", " << root->val << ']';
+
+      if (root->topLeft) ++n;
+      if (root->topRight) ++n;
+      if (root->bottomLeft) ++n;
+      if (root->bottomRight) ++n;
+
+      q.push(root->topLeft);
+      q.push(root->topRight);
+      q.push(root->bottomLeft);
+      q.push(root->bottomRight);
+    }
+
+    while (!q.empty()) {
+      m = n;
+      n = 0;
+
+      int N = q.size();
+      while (N--) {
+        root = q.front();
+        q.pop();
+
+        if (root) {
+          --m;
+
+          std::cout << ", [" << root->isLeaf \
+            << ", " << root->val << ']';
+
+          if (root->topLeft) ++n;
+          if (root->topRight) ++n;
+          if (root->bottomLeft) ++n;
+          if (root->bottomRight) ++n;
+
+          q.push(root->topLeft);
+          q.push(root->topRight);
+          q.push(root->bottomLeft);
+          q.push(root->bottomRight);
+        }
+        else if (m > 0 || n > 0)
+          std::cout << ", null";
+      }
+    }
+
+    std::cout << ']';
+  }
+};
+
+#endif // end of QUAD_NODE
+
+
 template <typename Tp>
 struct universal_print<std::vector<Tp>, false> {
   void operator()(const std::vector<Tp>& res) {
@@ -518,7 +527,7 @@ struct is_vector_of_pointers_impl<std::vector<Tp*>>: public std::true_type { };
 template <typename Tp>
 struct is_vector_of_pointers: 
   public is_vector_of_pointers_impl<
-    typename std::remove_const<
+    typename std::remove_cv<
       typename std::remove_reference<Tp>::type
     >::type
   > {
@@ -630,8 +639,10 @@ class input_parameter<Tp, false> {
   public:
     input_parameter() = default;
 
-    input_parameter(self&& x): par(std::move(x.par)) { }
-    self& operator=(self&& x) { par = std::move(x.par); }
+    input_parameter(self&& x) 
+      noexcept(std::is_move_constructible<type>::value): par(std::move(x.par)) { }
+    self& operator=(self&& x) 
+      noexcept(std::is_move_assignable<type>::value) { par = std::move(x.par); }
 
     inline operator Tp() {
       /*
@@ -687,8 +698,8 @@ class input_parameter<Tp*, false> {
 
     input_parameter(): par(nullptr) { }
 
-    input_parameter(self&& x): par(x.par) { x.par = nullptr; }
-    self& operator=(self&& x) { swap(par, x.par); }
+    input_parameter(self&& x) noexcept: par(x.par) { x.par = nullptr; }
+    self& operator=(self&& x) noexcept { swap(par, x.par); }
 
     inline operator Tp*() {
       return par;
@@ -748,8 +759,8 @@ class input_parameter<Tp, true> {
     self& operator=(const self&) = delete;
 
     // no need to handle memory at ctor
-    input_parameter(self&& x): par(std::move(x.par)) {  }
-    self& operator=(self&& x) { par.swap(x.par); }
+    input_parameter(self&& x) noexcept : par(std::move(x.par)) {  }
+    self& operator=(self&& x) noexcept { par.swap(x.par); }
 
     inline operator Tp() {
       return static_cast<Tp>(par);
