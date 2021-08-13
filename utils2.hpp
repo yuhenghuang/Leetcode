@@ -146,6 +146,64 @@ struct universal_parser<TreeNode*> {
 };
 
 
+#ifdef NARY_TREE_NODE
+
+template <>
+struct universal_parser<Node*> {
+  Node* operator()(const std::string& str) {
+    std::string line = regex_replace(str, std::regex("[\\[\\]\\s]+"), "");
+
+    if (line.size() == 0)
+      return nullptr;
+
+    // size of tree
+    size_t n = std::count(line.begin(), line.end(), ',') + 1UL;
+
+    // size of null node
+    size_t u = std::count(line.begin(), line.end(), 'u');
+
+    // only array new non-null nodes
+    // prepare for further plan of memory management (smart pointer)
+    // works even after the tree is dismantled...
+    Node* root = new Node[n - u];
+
+    // iterator over non-null nodes
+    Node* node = root;
+
+    // array of null and non-null nodes in the order of input
+    Node* nodes[n];
+
+    // iterator over nodes
+    Node** iter;
+
+    std::istringstream ss(line);
+    std::string val;
+    for (iter = &nodes[0]; getline(ss, val, ','); ++iter) {
+      if (val != "null") {
+        node->val = stoi(val);
+        *iter = node++;
+      }
+      else
+        *iter = nullptr;
+    }
+
+    iter = &nodes[0];
+    bool left = true;
+    for (size_t i = 2; i < n; ++i) {
+      if (nodes[i] == nullptr) 
+        // move to next valid parent
+        while (*(++iter) == nullptr);
+      else 
+        (*iter)->children.push_back(nodes[i]);
+    }
+
+    return root;
+  }
+};
+
+#endif // end of NARY_TREE_NODE
+
+
 template <>
 struct universal_parser<ListNode*> {
   ListNode* operator()(const std::string& str) {
@@ -231,6 +289,67 @@ struct universal_parser<std::vector<Tp>, true> {
 };
 
 
+#ifdef QUAD_NODE
+
+template <>
+struct universal_parser<Node*> {
+  Node* operator()(const std::string& str) {
+    // size of null node
+    size_t u = std::count(str.begin(), str.end(), 'u');
+    
+    // such that it can be parsed to 2D vector
+    std::string line = regex_replace(str, std::regex("null"), "[-1,-1]");
+
+    // must be declared after the following specialization of 2D vector
+    auto mat = universal_parser<std::vector<std::vector<int>>>()(line);
+
+    size_t n = mat.size();
+
+    Node* root = new Node[n - u];
+    Node* nodes[n];
+
+    Node* node = root;
+    Node** iter = &nodes[0];
+    for (std::vector<int>& p : mat) {
+      if (p[0] >= 0) {
+        node->isLeaf = p[0];
+        node->val = p[1];
+
+        *iter = node++;
+      }
+      else
+        *iter = nullptr;
+
+      ++iter;
+    }
+
+
+    iter = &nodes[0];
+    for (int i = 1; i < n; ++i) {
+      while (*iter == nullptr)
+        ++iter;
+
+      switch ((i + 3) % 4) {
+        case 0:
+          (*iter)->topLeft = nodes[i]; break;
+        case 1:
+          (*iter)->topRight = nodes[i]; break;
+        case 2:
+          (*iter)->bottomLeft = nodes[i]; break;
+        case 3:
+          (*iter++)->bottomRight = nodes[i]; break;
+        default:
+          abort();
+      }
+    }
+    
+    return root;
+  }
+};
+
+#endif // end of QUAD_NODE
+
+
 struct do_is_printable_impl {
   template <typename Tp, typename = decltype(std::cout << std::declval<Tp&>())>
   static std::true_type test(int);
@@ -266,7 +385,8 @@ struct universal_print {
     // ...
     if (flag) {
       std::cout << "no available function/operator<< to print the result\n" \
-        << "please define the specialization of universal_print<> by yourself if you'd like";
+        << "please define the specialization of universal_print<> by yourself if you'd like" \
+        << std::endl;
       flag = false;
     }
   }

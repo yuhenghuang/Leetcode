@@ -1,6 +1,7 @@
-#include <vector>
+#define _NONTRIVIAL_SOLUTION_CTOR
 #include <set>
-using namespace std;
+#include <numeric>
+#include "utils3.hpp"
 
 class Solution {
   private:
@@ -59,4 +60,70 @@ class Solution {
       else 
         return parent[i*n + j];
     }
+
+  private:
+    void recursion(
+      int r, int c, int p,
+      const vector<vector<int>>& dirs, const vector<vector<int>>& grid, 
+      vector<int>& parent, vector<int>& area, vector<vector<bool>>& seen) {
+      // ...
+      if (r < 0 || r >= n || c < 0 || c >= n || grid[r][c] == 0 || seen[r][c])
+        return;
+
+      seen[r][c] = true;
+      parent[r*n + c] = p;
+      ++area[p];
+
+      for (const vector<int>& d : dirs)
+        recursion(r + d[0], c + d[1], p, dirs, grid, parent, area, seen);
+    }
+
+  public:
+    int largestIslandFast(vector<vector<int>>& grid) {
+      n = grid.size();
+
+      vector<vector<int>> dirs {{1,0}, {0,1}, {-1,0}, {0,-1}};
+      vector<vector<bool>> seen(n, vector<bool>(n));
+
+      vector<int> area(n * n);
+      vector<int> parent(n * n);
+      iota(parent.begin(), parent.end(), 0);
+
+      int res = 0;
+      for (int i = 0; i < n; ++i)
+        for (int j = 0; j < n; ++j)
+          if (grid[i][j] && !seen[i][j])
+            recursion(i, j, i*n + j, dirs, grid, parent, area, seen);
+
+      for (int i = 0; i < n; ++i)
+        for (int j = 0; j < n; ++j) 
+          if (grid[i][j] == 0) {
+            int tmp = 1;
+
+            set<int> neighbors;
+            for (vector<int>& d : dirs) {
+              int r = i + d[0];
+              int c = j + d[1];
+              if (0 <= r && r < n && 0 <= c && c < n)
+                neighbors.insert(parent[r*n + c]);
+            }
+
+            for (int p : neighbors)
+              tmp += area[p];
+
+            if (tmp > res)
+              res = tmp;
+          }
+          else
+            res = max(res, area[parent[i*n + j]]);
+
+      return res;
+    }
 };
+
+
+int main() {
+  UFUNCS(Solution::largestIsland);
+  UFUNCS(Solution::largestIslandFast);
+  return 0;
+}

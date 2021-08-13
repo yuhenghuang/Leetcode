@@ -20,6 +20,9 @@ struct ListNode {
   ListNode(int x, ListNode *next) : val(x), next(next) {}
 };
 
+
+// class Node;
+
 #ifdef PERFECT_BINARY_TREE_NODE
 
 class Node {
@@ -55,7 +58,7 @@ class Node {
 
 #include <vector>
 
-#ifdef NARY_NODE
+#if defined(NARY_TREE_NODE) || defined(NARY_GRAPH_NODE)
 
 class Node {
   public:
@@ -83,7 +86,7 @@ class Node {
     }
 };
 
-#endif // end of NARY_NODE
+#endif // end of NARY_TREE_NODE or NARY_GRAPH_NODE
 
 
 #ifdef QUAD_NODE

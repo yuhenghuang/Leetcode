@@ -76,7 +76,7 @@ class Solution {
 
 
 int main() {
-  UFUNCR(Solution::lowestCommonAncestor, int, TreeNode*, int, int);
-  UFUNCR(Solution::lowestCommonAncestorOn, int, TreeNode*, int, int);
+  UFUNCS(Solution::lowestCommonAncestor, int, (TreeNode*, int, int));
+  UFUNCS(Solution::lowestCommonAncestorOn, int, (TreeNode*, int, int));
   return 0;
 }

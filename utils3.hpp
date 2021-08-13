@@ -17,30 +17,15 @@ noexcept(std::is_nothrow_constructible<Cp, Args...>::value)
 }
 
 
-// extract children type of different implementations of nary trees
-// also works as enable_if
-template <typename Tp> struct children_type;
-
-template <typename Tp>
-struct children_type<std::vector<Tp>> { typedef Tp type; };
-
-template <typename Tp, typename Key>
-struct children_type<std::unordered_map<Key, Tp>> { typedef Tp type; };
-
-// no need to consider array of variable length
-template <typename Tp, size_t N>
-struct children_type<Tp[N]> { typedef Tp type; };
-
-template <typename Tp, size_t N>
-struct children_type<std::array<Tp, N>> { typedef Tp type; };
-
-
 // extend std::is_array
 template <typename Tp>
 struct is_array: public std::is_array<Tp> { };
 
 template <typename Tp, size_t N>
 struct is_array<std::array<Tp, N>> : public std::true_type { };
+
+template <typename Tp>
+struct is_array<std::vector<Tp>> : public std::true_type { };
 
 
 // extend std::remove_extent
@@ -50,17 +35,26 @@ struct remove_extent: public std::remove_extent<Tp> { };
 template <typename Tp, size_t N>
 struct remove_extent<std::array<Tp, N>> { typedef Tp type; };
 
+template <typename Tp>
+struct remove_extent<std::vector<Tp>> { typedef Tp type; };
+
+
+// array cases
+template <typename Tp> 
+struct children_type : public remove_extent<Tp> { };
+
+// handle unordered_map for some implementations of trie
+template <typename Tp, typename Key>
+struct children_type<std::unordered_map<Key, Tp>> { typedef Tp type; };
+
 
 // is array (c or c++11) or std::vector of pointers
 template <typename Tp>
 struct is_array_of_pointers: 
-  public std::__or_<
-    utils2::is_vector_of_pointers_impl<Tp>,
-    std::__and_<
-      is_array<Tp>,
-      std::is_pointer<typename remove_extent<Tp>::type>
-    >
-  > 
+  public std::__and_<
+    is_array<Tp>,
+    std::is_pointer<typename remove_extent<Tp>::type>
+  >
 { };
 
 // an alternative of using enum and index to represent graph types
@@ -179,6 +173,7 @@ void destroy_impl(Tp* root, binary_tree_tag tag) {
 
   destroy_impl(root->left, tag);
   destroy_impl(root->right, tag);
+
   delete root;
 }
 
@@ -193,6 +188,7 @@ void destroy_impl(Tp* root, quad_tree_tag tag) {
   destroy_impl(root->topRight, tag);
   destroy_impl(root->bottomLeft, tag);
   destroy_impl(root->bottomRight, tag);
+
   delete root;
 }
 
@@ -249,7 +245,7 @@ void destroy_impl(Tp* root, nary_graph_tag tag) {
       if (iter != std::end(p->neighbors))
         *iter = nullptr;
       else {
-        std::cerr << "input undirected cyclic graph is not well-defined" << std::endl;
+        std::cerr << "input undirected (a)cyclic graph is not well-defined" << std::endl;
         abort();
       }
     }
@@ -274,8 +270,8 @@ void destroy(NodeType* root) {
   typedef typename std::remove_cv<NodeType>::type no_cv_nodetype;
 
   destroy_impl(
-    const_cast<no_cv_nodetype *>(root), 
-    graph_category<no_cv_nodetype *>{}
+    const_cast<no_cv_nodetype*>(root), 
+    graph_category<no_cv_nodetype*>{}
   ); 
 }
 
@@ -359,8 +355,10 @@ ListNode* find_node_in_linked_list(ListNode* head, int val) {
 template <typename Tp> struct is_scalar : public std::true_type { };
 
 template <typename Tp> struct is_scalar<std::vector<Tp>> : public std::false_type { };
-template <> struct is_scalar<TreeNode*> : public std::false_type { };
-template <> struct is_scalar<ListNode*> : public std::false_type { };
+template <typename Tp> struct is_scalar<Tp*> : public std::false_type { };
+// template <> struct is_scalar<TreeNode*> : public std::false_type { };
+// template <> struct is_scalar<ListNode*> : public std::false_type { };
+// template <> struct is_scalar<Node*>: public std::false_type { };
 
 // is_scalar = true
 inline void find_end_of_arg(size_t& j, const std::string& s, std::true_type) {
@@ -578,7 +576,7 @@ class MethodClass : public MethodClassBase<typename utils2::fn_ptr_traits<MemFn>
 /**
  * @brief wraps everything (factory and method) up
  * 
- * @tparam Func type of pointer to class factory
+ * @tparam Func type of function pointer to class factory
  * 
  */
 template <class Func>
@@ -863,7 +861,7 @@ void ufuncs(const std::string& path,
  * for the purpose of following predecessor
  * 
  */
-#define UFUNCS(METHOD) \
+#define UFUNCS_BASE(METHOD) \
   utils3::ufuncs( \
     "Inputs/" + utils2::to_txt_file(__FILE__), \
     #METHOD, &METHOD \
@@ -875,11 +873,16 @@ void ufuncs(const std::string& path,
  *   to handle override correctly
  * 
  */
-#define UFUNCR(METHOD, RETURN, ...) \
-  utils3::ufuncs<RETURN (Solution::*)(__VA_ARGS__)>( \
+#define UFUNCR(METHOD, RETURN, ARGS) \
+  utils3::ufuncs<RETURN (Solution::*) ARGS>( \
     "Inputs/" + utils2::to_txt_file(__FILE__), \
     #METHOD, &METHOD \
   )
+
+
+#define GETUFUNC(DUMMY1, DUMMY2, DUMMY3, NAME, ...) NAME
+
+#define UFUNCS(...) GETUFUNC(__VA_ARGS__, UFUNCR, DUMMY, UFUNCS_BASE) (__VA_ARGS__)
 
 using namespace std;
 

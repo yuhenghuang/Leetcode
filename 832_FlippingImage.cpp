@@ -1,4 +1,4 @@
-#include "utils.hpp"
+#include "utils3.hpp"
 
 class Solution {
   public:
@@ -17,6 +17,6 @@ class Solution {
 
 
 int main() {
-  UFUNC(Solution::flipAndInvertImage);
+  UFUNCS(Solution::flipAndInvertImage);
   return 0;
 }
