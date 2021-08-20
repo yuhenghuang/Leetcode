@@ -1,4 +1,4 @@
-#include "utils.hpp"
+#include "utils3.hpp"
 
 class Solution {
   public:
@@ -26,6 +26,6 @@ class Solution {
 
 
 int main() {
-  UFUNC(Solution::numDecodings);
+  UFUNCS(Solution::numDecodings);
   return 0;
 }

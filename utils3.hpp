@@ -533,7 +533,7 @@ class MethodClass : public MethodClassBase<typename utils2::fn_ptr_traits<MemFn>
 #ifndef _NONTRIVIAL_SOLUTION_CTOR
       // tackle non-scalar return type when printing results
       // differentiate ufuncx and ufuncs by verifying
-      // whether class_type is trivially constructible
+      // whether class_type is trivially default constructible
       if constexpr (!is_scalar<return_type>::value && !std::is_trivially_default_constructible<class_type>::value) {
         std::cout << "\n ";
         // print 2D array flatly
@@ -666,7 +666,7 @@ class Wrapper {
       swap(methods, x.methods);
     }
 
-    self& initializeOrReplace(const std::string& s) {
+    self& initializeOrReplace(const std::string& s = "") {
       release_object();
 
       input_gen(inputs, s, std::make_index_sequence<args_size>{});
@@ -770,8 +770,7 @@ void ufuncx(const std::string& path,
     // parse input file (methods and arguments)
     size_t j = 0;
     find_end_of_arg(j, line, std::false_type{});
-    std::vector<std::string> methods = 
-      utils2::universal_parser<std::vector<std::string>>()(line.substr(0, j));
+    auto methods = utils2::universal_parser<std::vector<std::string>>()(line.substr(0, j));
 
     std::vector<std::string> argss = parse_argss(line.substr(j));
 
@@ -818,7 +817,7 @@ void ufuncs(const std::string& path,
     method_name_raw.substr(method_name_raw.find_last_of(':') + 1);
 
   // create instance and add method and name to wrapper
-  w.initializeOrReplace("").addMethod(mem_fn, method_name);
+  w.initializeOrReplace().addMethod(mem_fn, method_name);
 
   std::ifstream f(path);
   std::string line;
@@ -873,16 +872,17 @@ void ufuncs(const std::string& path,
  *   to handle override correctly
  * 
  */
-#define UFUNCR(METHOD, RETURN, ARGS) \
+#define UFUNCR_BASE(METHOD, RETURN, ARGS) \
   utils3::ufuncs<RETURN (Solution::*) ARGS>( \
     "Inputs/" + utils2::to_txt_file(__FILE__), \
     #METHOD, &METHOD \
   )
 
+#define UFUNCR_NOARGS(METHOD, RETURN) UFUNCR_BASE(METHOD, RETURN, ());
 
 #define GETUFUNC(DUMMY1, DUMMY2, DUMMY3, NAME, ...) NAME
 
-#define UFUNCS(...) GETUFUNC(__VA_ARGS__, UFUNCR, DUMMY, UFUNCS_BASE) (__VA_ARGS__)
+#define UFUNCS(...) GETUFUNC(__VA_ARGS__, UFUNCR_BASE, UFUNCR_NOARGS, UFUNCS_BASE) (__VA_ARGS__)
 
 using namespace std;
 

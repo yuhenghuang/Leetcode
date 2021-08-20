@@ -1,24 +1,24 @@
-#include "DataStructure.h"
-#include <climits>
-// using namespace std;
+#include "utils3.hpp"
 
 class Solution {
   private:
-    int res;
+    int goodNodes(TreeNode* root, int val) {
+      if (!root)
+        return 0;
+      else if (root->val < val)
+        return goodNodes(root->left, val) + goodNodes(root->right, val);
+      else
+        return 1 + goodNodes(root->left, root->val) + goodNodes(root->right, root->val);
+    }
+
   public:
     int goodNodes(TreeNode* root) {
-      res = 0;
-      dfs(root, INT_MIN);
-      return res;
-    }
-    void dfs(TreeNode* node, int val) {
-      if (!node) return;
-      if (node->val>=val) {
-        ++res;
-        val = node->val;
-      }
-
-      dfs(node->left, val);
-      dfs(node->right, val);
+      return goodNodes(root, INT_MIN);
     }
 };
+
+
+int main() {
+  UFUNCS(Solution::goodNodes, int, (TreeNode*));
+  return 0;
+}

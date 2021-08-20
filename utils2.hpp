@@ -401,7 +401,7 @@ struct universal_print {
 
 template <>
 struct universal_print<char> {
-  void operator()(const std::string& res) {
+  void operator()(char res) {
     std::cout << '\'' << res << '\'';
   }
 };

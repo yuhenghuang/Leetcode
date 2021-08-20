@@ -42,7 +42,7 @@ class Solution {
         encode, int, 
         function<size_t (encode)>
       > s2i (
-        0, 
+        10, 
         [](const encode& e) {
           size_t h = 0;
           for (size_t c : e.count)
