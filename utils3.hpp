@@ -354,12 +354,64 @@ ListNode* find_node_in_linked_list(ListNode* head, int val) {
 // different from the one in std lib
 template <typename Tp> struct is_scalar : public std::true_type { };
 
+template <> struct is_scalar<std::string> : public std::false_type { };
 template <typename Tp> struct is_scalar<std::vector<Tp>> : public std::false_type { };
 template <typename Tp> struct is_scalar<Tp*> : public std::false_type { };
-// template <> struct is_scalar<TreeNode*> : public std::false_type { };
-// template <> struct is_scalar<ListNode*> : public std::false_type { };
-// template <> struct is_scalar<Node*>: public std::false_type { };
 
+
+template <typename Tp> struct is_quoted : public std::false_type { };
+template <> struct is_quoted<std::string> : public std::true_type { };
+
+template <
+  typename Tp, 
+  bool Is_Scalar = is_scalar<Tp>::value,
+  bool Is_String = std::is_same<Tp, std::string>::value
+>
+struct find_end_of_arg_impl;
+
+template <typename Tp>
+struct find_end_of_arg_impl<Tp, true, false> {
+  void operator()(size_t& j, const std::string& s) {
+    while (j < s.size() && s[j] != ' ' && s[j] != ',' && s[j] != ';')
+      ++j;
+  }
+};
+
+template <typename Tp>
+struct find_end_of_arg_impl<Tp, false, false> {
+  void operator()(size_t& j, const std::string& s) {
+    const size_t n = s.size();
+    // find left most '['
+    for (; j < n && s[j] != '['; ++j);
+
+    // find right most ']'
+    int count = 1;
+    for (++j; j < n && count > 0; ++j) {
+      if (s[j] == '[')
+        ++count;
+      else if (s[j] == ']')
+        --count;
+    }
+  }
+};
+
+// handle ',' inside of string
+template <typename Tp>
+struct find_end_of_arg_impl<Tp, false, true> {
+  void operator()(size_t& j, const std::string& s) {
+    const size_t n = s.size();
+    // find left '"'
+    for (; j < n && s[j] != '"'; ++j);
+
+    // find right '"'
+    for (++j; j < n && s[j] != '"'; ++j);
+
+    // to include last '"'
+    ++j;
+  }
+};
+
+/*
 // is_scalar = true
 inline void find_end_of_arg(size_t& j, const std::string& s, std::true_type) {
   while (j < s.size() && s[j] != ' ' && s[j] != ',' && s[j] != ';')
@@ -381,6 +433,7 @@ inline void find_end_of_arg(size_t& j, const std::string& s, std::false_type) {
       --count;
   }
 }
+*/
 
 
 /**
@@ -391,7 +444,7 @@ inline void find_end_of_arg(size_t& j, const std::string& s, std::false_type) {
  * @return std::vector\\<std::string> 
  */
 std::vector<std::string> parse_argss(const std::string& s) {
-  size_t n = s.size();
+  const size_t n = s.size();
 
   size_t j = 0;
   while (j < n && s[j] != '[')
@@ -407,7 +460,8 @@ std::vector<std::string> parse_argss(const std::string& s) {
       ++j;
 
     size_t i = j + 1;
-    find_end_of_arg(j, s, std::false_type{});
+    // find_end_of_arg(j, s, std::false_type{});
+    find_end_of_arg_impl<std::vector<std::string>>()(j, s);
 
     if (j < n) 
       out.push_back(s.substr(i, j - i - 1)); // remove '^[' and ']$'
@@ -424,7 +478,8 @@ inline Tp universal_parser_helper(size_t& j , const std::string& s) {
     ++j;
 
   size_t i = j;
-  find_end_of_arg(j, s, is_scalar<Tp>{});
+  // find_end_of_arg(j, s, is_scalar<Tp>{});
+  find_end_of_arg_impl<Tp>()(j, s);
 
   return utils2::universal_parser<Tp>()(s.substr(i, j - i));
 }
@@ -769,7 +824,8 @@ void ufuncx(const std::string& path,
 
     // parse input file (methods and arguments)
     size_t j = 0;
-    find_end_of_arg(j, line, std::false_type{});
+    // find_end_of_arg(j, line, std::false_type{});
+    find_end_of_arg_impl<std::vector<std::string>>()(j, line);
     auto methods = utils2::universal_parser<std::vector<std::string>>()(line.substr(0, j));
 
     std::vector<std::string> argss = parse_argss(line.substr(j));
@@ -886,4 +942,4 @@ void ufuncs(const std::string& path,
 
 using namespace std;
 
-#endif
+#endif // end of _UTILS_HPP

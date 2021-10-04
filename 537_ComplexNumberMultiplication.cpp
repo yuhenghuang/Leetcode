@@ -1,5 +1,30 @@
-#include "utils.hpp"
 #include <complex>
+#include "utils3.hpp"
+
+// complex number with integer real and image part
+class ComplexNumber {
+  private:
+    int r, i;
+
+  public:
+    ComplexNumber(int _r, int _i): r(_r), i(_i) { }
+
+    ComplexNumber(string s) {
+      sscanf(s.c_str(), "%d+%di", &r, &i);
+    }
+
+    ComplexNumber operator*(const ComplexNumber& x) {
+      return ComplexNumber(
+        r * x.r - i * x.i,
+        r * x.i + i * x.r
+      );
+    }
+
+    string toString() {
+      return to_string(r) + '+' + to_string(i) + 'i';
+    }
+};
+
 
 class Solution {
   private:
@@ -20,10 +45,15 @@ class Solution {
       sprintf(buffer, "%d+%di", z.real(), z.imag());
       return string(buffer);
     }
+
+    string complexNumberMultiplyUser(string a, string b) {
+      return (ComplexNumber(a) * ComplexNumber(b)).toString();
+    }
 };
 
 
 int main() {
-  UFUNC(Solution::complexNumberMultiply);
+  UFUNCS(Solution::complexNumberMultiply);
+  UFUNCS(Solution::complexNumberMultiplyUser);
   return 0;
 }
