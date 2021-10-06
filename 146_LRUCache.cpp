@@ -53,11 +53,101 @@ class LRUCache {
 };
 
 
+class LRUCacheList {
+  private:
+    struct Node {
+      Node* prev;
+      Node* next;
+      int key, val;
+
+      Node(int _key, int _val): key(_key), val(_val) { }
+    };
+
+    void remove(Node* node) {
+      node->prev->next = node->next;
+      node->next->prev = node->prev;
+    }
+
+    void add(Node* node) {
+      node->next = sentinel->next;
+      sentinel->next->prev = node;
+
+      sentinel->next = node;
+      node->prev = sentinel;
+    }
+
+    int cap;
+    Node* sentinel;
+
+    unordered_map<int, Node*> dict;
+
+  public:
+    LRUCacheList(int _cap): cap(_cap) {
+      sentinel = new Node(-1, -1);
+      sentinel->prev = sentinel;
+      sentinel->next = sentinel;
+    }
+
+
+    int get(int key) {
+      // pair of key, value
+      auto iter = dict.find(key);
+
+      if (iter == dict.end())
+        return -1;
+
+      Node* node = iter->second;
+      remove(node);
+      add(node);
+      
+      return node->val;
+    }
+
+    void put(int key, int value) {
+      Node* node;
+      // not exists
+      if (dict.count(key) == 0) {
+        // remost least recent used node
+        if (dict.size() == cap) {
+          node = sentinel->prev;
+
+          dict.erase(node->key);
+          remove(node);
+          // ignore delete for non-cxx users
+          delete node;
+        }
+
+        node = new Node(key, value);
+        dict[key] = node;
+        add(node);
+      }
+      // found
+      else {
+        // update value
+        node = dict[key];
+        node->val = value;
+
+        // update to least recent
+        remove(node);
+        add(node);
+      }
+    }
+    
+    // ~LRUCacheList() { utils3::destroy(sentinel); }
+};
+
+
 int main() {
   UFUNCX(
     CTOR(int),
     &LRUCache::get,
     &LRUCache::put
+  );
+
+  UFUNCX(
+    CTOR(int),
+    &LRUCacheList::get,
+    &LRUCacheList::put
   );
   return 0;
 }
