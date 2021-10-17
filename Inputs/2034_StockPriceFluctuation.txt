@@ -1,0 +1,1 @@
+["StockPrice", "update", "update", "current", "maximum", "update", "maximum", "update", "minimum"], [[], [1, 10], [2, 5], [], [], [1, 3], [], [4, 2], []]

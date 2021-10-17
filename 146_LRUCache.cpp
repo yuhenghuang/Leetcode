@@ -133,7 +133,7 @@ class LRUCacheList {
       }
     }
     
-    // ~LRUCacheList() { utils3::destroy(sentinel); }
+    ~LRUCacheList() { utils3::destroy(sentinel); }
 };
 
 

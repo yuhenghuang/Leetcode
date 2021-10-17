@@ -145,6 +145,42 @@ struct graph_category: public graph_category_impl<Tp>::type {
 };
 
 
+// handle cyclic linked list
+struct do_has_prev_impl {
+  template <typename Tp, typename = decltype(std::declval<Tp>()->prev)>
+  static std::true_type test(int);
+
+  template <typename>
+  static std::false_type test(...);
+};
+
+template <typename Tp>
+struct has_prev_impl : public do_has_prev_impl {
+  typedef decltype(test<Tp>(0)) type;
+};
+
+template <typename Tp>
+struct has_prev : public has_prev_impl<Tp>::type { };
+
+
+// cut prev -> head link
+template <typename Tp>
+typename std::enable_if<
+  has_prev<Tp*>::value
+>::type
+cut_prev(Tp* head) {
+  if (head->prev)
+    head->prev->next = nullptr;
+}
+
+// do nothing
+template <typename Tp>
+typename std::enable_if<
+  !has_prev<Tp*>::value
+>::type
+cut_prev(Tp* ) { }
+
+
 // single pointer
 template <typename Tp>
 void destroy_impl(Tp* ptr, single_node_tag) {
@@ -156,6 +192,8 @@ void destroy_impl(Tp* ptr, single_node_tag) {
 // linked list
 template <typename Tp>
 void destroy_impl(Tp* head, linked_list_tag) {
+  cut_prev(head);
+
   Tp* p;
   while (head) {
     p = head->next;
