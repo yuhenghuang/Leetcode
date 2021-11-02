@@ -1,13 +1,10 @@
-#include <unordered_map>
-#include <vector>
-#include <ctime>
-#include <iostream>
-using namespace std;
-
+#include "utils3.hpp"
 
 class RandomizedSet {
   private:
+    // value to index
     unordered_map<int, int> dict;
+    // index to value
     vector<int> vec;
     int size;
   public:
@@ -21,7 +18,7 @@ class RandomizedSet {
     bool insert(int val) {
       auto iter = dict.find(val);
       if (iter==dict.end()) {
-        dict.insert(pair<int, int>(val, size++));
+        dict.emplace(val, size++);
         vec.push_back(val);
         return true;
       }
@@ -51,12 +48,11 @@ class RandomizedSet {
 };
 
 int main() {
-  RandomizedSet s;
-  s.insert(0);
-  s.insert(1);
-  s.remove(0);
-  s.insert(2);
-  s.remove(1);
-  cout << s.getRandom() << endl;
+  UFUNCX(
+    CTOR(),
+    &RandomizedSet::insert,
+    &RandomizedSet::remove,
+    &RandomizedSet::getRandom
+  );
   return 0;
 }

@@ -1,7 +1,4 @@
-#include "DataStructure.h"
-#include "map"
-#include <iostream>
-using namespace std;
+#include "utils3.hpp"
 
 class Solution {
   private:
@@ -23,7 +20,7 @@ class Solution {
       m[curr]++;
       // for (auto ptr=m.begin(); ptr!=m.end(); ++ptr)
       //   cout << ptr->first << " : " << ptr->second << ", ";
-      cout << endl;
+      // cout << endl;
       dfs(node->left, m, curr, sum);
       dfs(node->right, m, curr, sum);
     }
@@ -41,3 +38,9 @@ class PathSumIII {
       return dfs(root->left, currSum, sum) + dfs(root->right, currSum, sum) + (currSum==sum?1:0);
     }
 };
+
+int main() {
+  UFUNCS(Solution::pathSum);
+  UFUNCS(PathSumIII::pathSum);
+  return 0;
+}

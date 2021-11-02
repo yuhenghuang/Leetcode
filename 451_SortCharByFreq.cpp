@@ -1,11 +1,4 @@
-#include <iostream>
-#include <string>
-#include <sstream>
-#include <unordered_map>
-#include <vector>
-#include <algorithm>
-using namespace std;
-
+#include "utils3.hpp"
 
 class Comp {
   private:
@@ -43,7 +36,6 @@ class Solution {
 
 
 int main() {
-  Solution sol;
-  cout << sol.frequencySort("Aabb") << endl;
+  UFUNCS(Solution::frequencySort);
   return 0;
 }

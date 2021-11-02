@@ -1,14 +1,15 @@
-#include "DataStructure.h"
-#include <vector>
-#include <iostream>
-using namespace std;
+#include "utils3.hpp"
 
+
+/*
 static vector<int> vec = [](){
   ios::sync_with_stdio(false);
   cin.tie(NULL);
   return vector<int>();
 }();
+*/
 
+// old solution
 class Solution {
   private:
     int d_x, d_y, i_x, i_y;
@@ -30,3 +31,37 @@ class Solution {
       dfs(node->right, idx*2+1, depth+1, x, y);
     }
 };
+
+
+class Sol {
+  private:
+    void dfs(TreeNode* root, stack<TreeNode*>& s, stack<TreeNode*>& sx, stack<TreeNode*>& sy, int x, int y) {
+      if (!root) return;
+
+      if (root->val == x)
+        sx = s;
+      else if (root->val == y)
+        sy = s;
+
+      s.push(root);
+
+      dfs(root->left, s, sx, sy, x, y);
+      dfs(root->right, s, sx, sy, x, y);
+
+      s.pop();
+    }
+
+  public:
+    bool isCousins(TreeNode* root, int x, int y) {
+      stack<TreeNode*> s, sx, sy;
+      dfs(root, s, sx, sy, x, y);
+
+      return sx.size() == sy.size() && sx.top() != sy.top();
+    }
+};
+
+
+int main() {
+  UFUNCS(Sol::isCousins);
+  return 0;
+}

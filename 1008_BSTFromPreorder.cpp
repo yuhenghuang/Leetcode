@@ -16,14 +16,35 @@ class Solution {
       return root;
     }
 
+    TreeNode* dfs(int*& i, int* j, int rbound) {
+      if (i == j)
+        return nullptr;
+
+      TreeNode* root = new TreeNode(*i++);
+
+      if (i != j && *i < root->val)
+        root->left = dfs(i, j, root->val);
+
+      if (i != j && *i < rbound)
+        root->right = dfs(i, j, rbound);
+
+      return root;
+    }
+
   public:
     TreeNode* bstFromPreorder(vector<int>& preorder) {
       return dfs(0, preorder.size()-1, preorder);
+    }
+
+    TreeNode* bstFromPreorderOn(vector<int>& preorder) {
+      int* i = preorder.data();
+      return dfs(i, i + preorder.size(), INT_MAX);
     }
 };
 
 
 int main() {
   UFUNCS(Solution::bstFromPreorder);
+  UFUNCS(Solution::bstFromPreorderOn);
   return 0;
 }

@@ -57,6 +57,14 @@ struct universal_parser<int> {
 
 
 template <>
+struct universal_parser<long long> {
+  int operator()(const std::string& str) {
+    return stoll(str);
+  }
+};
+
+
+template <>
 struct universal_parser<uint32_t> {
   uint32_t operator()(const std::string& str) {
     uint32_t res = 0;

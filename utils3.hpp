@@ -627,7 +627,7 @@ class MethodClass : public MethodClassBase<typename utils2::fn_ptr_traits<MemFn>
       // tackle non-scalar return type when printing results
       // differentiate ufuncx and ufuncs by verifying
       // whether class_type is trivially default constructible
-      if constexpr (!is_scalar<return_type>::value && !std::is_trivially_default_constructible<class_type>::value) {
+      if constexpr (!std::is_trivially_default_constructible<class_type>::value && utils2::is_2d<return_type>::value) {
         std::cout << "\n ";
         // print 2D array flatly
         utils2::universal_print<return_type, false>()(res);

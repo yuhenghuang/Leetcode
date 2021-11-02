@@ -1,12 +1,9 @@
-#include <iostream>
-#include <vector>
-
-using namespace std;
+#include "utils3.hpp"
 
 class Solution {
   public:
     int climbStairs(int n) {
-      vector<int> memo(n+1);
+      int memo[n+1];
       memo[0] = 1;
       memo[1] = 1;
       for (int i=2; i<=n; ++i)
@@ -16,8 +13,6 @@ class Solution {
 };
 
 int main() {
-  Solution sol;
-  cout << sol.climbStairs(40) << endl;
-  sol.climbStairs(40);
+  UFUNCS(Solution::climbStairs);
   return 0;
 }

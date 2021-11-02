@@ -1,7 +1,4 @@
-#include <vector>
-#include <iostream>
-#include <queue>
-using namespace std;
+#include "utils3.hpp"
 
 class Solution {
   public:
@@ -16,7 +13,7 @@ class Solution {
           if (grid[i][j]!=1) {
             seen[i][j] = true;
             if (grid[i][j]==2) 
-              q.push(make_pair(i, j));
+              q.emplace(i, j);
           }
 
       int dir_row[4] = {1, -1, 0, 0};
@@ -38,7 +35,7 @@ class Solution {
             j = j_old + dir_col[k];
             if (i<0 || i>=m || j<0 || j>=n || seen[i][j]) continue;
             move = true;
-            q.push(make_pair(i, j));
+            q.emplace(i, j);
             seen[i][j] = true;
           }
         }
@@ -55,8 +52,6 @@ class Solution {
 };
 
 int main() {
-  vector<vector<int>> grid = {{2,1,1,}, {1,1,0}, {0,1,1}};
-  Solution sol;
-  cout << sol.orangesRotting(grid) << endl;
+  UFUNCS(Solution::orangesRotting);
   return 0;
 }

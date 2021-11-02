@@ -1,10 +1,5 @@
-#include <vector>
-#include <fstream>
-#include <iostream>
-#include <sstream>
-#include <bits/stdc++.h>
-
-using namespace std;
+#define _NONTRIVIAL_SOLUTION_CTOR
+#include "utils3.hpp"
 
 class Solution {
   private:
@@ -12,7 +7,7 @@ class Solution {
     int dir[4][2] = {{0,1}, {1,0}, {0,-1}, {-1,0}};
     vector<vector<bool>> seen;
 
-    void dfs(const int& i, const int& j, int&& sum, vector<vector<int>> &grid) {
+    void dfs(int i, int j, int sum, vector<vector<int>>& grid) {
       if (i<0 || i>=m || j<0 || j>=n || seen[i][j]) return;
       if (grid[i][j]==2) {
         if (sum==target)
@@ -54,37 +49,8 @@ class Solution {
     }
 };
 
-vector<int> parse_line(string &s) {
-  vector<int> out;
-  s = regex_replace(s, regex("[\\[\\]]"), "");
-  istringstream ss(s);
-
-  string num;
-  while (getline(ss, num, ',')) 
-    out.push_back(stoi(num));
-  
-  return out;
-}
 
 int main() {
-  Solution sol;
-
-  fstream f("Inputs/980_UniquePathsIII.txt");
-  string line;
-  vector<vector<int>> grid;
-  while (getline(f, line)) {
-    line = regex_replace(line, regex("\\s+"), "");
-    line = regex_replace(line, regex("\\],\\["), ";");
-
-    istringstream ss(line);
-    string row;
-    grid.clear();
-    while (getline(ss, row, ';')) {
-      grid.push_back(parse_line(row));
-    }
-
-    cout << sol.uniquePathsIII(grid) << endl;
-  }
-
+  UFUNCS(Solution::uniquePathsIII);
   return 0;
 }

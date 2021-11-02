@@ -1,6 +1,4 @@
-#include <string>
-#include <iostream>
-using namespace std;
+#include "utils3.hpp"
 
 class Solution {
 public:
@@ -26,10 +24,30 @@ public:
         s.pop_back();
       return s;
     }
+
+    string reverseWordsRegexIter(string s) {
+      regex re("\\w+");
+      regex_iterator iter(s.rbegin(), s.rend(), re);
+      regex_iterator<string::reverse_iterator> end;
+
+      string res;
+      while (iter != end) {
+        string&& temp = iter++->str();
+        reverse(temp.begin(), temp.end());
+        res.append(temp);
+
+        res.push_back(' ');
+      }
+
+      if (!res.empty())
+        res.pop_back();
+
+      return res;
+    }
 };
 
 int main() {
-  Solution sol;
-  cout << sol.reverseWords(" ") << endl;
+  UFUNCS(Solution::reverseWords);
+  UFUNCS(Solution::reverseWordsRegexIter);
   return 0;
 }
