@@ -1,5 +1,4 @@
-#include <vector>
-using namespace std;
+#include "utils3.hpp"
 
 class Solution {
   public:
@@ -20,3 +19,8 @@ class Solution {
       return res;
     }
 };
+
+int main() {
+  UFUNCS(Solution::findDisappearedNumbers);
+  return 0;
+}

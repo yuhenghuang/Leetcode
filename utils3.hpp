@@ -159,6 +159,7 @@ struct has_prev_impl : public do_has_prev_impl {
   typedef decltype(test<Tp>(0)) type;
 };
 
+// whether the linked list node is doubly linked
 template <typename Tp>
 struct has_prev : public has_prev_impl<Tp>::type { };
 

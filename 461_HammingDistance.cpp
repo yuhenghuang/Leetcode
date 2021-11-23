@@ -1,5 +1,4 @@
-#include <iostream>
-using namespace std;
+#include "utils3.hpp"
 
 class Solution {
   public:
@@ -15,7 +14,6 @@ class Solution {
 };
 
 int main() {
-  Solution sol;
-  cout << sol.hammingDistance(1, 4) << endl;
+  UFUNCS(Solution::hammingDistance);
   return 0;
 }

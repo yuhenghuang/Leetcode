@@ -1,29 +1,26 @@
-#include <vector>
-#include <algorithm>
-#include <unordered_map>
-#include <iostream>
-
-using namespace std;
+#include "utils3.hpp"
 
 struct UnionFind {
-  vector<int> prev;
-  UnionFind(int n) {
-    prev.resize(n);
-    for (int i=0; i<n; ++i)
-      prev[i] = i;
+  vector<int> parent;
+  UnionFind(int n): parent(n, -1) { }
+
+  int find(int p) {
+    if (parent[p] < 0)
+      return p;
+    
+    return parent[p] = find(parent[p]);
   }
 
-  void find(int &num) {
-    int temp = num;
-    while (prev[num]!=num)
-      num = prev[num];
-    prev[temp] = num;
-  }
+  void join(int p, int q) {
+    p = find(p);
+    q = find(q);
+  
+    if (p != q) {
+      if (p > q)
+        swap(p, q);
 
-  void unite(int a, int b) {
-    find(a);
-    find(b);
-    prev[a] = b;
+      parent[q] = p;
+    }
   }
 };
 
@@ -47,24 +44,22 @@ private:
     }
   }
 public:
-    int largestComponentSize(vector<int>& A) {
-      int n = A.size();
+    int largestComponentSize(vector<int>& nums) {
+      return -1;
+    }
+
+    int largestComponentSizeTLE(vector<int>& nums) {
+      int n = nums.size();
       UnionFind uf(n);
-      vector<bool> seen(n, false);
+
       for (int i=1; i<n; ++i)
         for (int j=0; j<i; ++j)
-          if (connected(A[i], A[j]))
-            uf.unite(i, j);
-
-      int temp;
-      for (int i=0; i<n; ++i) {
-        temp = i;
-        uf.find(temp);
-      }
+          if (connected(nums[i], nums[j]))
+            uf.join(i, j);
 
       unordered_map<int, int> m;
-      for (int &num : uf.prev)
-        ++m[num];
+      for (int i=0; i<n; ++i)
+        ++m[uf.find(i)];
 
       int res=0;
       for (auto iter=m.begin(); iter!=m.end(); ++iter)
@@ -74,8 +69,7 @@ public:
 };
 
 int main() {
-  Solution sol;
-  vector<int> A = {2,3,6,7,4,12,21,39};
-  cout << sol.largestComponentSize(A) << endl;
+  UFUNCS(Solution::largestComponentSize);
+  UFUNCS(Solution::largestComponentSizeTLE);
   return 0;
 }
