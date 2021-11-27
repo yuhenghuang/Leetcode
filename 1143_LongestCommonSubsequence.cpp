@@ -1,9 +1,4 @@
-#include <string>
-#include <cstring>
-#include <iostream>
-#include <vector>
-#include <cmath>
-using namespace std;
+#include "utils3.hpp"
 
 class Solution {
   public:
@@ -22,7 +17,6 @@ class Solution {
 };
 
 int main() {
-  Solution obj;
-  cout << obj.longestCommonSubsequence("abcde", "ace") << endl;
+  UFUNCS(Solution::longestCommonSubsequence);
   return 0;
 }

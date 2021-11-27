@@ -1,4 +1,5 @@
-#include "utils.hpp"
+#include <unordered_set>
+#include "utils3.hpp"
 
 size_t hash_func(string& s) {
   size_t seed = 0;
@@ -128,6 +129,6 @@ class Solution {
 };
 
 int main() {
-  UFUNC(Solution::longestDupSubstring);
+  UFUNCS(Solution::longestDupSubstring);
   return 0;
 }

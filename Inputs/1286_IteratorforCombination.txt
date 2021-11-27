@@ -1,0 +1,2 @@
+["CombinationIterator", "next", "hasNext", "next", "hasNext", "next", "hasNext"], [["abc", 2], [], [], [], [], [], []]
+["CombinationIterator","hasNext","next","hasNext"], [["a",1],[],[],[]]

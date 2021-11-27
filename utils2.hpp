@@ -952,15 +952,8 @@ class input_parameter<Tp, true> {
 template <typename... Args> struct args_pack { };
 
 
-template <typename Tp>
-struct remove_rvalue_reference {
-  typedef Tp type;
-};
-
-template <typename Tp>
-struct remove_rvalue_reference<Tp&&> {
-  typedef Tp type;
-};
+template <typename Tp> struct remove_rvalue_reference { typedef Tp type; };
+template <typename Tp> struct remove_rvalue_reference<Tp&&> { typedef Tp type; };
 
 
 template <bool... Preds> struct bool_dummies { };
@@ -978,6 +971,12 @@ struct args_convertible<args_pack<Types...>, args_pack<Args...>>
     std::is_convertible<Types, Args>::value ...
   >
 { };
+
+
+// remove references to pointer types
+template <typename Tp> struct remove_reference_to_pointer { typedef Tp type; };
+template <typename Tp> struct remove_reference_to_pointer<Tp* &> { typedef Tp* type; };
+template <typename Tp> struct remove_reference_to_pointer<Tp* &&> { typedef Tp* type; };
 
 
 // function / class member function traits
@@ -1019,7 +1018,13 @@ struct fn_ptr_traits<Tp (*)(Args...)>
     >::type ...
   > args_tuple_type;
 
-  typedef std::tuple<input_parameter<Args> ...> args_tuple_param_type;
+  // note: this unexpected bug may suggest a complete redesign of the library...
+  // the class factory add && to all its parameters
+  // this will cause the partial specification of input_parameter to work improperly
+  // as an emergency measure, all refenreces to pointer shall be removed
+  typedef std::tuple<input_parameter<
+    typename remove_reference_to_pointer<Args>::type
+  > ...> args_tuple_param_type;
 };
 
 
