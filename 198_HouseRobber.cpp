@@ -1,11 +1,4 @@
-#include <vector>
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <string>
-#include <bits/stdc++.h>
-
-using namespace std;
+#include "utils3.hpp"
 
 class Solution {
   public:
@@ -19,6 +12,7 @@ class Solution {
     }
 };
 
+/*
 void parse_vec(vector<int> &vec) {
   ifstream f;
 
@@ -44,12 +38,9 @@ void parse_vec(vector<int> &vec) {
   if (f.is_open())
     f.close();
 }
+*/
 
 int main() {
-  Solution sol;
-  vector<int> vec;
-  // vec = {2,1,1,2};
-  parse_vec(vec);
-  cout << sol.rob(vec) << endl;
+  UFUNCS(Solution::rob);
   return 0;
 }

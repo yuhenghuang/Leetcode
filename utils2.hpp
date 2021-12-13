@@ -357,6 +357,138 @@ struct universal_parser<Node*> {
 
 #endif // end of QUAD_NODE
 
+#ifdef CIRCULAR_LINKED_NODE
+
+template <>
+struct universal_parser<Node*> {
+  Node* operator()(const std::string& str) {
+    std::string line = regex_replace(str, std::regex("[\\[\\]\\s]+"), "");
+
+    if (line.size() == 0)
+      return nullptr;
+
+    // size of linked list
+    size_t n = std::count(line.begin(), line.end(), ',') + 1UL;
+
+    // array new to save memory
+    // prepare for further plan of memory management (smart pointer)
+    Node* root = new Node[n];
+
+    Node* node = root;
+
+    std::istringstream ss(line);
+    std::string val;
+
+    for (size_t i = 0; i < n; ++i, ++node) {
+      getline(ss, val, ',');
+      node->val = stoi(val);
+
+      if (i < n - 1) 
+        node->next = node + 1;
+      else
+        // circulate
+        node->next = root;
+    }
+
+    return root;
+  }
+};
+
+#endif // end of CIRCULAR_LINKED_NODE
+
+
+template <>
+struct universal_parser<NestedInteger> {
+  size_t end_of_integer(const std::string& s, size_t j) {
+    while (j < s.size() && isdigit(s[j]))
+      ++j;
+
+    return j;
+  }
+
+  size_t end_of_list(const std::string& s, size_t j) {
+    const size_t n = s.size();
+
+    // find right most ']'
+    int count = 1;
+    for (++j; j < n && count > 0; ++j) {
+      if (s[j] == '[')
+        ++count;
+      else if (s[j] == ']')
+        --count;
+    }
+
+    return j;
+  }
+
+  NestedInteger operator()(const std::string& str) {
+    return (*this)(str, 0, str.size());
+  }
+
+  // include sive
+  NestedInteger operator()(const std::string& str, size_t i, size_t j) {
+    // empty list
+    if (str[i] == ']')
+      return {};
+    // integer found
+    else if (str[i] != '[')
+      return NestedInteger(stoi(str.substr(i, j - i)));
+
+    NestedInteger ni;
+
+    // point to first element
+    ++i;
+    while (i < j && (str[i] == ' ' || str[i] == ','))
+      ++i;
+
+    while (i < j) {
+      // end of current element
+      size_t k = str[i] == '[' ? end_of_list(str, i) : end_of_integer(str, i);
+
+      ni.add((*this)(str, i, k));
+
+      i = k;
+      // to the start of the element
+      while (i < j && ((str[i] == ' ') || (str[i] == ',') || (str[i] == ']')))
+        ++i;
+    }
+
+    return ni;
+  }
+
+};
+
+
+template <>
+struct universal_parser<std::vector<NestedInteger>> {
+  std::vector<NestedInteger> operator()(const std::string& str) {
+
+    universal_parser<NestedInteger> parser;
+
+    std::vector<NestedInteger> out;
+
+    size_t n = str.size();
+    size_t i = 1;
+    // to the start of the element
+    while (i < n && str[i] == ' ')
+      ++i;
+
+    while (i < n) {
+      // end of current element
+      size_t j = str[i] == '[' ? parser.end_of_list(str, i) : parser.end_of_integer(str, i);
+
+      out.push_back(parser(str, i, j));
+
+      i = j;
+      // to the start of the element
+      while (i < n && ((str[i] == ' ') || (str[i] == ',') || (str[i] == ']')))
+        ++i;
+    }
+
+    return out;
+  }
+};
+
 
 struct do_is_printable_impl {
   template <typename Tp, typename = decltype(std::cout << std::declval<Tp&>())>
@@ -580,6 +712,30 @@ struct universal_print<Node*, false> {
 
 #endif // end of QUAD_NODE
 
+
+#ifdef CIRCULAR_LINKED_NODE
+
+template <>
+struct universal_print<Node*, false> {
+  void operator()(Node* head) {
+    std::cout << '[';
+
+    if (head) {
+      std::cout << head->val;
+
+      Node* p = head->next;
+      while (p != head) {
+        std::cout << ", " << p->val;
+        p = p->next;
+      }
+    }
+
+    std::cout << ']';
+  }
+};
+
+
+#endif // end of CIRCULAR_LINKED_NODE
 
 template <typename Tp>
 struct universal_print<std::vector<Tp>, false> {

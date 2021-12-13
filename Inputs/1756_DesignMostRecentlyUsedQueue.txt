@@ -1,0 +1,1 @@
+["MRUQueue", "fetch", "fetch", "fetch", "fetch"], [[8], [3], [5], [2], [8]]

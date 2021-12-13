@@ -1,6 +1,4 @@
-#include "utils.hpp"
-#include <stack>
-#include <unordered_map>
+#include "utils3.hpp"
 
 class Solution {
   private:
@@ -48,7 +46,7 @@ class Solution {
           }
 
           // avoid memory leaking as the iteration breaks up the tree
-          delete root;
+          // delete root;
         }
 
         if (!s.empty()) {
@@ -66,11 +64,7 @@ class Solution {
 
 
 int main() {
-  {
-    UFUNC(Solution::findTilt);
-  }
-  {
-    UFUNC(Solution::findTiltIter);
-  }
+  UFUNCS(Solution::findTilt);
+  UFUNCS(Solution::findTiltIter);
   return 0;
 }

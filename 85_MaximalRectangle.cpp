@@ -1,4 +1,4 @@
-#include "utils2.hpp"
+#include "utils3.hpp"
 
 class Solution {
   public:
@@ -71,11 +71,7 @@ class Solution {
 
 
 int main() {
-  {
-    UFUNC(Solution::maximalRectangle);
-  }
-  {
-    UFUNC(Solution::maximalRectangleSimple);
-  }
+  UFUNCS(Solution::maximalRectangle);
+  UFUNCS(Solution::maximalRectangleSimple);
   return 0;
 }

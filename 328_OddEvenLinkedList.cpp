@@ -1,10 +1,8 @@
-#include "DataStructure.h"
-#include <iostream>
-using namespace std;
+#include "utils3.hpp"
 
 class Solution {
   public:
-    ListNode* oddEvenList(ListNode* head) {
+    ListNode* oddEvenListOld(ListNode* head) {
       if (!head || !head->next) return head;
       ListNode* even = head->next;
       ListNode* ptr_odd = head, * ptr_even = even, * ptr = even->next;
@@ -25,27 +23,15 @@ class Solution {
       ptr_even->next = nullptr;
       return head;
     }
+
+    ListNode* oddEvenList(ListNode* head) {
+      // until new algorithms come up
+      return nullptr;
+    }
 };
 
 int main() {
-  ListNode* arr[5];
-  for (int i=0; i<5; ++i)
-    arr[i] = new ListNode(i+1);
-  for (int i=1; i<5; ++i)
-    arr[i-1]->next = arr[i];
-
-  ListNode* head = arr[0];
-  while (head) {
-    cout << head->val << endl;
-    head = head->next;
-  }
-  
-  Solution sol;
-  head = sol.oddEvenList(arr[0]);
-
-  while (head) {
-    cout << head->val << endl;
-    head = head->next;
-  }
+  UFUNCS(Solution::oddEvenListOld);
+  UFUNCS(Solution::oddEvenList);
   return 0;
 }

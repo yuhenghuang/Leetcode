@@ -130,4 +130,67 @@ public:
 
 #endif // end of QUAD_NODE
 
+
+#ifdef CIRCULAR_LINKED_NODE
+
+class Node {
+public:
+  int val;
+  Node* next;
+  
+  Node() {}
+
+  Node(int _val) {
+    val = _val;
+    next = NULL;
+  }
+
+  Node(int _val, Node* _next) {
+    val = _val;
+    next = _next;
+  }
+};
+
+#endif // end of CIRCULAR_LINKED_NODE
+
+class NestedInteger {
+  private:
+    bool is_integer;
+    int val;
+    std::vector<NestedInteger> data;
+
+  public:
+    // Constructor initializes an empty nested list.
+    NestedInteger(): is_integer(false) { }
+
+    // Constructor initializes a single integer.
+    NestedInteger(int value): is_integer(true), val(value) { }
+
+    // Return true if this NestedInteger holds a single integer, rather than a nested list.
+    bool isInteger() const { return is_integer; }
+
+    // Return the single integer that this NestedInteger holds, if it holds a single integer
+    // The result is undefined if this NestedInteger holds a nested list
+    int getInteger() const { return val; }
+
+    // Set this NestedInteger to hold a single integer.
+    void setInteger(int value) {
+      val = value;
+      if (!is_integer) {
+        is_integer = true;
+        data.clear();
+      }
+    }
+
+    // Set this NestedInteger to hold a nested list and adds a nested integer to it.
+    void add(const NestedInteger &ni) {
+      is_integer = false;
+      data.push_back(ni);
+    }
+
+    // Return the nested list that this NestedInteger holds, if it holds a nested list
+    // The result is undefined if this NestedInteger holds a single integer
+    const std::vector<NestedInteger> &getList() const { return data; }
+};
+
 #endif // end of _DS_H

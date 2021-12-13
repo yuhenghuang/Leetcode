@@ -1,8 +1,4 @@
-#include <vector>
-#include <climits>
-#include <iostream>
-
-using namespace std;
+#include "utils3.hpp"
 
 template <typename T>
 constexpr const T &max(const T &a, const T &b, const T &c) {
@@ -53,12 +49,6 @@ class Solution {
 };
 
 int main() {
-  Solution sol;
-  vector<int> res;
-  res = {2,3,-2,4};
-  cout << sol.maxProduct(res) << endl;
-  res = {-2,0,-1};
-  cout << sol.maxProduct(res) << endl;
-
+  UFUNCS(Solution::maxProduct);
   return 0;
 }

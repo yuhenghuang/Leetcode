@@ -1,8 +1,6 @@
-#include <vector>
-#include <stack>
+#include "utils3.hpp"
 
-using namespace std;
-
+/*
 class NestedInteger {
   public:
     // Return true if this NestedInteger holds a single integer, rather than a nested list.
@@ -16,6 +14,8 @@ class NestedInteger {
     // The result is undefined if this NestedInteger holds a single integer
     const vector<NestedInteger> &getList() const;
 };
+
+*/
 
 /*
 class NestedIterator {
@@ -83,3 +83,23 @@ class NestedIterator {
       return !iters.empty();
     }
 };
+
+
+class Solution {
+  public:
+    vector<int> flattenList(vector<NestedInteger>& nestedList) {
+      vector<int> res;
+
+      NestedIterator iter(nestedList);
+      while (iter.hasNext())
+        res.push_back(iter.next());
+
+      return res;
+    }
+};
+
+
+int main() {
+  UFUNCS(Solution::flattenList);
+  return 0;
+}

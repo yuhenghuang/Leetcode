@@ -1,5 +1,5 @@
-#include <vector>
-using namespace std;
+#define _NONTRIVIAL_SOLUTION_CTOR
+#include "utils3.hpp"
 
 class Solution {
   private:
@@ -27,3 +27,8 @@ class Solution {
       }
     }
 };
+
+int main() {
+  UFUNCS(Solution::allPathsSourceTarget);
+  return 0;
+}

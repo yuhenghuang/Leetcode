@@ -1,11 +1,5 @@
 #include <numeric>
-#include "utils.hpp"
-
-static int emm = [](){
-  ios::sync_with_stdio(false);
-  cin.tie(nullptr);
-  return 0;
-}();
+#include "utils3.hpp"
 
 enum COLOR {
   WHITE,
@@ -64,11 +58,7 @@ class Solution {
 };
 
 int main() {
-  {
-    UFUNC(Solution::canPartition);
-  }
-  {
-    UFUNC(Solution::canPartitionSlow);
-  }
+  UFUNCS(Solution::canPartition);
+  UFUNCS(Solution::canPartitionSlow);
   return 0;
 }
