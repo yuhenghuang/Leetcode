@@ -11,17 +11,13 @@ class SORTracker {
       Scene(int s, const string& n): score(s), name(n) { }
       Scene(int s, string&& n): score(s), name(std::move(n)) { }
 
-      Scene(const self& x): score(x.score), name(x.name) { }
+      // copy ctor
+      Scene(const self& x) = default;
+      // move ctor
       Scene(self&& x): score(x.score), name(std::move(x.name)) { }
 
       // copy assignment
-      self& operator=(const self& rhs) {
-        score = rhs.score;
-        name = rhs.name;
-
-        return *this;
-      }
-
+      self& operator=(const self& rhs) = default;
       // move assignment
       self& operator=(self&& rhs) {
         score = rhs.score;
@@ -31,14 +27,12 @@ class SORTracker {
       }
 
       // less
-      bool operator<(const Scene& rhs) const {
+      bool operator<(const self& rhs) const {
         return score > rhs.score || (score == rhs.score && name < rhs.name);
       }
 
       // greater
-      bool operator>(const Scene& rhs) const {
-        return !(*this < rhs);
-      }
+      bool operator>(const self& rhs) const { return !(*this < rhs); }
     };
 
     priority_queue<Scene> max_heap;

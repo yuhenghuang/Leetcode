@@ -3,6 +3,7 @@
 
 #include "DataStructure.h"
 
+#include <unordered_map>
 #include <sstream>
 #include <iostream>
 #include <iterator>
