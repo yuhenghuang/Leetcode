@@ -1,4 +1,4 @@
-#include "utils.hpp"
+#include "utils3.hpp"
 #include <unordered_set>
 
 class Solution {
@@ -27,6 +27,7 @@ class Solution {
           const int& v = q.front();
 
           for (const int& w : graph[v]) 
+            // avoid going back
             if (indepth[w]>1 && --indepth[w]==1) 
               q.push(w);
               
@@ -121,14 +122,8 @@ class Solution {
 
 
 int main() {
-  {
-    UFUNC(Solution::findMinHeightTrees);
-  }
-  {
-    UFUNC(Solution::findMinHeightTreesTS);
-  }
-  {
-    UFUNC(Solution::findMinHeightTreesTLE);
-  }
+  UFUNCS(Solution::findMinHeightTrees);
+  UFUNCS(Solution::findMinHeightTreesTS);
+  UFUNCS(Solution::findMinHeightTreesTLE);
   return 0;
 }

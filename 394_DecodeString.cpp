@@ -1,7 +1,45 @@
-#include "utils.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
+  private:
+    string repeat(const string& s, size_t n) {
+      string out;
+      out.reserve(s.size() * n);
+
+      while (n--)
+        out += s;
+
+      return out;
+    }
+
+    string recursion(const string& s, size_t& i) {
+      string res;
+      string num;
+      while (i < s.size() && s[i] != ']') {
+        if (isdigit(s[i]))
+          num.push_back(s[i]);
+        else if (s[i] == '[') {
+          ++i;
+          res += repeat(recursion(s, i), stoul(num));
+
+          num.clear();
+        }
+        else
+          res.push_back(s[i]);
+
+        ++i;
+      }
+
+      return res;
+    }
+
   public:
+    string decodeStringRecursion(string s) {
+      size_t i = 0;
+      return recursion(s, i);
+    }
+
+
     string decodeString(string s) {
       string num;
       string temp;
@@ -50,6 +88,7 @@ class Solution {
 
 
 int main() {
-  UFUNC(Solution::decodeString);
+  EXECS(Solution::decodeString);
+  EXECS(Solution::decodeStringRecursion);
   return 0;
 }

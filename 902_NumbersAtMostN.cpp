@@ -1,5 +1,4 @@
-#include "utils.hpp"
-#include <algorithm>
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
@@ -50,9 +49,10 @@ class Solution {
     }
 
     int atMostNGivenDigitSetDP(vector<string>& digits, int n) {
-      int p = digits.size();
-      bool ds[9] = {0};
-      int cumsum[9] = {0};
+      int p = digits.size(); // # of digits
+      bool ds[9] = {0}; // if digit i exists
+      int cumsum[9] = {0}; // # of digits <= i
+
       for (const string& digit : digits) {
         int idx = digit[0] - '1';
         ds[idx] = true;
@@ -63,11 +63,12 @@ class Solution {
         cumsum[i] = cumsum[i-1] + cumsum[i];
 
       string target = to_string(n);
-      int q = target.size();
+      int q = target.size(); // size of target
       int cumprod[q];
       cumprod[0] = 1;
 
       int res = 0;
+      // # of numbers whose length < q
       for (int i=1; i<q; ++i) {
         cumprod[i] = p * cumprod[i-1];
         res += cumprod[i];
@@ -85,9 +86,8 @@ class Solution {
           dp[i] = dp[i+1];
           dp[i] += (cumsum[idx]-1) * cumprod[q-1-i];
         }
-        else {
+        else 
           dp[i] = cumsum[idx] * cumprod[q-1-i];
-        }
       }
 
       return res + dp[0];
@@ -96,11 +96,7 @@ class Solution {
 
 
 int main() {
-  {
-    UFUNC(Solution::atMostNGivenDigitSet);
-  }
-  {
-    UFUNC(Solution::atMostNGivenDigitSetDP);
-  }
+  EXECS(Solution::atMostNGivenDigitSet);
+  EXECS(Solution::atMostNGivenDigitSetDP);
   return 0;
 }
