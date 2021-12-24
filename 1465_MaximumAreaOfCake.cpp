@@ -1,4 +1,4 @@
-#include "utils2.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
@@ -20,6 +20,6 @@ class Solution {
 
 
 int main() {
-  UFUNC(Solution::maxArea);
+  EXECS(Solution::maxArea);
   return 0;
 }

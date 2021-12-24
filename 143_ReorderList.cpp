@@ -1,7 +1,4 @@
-#include "DataStructure.h"
-#include <stack>
-
-using namespace std;
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -29,17 +26,62 @@ class Solution {
         s.pop();
       }
     }
+
+    // O(1) space
+    void reorderListO1(ListNode* head) {
+      ListNode dummy(0, head);
+
+      ListNode* p = &dummy;
+      ListNode* q = &dummy;
+
+      while (q->next) {
+        p = p->next;
+        q = q->next;
+        if (q->next)
+          q = q->next;
+      }
+
+      q = p->next;
+      // set end of first half
+      p->next = nullptr;
+
+      p = q;
+      if (p) {
+        q = p->next;
+        // set end of second half
+        p->next = nullptr;
+      }
+      else
+        q = nullptr;
+
+      while (q) {
+        ListNode* tmp = q->next;
+        q->next = p;
+        p = q;
+        q = tmp;
+      }
+
+      q = dummy.next;
+      ListNode* iter = &dummy;
+
+      // second half (p) <= first half (q) in terms of length
+      while (p) {
+        iter->next = q;
+        q = q->next;
+        iter = iter->next;
+
+        iter->next = p;
+        p = p->next;
+        iter = iter->next;
+      }
+
+      iter->next = q;
+    }
 };
 
-int main() {
-  ListNode *head = new ListNode(1);
-  ListNode *p = head;
-  for (int i=2; i<6; ++i) {
-    p->next = new ListNode(i);
-    p = p->next;
-  }
 
-  Solution sol;
-  sol.reorderList(head);
+int main() {
+  EXECS(Solution::reorderList);
+  EXECS(Solution::reorderListO1);
   return 0;
 }

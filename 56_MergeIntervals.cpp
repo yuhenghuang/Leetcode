@@ -1,5 +1,4 @@
-#include "utils.hpp"
-#include <algorithm>
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -7,10 +6,12 @@ class Solution {
       if (intervals.size()<2)
         return intervals;
 
-      sort(intervals.begin(), intervals.end(),
-           [](const vector<int>& a, const vector<int>& b) -> bool {
-             return a[0]==b[0] ? a[1] < b[1] : a[0] < b[0];
-           });
+      sort(
+        intervals.begin(), intervals.end(),
+          [](const vector<int>& a, const vector<int>& b) -> bool {
+            return a[0]==b[0] ? a[1] < b[1] : a[0] < b[0];
+          }
+      );
 
       int st = intervals[0][0], ed = intervals[0][1];
       vector<vector<int>> res;
@@ -31,6 +32,6 @@ class Solution {
 
 
 int main() {
-  UFUNC(Solution::merge);
+  EXECS(Solution::merge);
   return 0;
 }

@@ -1,5 +1,5 @@
-#include "utils3.hpp"
 #include <unordered_set>
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -15,12 +15,12 @@ class Solution {
       }
 
       queue<int> q;
-      for (int i=0; i<n; ++i)
-        if (indepth[i]<2)
+      for (int i = 0; i < n; ++i)
+        if (indepth[i] < 2)
           q.push(i);
 
       int remaining = n;
-      while (remaining>2) {
+      while (remaining > 2) {
         int N = q.size();
         remaining -= N;
         while (N--) {
@@ -28,7 +28,7 @@ class Solution {
 
           for (const int& w : graph[v]) 
             // avoid going back
-            if (indepth[w]>1 && --indepth[w]==1) 
+            if (indepth[w] > 1 && --indepth[w] == 1) 
               q.push(w);
               
           q.pop();
@@ -83,6 +83,7 @@ class Solution {
         graph[edge[1]].push_back(edge[0]);
       }
 
+      // prev node, current node
       queue<pair<int, int>> q;
       vector<int> depth(n, 0);
       int leaves = 0;
@@ -90,21 +91,20 @@ class Solution {
         if (graph[i].size()<2) {
           ++leaves;
           ++depth[i];
-          q.push({-1, i});
+          q.emplace(-1, i);
         }
 
       bool flag = false;
       while (!q.empty()) {
         int N = q.size();
         while (N--) {
-          auto& p = q.front();
-          int v = p.first, w = p.second;
+          auto [v, w] = q.front();
           q.pop();
-          for (const int& e : graph[w]) {
-            if (e==v) continue;
+          for (int e : graph[w]) {
+            if (e == v) continue;
 
-            q.push({w, e});
-            if (++depth[e]==leaves)
+            q.emplace(w, e);
+            if (++depth[e] == leaves)
               flag = true;
           }
         }
@@ -112,8 +112,8 @@ class Solution {
       }
 
       vector<int> res;
-      for (int i=0; i<n; ++i)
-        if (depth[i]==leaves)
+      for (int i = 0; i < n; ++i)
+        if (depth[i] == leaves)
           res.push_back(i);
 
       return res;
@@ -122,8 +122,8 @@ class Solution {
 
 
 int main() {
-  UFUNCS(Solution::findMinHeightTrees);
-  UFUNCS(Solution::findMinHeightTreesTS);
-  UFUNCS(Solution::findMinHeightTreesTLE);
+  EXECS(Solution::findMinHeightTrees);
+  EXECS(Solution::findMinHeightTreesTS);
+  EXECS(Solution::findMinHeightTreesTLE);
   return 0;
 }

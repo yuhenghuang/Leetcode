@@ -1,5 +1,5 @@
-#define PERFECT_BINARY_TREE_NODE
-#include "DataStructure.h"
+#define TERNARY_TREE_NODE
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
@@ -33,3 +33,8 @@ class Solution {
     }
 };
 
+
+int main() {
+  EXECS(Solution::connect);
+  return 0;
+}

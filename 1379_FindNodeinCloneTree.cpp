@@ -1,4 +1,4 @@
-#include "DataStructure.h"
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -10,4 +10,18 @@ class Solution {
         return temp ? temp : getTargetCopy(original->right, cloned->right, target);
       }
     }
+
+    int getTargetCopy(TreeNode* original, TreeNode* cloned, int target) {
+      return getTargetCopy(
+        original,
+        cloned,
+        ll::find_node_in_tree(original, target)
+      )->val;
+    }
 };
+
+
+int main() {
+  EXECS(Solution::getTargetCopy, int, (TreeNode*, TreeNode*, int));
+  return 0;
+}
