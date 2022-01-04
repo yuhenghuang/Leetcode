@@ -1,13 +1,4 @@
-#include <vector>
-#include <algorithm>
-#include <iostream>
-using namespace std;
-
-static int emm = []() {
-  ios::sync_with_stdio(false);
-  cin.tie(nullptr);
-  return 0;
-}();
+#include <local_leetcode.hpp>
 
 class Comparator {
   private:
@@ -39,4 +30,43 @@ class Solution {
         res[i] = points[idx[i]];
       return res;
     }
+
+    vector<vector<int>> kClosestHeap(vector<vector<int>>& points, int k) {
+      int n = points.size();
+      
+      vector<int> norm(n);
+      for (int i=0; i<n; ++i) 
+        norm[i] = computeNorm(points[i]);
+
+      priority_queue<int, vector<int>, std::function<bool (int, int)>> heap(
+        [&norm](int i, int j) -> bool {
+          return norm[i] < norm[j];
+        }
+      );
+
+      for (int i = 0; i < n; ++i){
+        if (heap.size() < k)
+          heap.push(i);
+        else if (norm[heap.top()] > norm[i]) {
+          heap.pop();
+          heap.push(i);
+        }
+      }
+
+
+      vector<vector<int>> res(k);
+      while (!heap.empty()) {
+        res[--k] = points[heap.top()];
+        heap.pop();
+      }
+
+      return res;
+    }
 };
+
+
+int main() {
+  EXECS(Solution::kClosest);
+  EXECS(Solution::kClosestHeap);
+  return 0;
+}

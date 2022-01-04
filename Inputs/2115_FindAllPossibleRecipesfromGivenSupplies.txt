@@ -1,0 +1,3 @@
+["bread"], [["yeast","flour"]], ["yeast","flour","corn"]
+["bread","sandwich"], [["yeast","flour"],["bread","meat"]], ["yeast","flour","meat"]
+["bread","sandwich","burger"], [["yeast","flour"],["bread","meat"],["sandwich","meat","bread"]], ["yeast","flour","meat"]
