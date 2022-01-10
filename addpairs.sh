@@ -8,14 +8,20 @@ then
 
   # avoid unexpected overwrite
   if [ ! -f $cppfile ]
-  then
-
-    # flush header and clipboard
+  then # flush header and clipboard
+  
     printf "#include <local_leetcode.hpp>\n\n" >> ${cppfile}
-    xclip -selection c -o >> ${cppfile}
 
+    # wsl or not
+    if [ -f /etc/resolv.conf ]
+    then
+      template=$(powershell.exe -Command get-clipboard)
+    else
+      template=$(xclip -selection c -o)
+    fi
+
+    printf "${template}" >> $cppfile;
     # create main() and flush
-    template=$(xclip -selection c -o)
     method=$(echo $template | sed -E 's/.*[a-zA-Z<>\\*]+\s([a-zA-Z]+)\s?\(.*/\1/')
     printf "\n\n\nint main() {\n  EXECS(Solution::${method});\n  return 0;\n}" >> ${cppfile}
   fi

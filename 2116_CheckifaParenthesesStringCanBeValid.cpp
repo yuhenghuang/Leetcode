@@ -15,7 +15,7 @@ class Solution {
           p += s[i] == '(' ? 1 : -1;
 
           if (p < 0) {
-            if (v < 0)
+            if (v <= 0)
               return false;
             --v;
             ++p;
@@ -31,7 +31,7 @@ class Solution {
           p += s[i] == ')' ? 1 : -1;
 
           if (p < 0) {
-            if (v < 0)
+            if (v <= 0)
               return false;
             --v;
             ++p;

@@ -1,4 +1,4 @@
-#include "utils.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -19,6 +19,6 @@ class Solution {
 
 
 int main() {
-  UFUNC(Solution::numPairsDivisibleBy60);
+  EXECS(Solution::numPairsDivisibleBy60);
   return 0;
 }

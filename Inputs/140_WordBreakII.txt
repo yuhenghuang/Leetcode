@@ -1,0 +1,3 @@
+"catsanddog", ["cat","cats","and","sand","dog"]
+"pineapplepenapple", ["apple","pen","applepen","pine","pineapple"]
+"catsandog", ["cats","dog","sand","and","cat"]

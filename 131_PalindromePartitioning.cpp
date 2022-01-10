@@ -1,12 +1,11 @@
-#include "utils.hpp"
-
+#include <string_view>
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
-    bool isPalindrome(const string& s) {
-      int i=0, j=s.size()-1;
-      while (j>i) {
-        if (s[i++]!=s[j--])
+    bool isPalindrome(const string& s, int i, int j) {
+      while (i < j) {
+        if (s[i++] != s[j--])
           return false;
       }
       return true;
@@ -27,18 +26,17 @@ class Solution {
   public:
     vector<vector<string>> partition(string s) {
       int n = s.size();
-      vector<vector<vector<string>>> memo(n+1);
+      vector<vector<string>> memo[n+1];
 
-      memo[0] = {{}};
+      memo[0].push_back({});
 
-      for (int i=0; i<n; ++i) 
-        for (int j=0; j<=i; ++j)
-          if (s[j]==s[i] && (i-j<3 || isPalindrome(s.substr(j+1, i-j-1)))) {
+      for (int i = 0; i < n; ++i) 
+        for (int j = 0; j <= i; ++j)
+          if (isPalindrome(s, j, i)) {
             string temp = s.substr(j, i-j+1);
-            for (auto vec : memo[j]) {
-              vec.push_back(temp);
-              memo[i+1].push_back(std::move(vec));
-            }
+            // string_view temp(s.c_str() + j, i-j+1);
+            for (const auto& vec : memo[j]) 
+              memo[i+1].emplace_back(vec).push_back(temp);
           }
 
       return memo[n];
@@ -60,11 +58,7 @@ class Solution {
 
 
 int main() {
-  {
-    UFUNC(Solution::partition);
-  }
-  {
-    UFUNC(Solution::partitionDFS);
-  }
+  EXECS(Solution::partition);
+  EXECS(Solution::partitionDFS);
   return 0;
 }

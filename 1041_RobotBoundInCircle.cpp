@@ -1,9 +1,5 @@
-#include <string>
-#include <vector>
 #include <unordered_set>
-#include <iostream>
-
-using namespace std;
+#include <local_leetcode.hpp>
 
 // wrong answer
 
@@ -49,13 +45,13 @@ class Solution {
   private:
     int steer[4][2] = {{0,1}, {1,0}, {0,-1}, {-1,0}};
   public:
-    bool isRobotBounded(string instructions) {
+    bool isRobotBoundedWrong(string instructions) {
       unordered_set<Triple, TripleHash> s;
       int x=0, y=0, dir = 0;
       for (char& c : instructions) {
         switch (c) {
           case 'L':
-            dir = (dir-1)%4;
+            dir = (dir+3)%4;
             break;
           case 'R':
             dir = (dir+1)%4;
@@ -73,14 +69,38 @@ class Solution {
       }
       return false;
     }
+
+  bool isRobotBounded(string instructions) {
+    int dirs[4][2] = {{0,1}, {1,0}, {0,-1}, {-1,0}};
+
+    int x = 0;
+    int y = 0;
+    int d = 0;
+    for (char c : instructions) {
+      if (c == 'L')
+        d = (d + 3) % 4;
+      else if (c == 'R')
+        d = (d + 1) % 4;
+      else { // 'G'
+        x += dirs[d][0];
+        y += dirs[d][1];
+      }
+    }
+
+    return (x == 0 && y == 0) || d != 0;
+  }
 };
 
 int main() {
+  /*
   string instructions;
   getline(cin, instructions);
 
   Solution sol;
   cout << sol.isRobotBounded(instructions) << endl;
+  */
 
+  EXECS(Solution::isRobotBoundedWrong);
+  EXECS(Solution::isRobotBounded);
   return 0;
 }
