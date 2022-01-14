@@ -1,8 +1,12 @@
+/*
 #include "utils.hpp"
 #include <algorithm>
 #include <climits>
 
 using namespace std;
+*/
+
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -30,10 +34,32 @@ class Solution {
 
       return res;
     }
+
+    int findMinArrowShotsAlternative(vector<vector<int>>& points) {
+      sort(points.begin(), points.end(),
+        [](const vector<int>& x, const vector<int>& y) {
+          return x[1] < y[1];
+        }
+      );
+
+      int ed = INT_MIN;
+      int res = 0;
+      for (auto& p : points) 
+        if (p[0] > ed) {
+          ++res;
+          ed = p[1];
+        }
+
+      if (!points.empty() && points[0][0]==INT_MIN)
+        ++res;
+
+      return res;
+    }
 };
 
 
 int main() {
+  /*
   Solution sol;
 
   vector<vector<int>> points;
@@ -46,6 +72,9 @@ int main() {
 
     cout << sol.findMinArrowShots(points) << endl;
   }
+  */
 
+  EXECS(Solution::findMinArrowShots);
+  EXECS(Solution::findMinArrowShotsAlternative);
   return 0;
 }

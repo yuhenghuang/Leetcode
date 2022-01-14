@@ -20,6 +20,9 @@ then
       template=$(xclip -selection c -o)
     fi
 
+    # remove line numbers
+    template=$(echo "$template" | sed -E 's/^[0-9]+//')
+    
     printf "${template}" >> $cppfile;
     # create main() and flush
     method=$(echo $template | sed -E 's/.*[a-zA-Z<>\\*]+\s([a-zA-Z]+)\s?\(.*/\1/')

@@ -1,4 +1,4 @@
-#include "utils3.hpp"
+#include <local_leetcode.hpp>
 
 
 class Solution {
@@ -19,6 +19,6 @@ class Solution {
 
 
 int main() {
-  UFUNCS(Solution::depthSum);
+  EXECS(Solution::depthSum);
   return 0;
 }

@@ -1,10 +1,18 @@
+/*
 #include "utils.hpp"
 #include <fstream>
 #include <cmath>
 
 using namespace std;
+*/
+
+#define _LL_NONTRIVIAL_SOLUTION_CTOR
+#include <local_leetcode.hpp>
 
 class Solution {
+  private:
+    vector<TreeNode*> nodes;
+
   public:
     TreeNode* insertIntoBST(TreeNode* root, int val) {
       TreeNode* x = root;
@@ -16,7 +24,7 @@ class Solution {
         else
           x = x->right;
       }
-      TreeNode* p = new TreeNode(val);
+      TreeNode* p = nodes.emplace_back(new TreeNode(val));
 
       if (!y)
         root = p;
@@ -26,9 +34,27 @@ class Solution {
         y->right = p;
       return root;
     }
+
+    TreeNode* insertIntoBSTdfs(TreeNode* root, int val) {
+      if (!root)
+        root = nodes.emplace_back(new TreeNode(val));
+      else if (root->val > val)
+        root->left = insertIntoBSTdfs(root->left, val);
+      else if (root->val < val)
+        root->right = insertIntoBSTdfs(root->right, val);
+
+      return root;
+    }
+
+    ~Solution() {
+      for (auto& ptr : nodes)
+        delete ptr;
+    }
 };
 
+
 int main() {
+  /*
   Solution sol;
   vector<string> args;
   TreeNode* root;
@@ -43,6 +69,9 @@ int main() {
     sol.insertIntoBST(root, val);
     utils::print_tree_horizontal(root);
   }
+  */
 
+  EXECS(Solution::insertIntoBST);
+  EXECS(Solution::insertIntoBSTdfs);
   return 0;
 }

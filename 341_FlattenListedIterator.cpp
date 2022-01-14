@@ -1,4 +1,4 @@
-#include "utils3.hpp"
+#include <local_leetcode.hpp>
 
 /*
 class NestedInteger {
@@ -100,6 +100,6 @@ class Solution {
 
 
 int main() {
-  UFUNCS(Solution::flattenList);
+  EXECS(Solution::flattenList);
   return 0;
 }
