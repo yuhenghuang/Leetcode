@@ -1,4 +1,4 @@
-#include "DataStructure.h"
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
@@ -23,4 +23,16 @@ class Solution {
 
       return p;
     }
+
+    int detectCycle(ListNode* head, int pos) {
+      return ll::find_index(
+        head,
+        detectCycle(ll::create_cycle(head, pos))
+      );
+    }
 };
+
+
+int main() {
+  EXECS(Solution::detectCycle, int, (ListNode*, int));
+}

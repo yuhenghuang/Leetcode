@@ -1,7 +1,6 @@
-#include <vector>
+#include <local_leetcode.hpp>
 
-using namespace std;
-
+/*
 class Iterator {
   private:
     struct Data;
@@ -16,6 +15,7 @@ class Iterator {
     // Returns true if the iteration has more elements.
     bool hasNext() const;
 };
+*/
 
 
 class PeekingIterator : public Iterator {
@@ -35,9 +35,7 @@ class PeekingIterator : public Iterator {
     }
     
     // Returns the next element in the iteration without advancing the iterator.
-    int peek() {
-      return cacheHasNext;
-    }
+    int peek() { return cacheNum; }
     
     // hasNext() and next() should behave the same as in the Iterator interface.
     // Override them if needed.
@@ -49,7 +47,16 @@ class PeekingIterator : public Iterator {
       return tmp;
     }
     
-    bool hasNext() const {
-      return cacheHasNext;
-    }
+    bool hasNext() const { return cacheHasNext; }
 };
+
+
+int main() {
+  EXECX(
+    CTOR(const vector<int>&),
+    &PeekingIterator::peek,
+    &PeekingIterator::next,
+    &PeekingIterator::hasNext
+  );
+  return 0;
+}

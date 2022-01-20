@@ -1,3 +1,4 @@
+/*
 #define RANDOM_POINTER
 #include "DataStructure.h"
 
@@ -5,6 +6,11 @@
 #include <vector>
 
 using namespace std;
+*/
+
+#define RANDOM_LIST_NODE
+#define _LL_DELETE_RETURN_POINTER
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -72,3 +78,10 @@ class Solution {
       return res;
     }
 };
+
+
+int main() {
+  EXECS(Solution::copyRandomList);
+  EXECS(Solution::copyRandomListO1);
+  return 0;
+}

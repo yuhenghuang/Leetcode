@@ -1,4 +1,4 @@
-#include "DataStructure.h"
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -25,6 +25,18 @@ class Solution {
           q = q->next;
       }
 
-      return !p;
+      return p;
     }
+
+  bool hasCycle(ListNode* head, int pos) {
+    return hasCycle(
+      ll::create_cycle(head, pos)
+    );
+  }
 };
+
+
+int main() {
+  EXECS(Solution::hasCycle, bool, (ListNode*, int));
+  return 0;
+}

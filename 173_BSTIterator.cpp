@@ -1,7 +1,4 @@
-#include "DataStructure.h"
-#include <stack>
-#include <iostream>
-using namespace std;
+#include <local_leetcode.hpp>
 
 class Node {
   public:
@@ -42,6 +39,8 @@ class BSTIterator {
     bool hasNext() {
       return curr->next!=nullptr;
     }
+
+    ~BSTIterator() { ll::destroy(head); }
 };
 
 
@@ -74,10 +73,24 @@ class BSTIter {
 
 
 int main() {
+  /*
   TreeNode* root = new TreeNode(7);
   root->left = new TreeNode(3);
   root->right = new TreeNode(15, new TreeNode(9), new TreeNode(20));
   BSTIterator iter(root);
   cout << iter.next() << endl;
+  */
+
+  EXECX(
+    CTOR(TreeNode*),
+    &BSTIterator::next,
+    &BSTIterator::hasNext
+  );
+
+  EXECX(
+    CTOR(TreeNode*),
+    &BSTIter::next,
+    &BSTIter::hasNext
+  );
   return 0;
 }
