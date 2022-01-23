@@ -1,4 +1,5 @@
-#include "DataStructure.h"
+#define TERNARY_LIST_NODE
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -26,3 +27,9 @@ class Solution {
       return temp ? dfs(temp) : head;
     }
 };
+
+
+int main() {
+  EXECS(Solution::flatten);
+  return 0;
+}

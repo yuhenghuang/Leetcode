@@ -1,6 +1,12 @@
+/*
 #include "DataStructure.h"
 #include <vector>
 using namespace std;
+*/
+
+#define _LL_NONTRIVIAL_SOLUTION_CTOR
+#define _LL_FLATTEN_2D
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
@@ -8,7 +14,9 @@ class Solution {
     vector<bool> todo;
   public:
     vector<TreeNode*> delNodes(TreeNode* root, vector<int>& to_delete) {
-      todo = vector<bool>(1001, false);
+      res.clear();
+      todo.assign(1001, false);
+      
       for (int& idx : to_delete)
         todo[idx] = true;
       if (!todo[root->val])
@@ -36,3 +44,9 @@ class Solution {
       }
     }
 };
+
+
+int main() {
+  EXECS(Solution::delNodes);
+  return 0;
+}

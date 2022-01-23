@@ -1,3 +1,4 @@
+/*
 #include "DataStructure.h"
 #include <vector>
 #include <string>
@@ -10,6 +11,10 @@ static int emm = []() {
   cin.tie(nullptr);
   return 0;
 }();
+*/
+
+#define _LL_DELETE_RETURN_POINTER
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
@@ -56,3 +61,9 @@ class Solution {
       return root;
     }
 };
+
+
+int main() {
+  EXECS(Solution::recoverFromPreorder);
+  return 0;
+}

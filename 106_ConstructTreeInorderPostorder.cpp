@@ -1,6 +1,5 @@
-#include <vector>
-#include "DataStructure.h"
-using namespace std;
+#define _LL_DELETE_RETURN_POINTER
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -23,8 +22,12 @@ class Solution {
 };
 
 int main(){
+  /*
   vector<int> in = {3, 2, 1};
   Solution sol;
   TreeNode* root = sol.buildTree(in, in);
+  */
+
+  EXECS(Solution::buildTree);
   return 0;
 }

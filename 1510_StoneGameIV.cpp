@@ -1,4 +1,4 @@
-#include "utils3.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
@@ -24,9 +24,23 @@ class Solution {
       memo[0][1] = 0;
       return play(n, true);
     }
+
+    bool winnerSquareGameDp(int n) {
+      vector<bool> dp(n + 1);
+      for (int i = 1; i <= n; ++i) {
+        for (int j = 1; j * j <= i; ++j)
+          if (!dp[i - j * j]) {
+            dp[i] = true;
+            break;
+          }
+      }
+
+      return dp[n];
+    }
 };
 
 
 int main() {
-  UFUNCS(Solution::winnerSquareGame);
+  EXECS(Solution::winnerSquareGame);
+  EXECS(Solution::winnerSquareGameDp);
 }

@@ -1,7 +1,13 @@
+/*
 #include "DataStructure.h"
 #include <unordered_map>
 
 using namespace std;
+*/
+
+#define NARY_GRAPH_NODE
+#define _LL_DELETE_RETURN_POINTER
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
@@ -30,3 +36,8 @@ class Solution {
     }
 };
 
+
+int main() {
+  EXECS(Solution::cloneGraph, Node*, (Node*));
+  return 0;
+}
