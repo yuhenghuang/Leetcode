@@ -1,4 +1,4 @@
-#include "utils3.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
@@ -16,28 +16,60 @@ class Solution {
 
   public:
     int minimumJumps(vector<int>& forbidden, int a, int b, int x) {
-      bool dp[10000][2] = {0};
-      for (int i : forbidden)
-        if (i < 10001)
-          dp[i][0] = dp[i][1] = true;
+      if (x == 0)
+        return 0;
 
-      int res = 0;
-
-      queue<pair<int, int>> q;
-      q.emplace(0, 0);
+      int n = 6004;
       
+      // 0 backward, 1 forward
+      vector<bool> dp[2];
+
+      dp[0].assign(n+1, false);
+      dp[1].assign(n+1, false);
+
+      dp[1][0] = dp[0][0] = true;
+
+      for (const int& f : forbidden)
+        if (f <= n)
+          dp[0][f] = dp[1][f] = true;
+
+      queue<pair<int, bool>> q;
+      q.emplace(0, true);
+
+      int res = 1;
       while (!q.empty()) {
-        int n = q.size();
-        while (n--) {
-          auto [i, s] = q.front();
+        int s = q.size();
 
-
-
+        while (s--) {
+          auto [v, front] = q.front();
           q.pop();
+
+          int w;
+          w = v + a;
+
+          if (w == x)
+            return res;
+          else if (w <= n && !dp[0][w]) {
+            dp[0][w] = dp[1][w] = true;
+            q.emplace(w, true);
+          }
+          
+          // can move backward
+          if (front) {
+            w = v - b;
+
+            if (w == x)
+              return res;
+            else if (w >= 0 && w <= n && !dp[1][w]) {
+              dp[1][w] = true;
+              q.emplace(w, false);
+            }
+          }
         }
+
         ++res;
       }
-
+      
       return -1;
     }
 
@@ -62,7 +94,7 @@ class Solution {
 
 
 int main() {
-  UFUNCS(Solution::minimumJumps);
-  UFUNCS(Solution::minimumJumpsWrong);
+  EXECS(Solution::minimumJumps);
+  EXECS(Solution::minimumJumpsWrong);
   return 0;
 }
