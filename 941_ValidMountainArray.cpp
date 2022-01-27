@@ -1,4 +1,4 @@
-#include "utils.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -21,6 +21,6 @@ class Solution {
 
 
 int main() {
-  UFUNC(Solution::validMountainArray);
+  EXECS(Solution::validMountainArray);
   return 0;
 }

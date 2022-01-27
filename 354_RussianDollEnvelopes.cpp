@@ -1,6 +1,4 @@
-#include <set>
-#include "utils2.hpp"
-
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
@@ -141,14 +139,8 @@ class Solution {
 
 
 int main() {
-  {
-    UFUNC(Solution::maxEnvelopes);
-  }
-  {
-    UFUNC(Solution::maxEnvelopesSlow);
-  }
-  {
-    UFUNC(Solution::maxEnvelopesTLE);
-  }
+  EXECS(Solution::maxEnvelopes);
+  EXECS(Solution::maxEnvelopesSlow);
+  EXECS(Solution::maxEnvelopesTLE);
   return 0;
 }

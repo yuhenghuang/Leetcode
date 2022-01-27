@@ -1,14 +1,8 @@
-#include <vector>
-#include <fstream>
-#include <sstream>
-#include <iostream>
-#include <string>
-#include <bits/stdc++.h>
-
-using namespace std;
+#include <local_leetcode.hpp>
 
 struct Node {
-  Node *left, *right;
+  Node* left;
+  Node* right;
   Node(): left(nullptr), right(nullptr) { }
 }
 ;
@@ -53,14 +47,16 @@ class Solution {
     int findMaximumXOR(vector<int>& nums) {
       int res=0;
 
-      Node *root = new Node();
+      Node* root = new Node();
       int temp;
-      for (int& num : nums) {
+      for (const int& num : nums) {
         temp = 0;
         findMax(root, num, 31, temp);
         res = max(res, temp);
         addNode(root, num, 31);
       }
+
+      ll::destroy(root);
       return res;
     }
 };
@@ -68,6 +64,7 @@ class Solution {
 
 
 int main() {
+  /*
   Solution sol;
   vector<int> nums;
 
@@ -84,6 +81,9 @@ int main() {
 
     cout << sol.findMaximumXOR(nums) << endl;
   }
+  */
+
+  EXECS(Solution::findMaximumXOR);
 
   return 0;
 }

@@ -14,15 +14,11 @@ class Solution {
       if (q)
         q = q->next;
 
-      while (p!=q) {
-        if (p)
-          p = p->next;
+      while (p != q) {
+        if (p) p = p->next;
 
-        if (q)
-          q = q->next;
-
-        if (q)
-          q = q->next;
+        if (q) q = q->next;
+        if (q) q = q->next;
       }
 
       return p;
