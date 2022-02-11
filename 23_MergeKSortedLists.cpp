@@ -1,5 +1,4 @@
-#include <functional>
-#include "utils2.hpp"
+#include <local_leetcode.hpp>
 
 struct Comparator {
   bool operator()(const ListNode* x, const ListNode* y) const {
@@ -15,8 +14,8 @@ class Solution {
       else if (!l2)
         return l1;
 
-      ListNode* head = new ListNode(-1);
-      ListNode* p = head;
+      ListNode head(-1);
+      ListNode* p = &head;
       while (l1 && l2) {
         if (l1->val < l2->val) {
           p->next = l1;
@@ -31,11 +30,11 @@ class Solution {
 
       p->next = l1 ? l1 : l2;
 
-      return head->next;
+      return head.next;
     }
 
   public:
-    ListNode* mergeKListsDQ(vector<ListNode*>& lists) {
+    ListNode* mergeKListsDQ(vector<ListNode*> lists) {
       int n = lists.size();
       if (n==0)
         return nullptr;
@@ -54,8 +53,8 @@ class Solution {
 
 
     ListNode* mergeKLists(vector<ListNode*>& lists) {
-      ListNode* dummy = new ListNode(-1);
-      ListNode* p = dummy;
+      ListNode dummy(-1);
+      ListNode* p = &dummy;
 
       // priority_queue<ListNode*, deque<ListNode*>, Comparator> heap;
 
@@ -81,17 +80,13 @@ class Solution {
           heap.push(p->next);
       }
 
-      return dummy->next;
+      return dummy.next;
     }
 };
 
 
 int main() {
-  {
-    UFUNC(Solution::mergeKLists);
-  }
-  {
-    UFUNC(Solution::mergeKListsDQ);
-  }
+  EXECS(Solution::mergeKLists);
+  EXECS(Solution::mergeKListsDQ);
   return 0;
 }

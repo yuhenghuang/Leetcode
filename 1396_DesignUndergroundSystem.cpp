@@ -1,6 +1,4 @@
-#include <unordered_map>
-
-using namespace std;
+#include <local_leetcode.hpp>
 
 class UndergroundSystem {
   private:
@@ -15,14 +13,26 @@ class UndergroundSystem {
     }
     
     void checkOut(int id, string stationName, int t) {
-      auto p = onBoard[id];
+      auto& p = onBoard[id];
       auto& q = trips[p.first + "_" + stationName];
       q.first += t - p.second;
       q.second++;
     }
     
     double getAverageTime(string startStation, string endStation) {
-      auto q = trips[startStation + "_" + endStation];
+      auto& q = trips[startStation + "_" + endStation];
       return (double) q.first / q.second;
     }
 };
+
+
+int main() {
+  EXECX(
+    CTOR(),
+    &UndergroundSystem::checkIn,
+    &UndergroundSystem::checkOut,
+    &UndergroundSystem::getAverageTime
+  );
+  
+  return 0;
+}
