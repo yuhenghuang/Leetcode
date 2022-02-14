@@ -1,5 +1,4 @@
-#include "utils.hpp"
-#include <algorithm>
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -10,6 +9,6 @@ class Solution {
 
 
 int main() {
-  UFUNC(Solution::maxDepth);
+  EXECS(Solution::maxDepth);
   return 0;
 }

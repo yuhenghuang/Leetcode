@@ -12,10 +12,10 @@ class FileSystem {
       Node(bool _d = true): dir(_d) { }
     };
 
-    Node* root;
+    static const sregex_iterator end;
 
+    Node* root;
     regex re;
-    sregex_iterator end;
 
     Node* query(Node* node, sregex_iterator iter) {
       if (iter == end)
@@ -40,9 +40,9 @@ class FileSystem {
     }
 
   public:
-    FileSystem(): re("/(\\w+)") {
-      root = new Node();
-    }
+    FileSystem(): 
+      root(new Node()), re("/(\\w+)")
+    { }
 
     vector<string> ls(string path) {
       sregex_iterator iter(path.begin(), path.end(), re);
@@ -83,6 +83,8 @@ class FileSystem {
 
     ~FileSystem() { ll::destroy(root); }
 };
+
+const sregex_iterator FileSystem::end;
 
 
 int main() {

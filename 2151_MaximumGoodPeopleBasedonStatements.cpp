@@ -58,7 +58,7 @@ class Solution {
           res = max(res, __builtin_popcount(i));
 
           for (const auto& [gb, bb] : m)
-            if ((i & gb) == 0 && (i & bb) == 0 && (dp[i] & gb) == 0)
+            if ((i & gb) == 0 and (i & bb) == 0 and (dp[i] & gb) == 0)
               dp[i | gb] = dp[i] | bb;
         }
 
