@@ -112,7 +112,7 @@ class Solution {
 
 
 int main() {
-  // EXECS(Solution::maxCompatibilitySumTLE);
+  EXECS(Solution::maxCompatibilitySumTLE);
   EXECS(Solution::maxCompatibilitySum);
   EXECS(Solution::maxCompatibilitySumFast);
   return 0;

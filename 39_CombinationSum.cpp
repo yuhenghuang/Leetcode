@@ -1,6 +1,5 @@
-#include "utils.hpp"
-
-using namespace std;
+#define _LL_NONTRIVIAL_SOLUTION_CTOR
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
@@ -20,8 +19,28 @@ class Solution {
         stack.pop_back();
       }
     }
+
   public:
     vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+      sort(candidates.begin(), candidates.end());
+
+      vector<int> s;
+      vector<vector<vector<int>>> dp(target + 1);
+      dp[0].emplace_back();
+
+      for (int i = 0; i < target; ++i)
+        for (const int& j : candidates) {
+          if (i + j > target) break;
+
+          for (auto& comb : dp[i])
+            if (comb.empty() || comb.back() <= j)
+              dp[i + j].emplace_back(comb).push_back(j);
+        }
+
+      return dp[target];
+    }
+
+    vector<vector<int>> combinationSumOld(vector<int>& candidates, int target) {
       n = candidates.size();
       this->target = target;
       vector<vector<int>> res;
@@ -34,6 +53,7 @@ class Solution {
 
 
 int main() {
+  /*
   Solution sol;
 
   vector<string> args;
@@ -54,6 +74,10 @@ int main() {
 
     utils::print_vector_2d(res);
   }
+  */
+
+  EXECS(Solution::combinationSum);
+  EXECS(Solution::combinationSumOld);
 
   return 0;
 }
