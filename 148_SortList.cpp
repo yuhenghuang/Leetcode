@@ -1,7 +1,4 @@
-#include "utils.hpp"
-#include <climits>
-
-using namespace std;
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
@@ -17,8 +14,8 @@ class Solution {
     }
 
     ListNode* merge(ListNode* p, ListNode* q) {
-      ListNode *dummy = new ListNode(INT_MIN);
-      ListNode *tail = dummy;
+      ListNode dummy(INT_MIN);
+      ListNode *tail = &dummy;
       while (p && q) {
         if (p->val < q->val) {
           tail->next = p;
@@ -31,7 +28,7 @@ class Solution {
         tail = tail->next;
       }
       tail->next = p ? p : q;
-      return dummy->next;
+      return dummy.next;
     }
   public:
     ListNode* sortList(ListNode* head) {
@@ -46,14 +43,14 @@ class Solution {
     ListNode* sortListBubble(ListNode* head) {
       if (!head || !head->next) return head;
 
-      ListNode *dummy = new ListNode(INT_MIN, head);
+      ListNode dummy(INT_MIN, head);
 
       ListNode *p, *q = nullptr, *ed;
 
       bool swaped = true;
       while (swaped) {
         ed = q;
-        p = dummy;
+        p = &dummy;
         q = p->next;
         swaped = false;
 
@@ -73,12 +70,13 @@ class Solution {
         }
       }
 
-      return dummy->next;
+      return dummy.next;
     }
 };
 
 
 int main() {
+  /*
   Solution sol;
 
   ListNode *head, *res;
@@ -91,6 +89,10 @@ int main() {
 
     utils::print_linked_list(res);
   }
+  */
+
+  EXECS(Solution::sortList);
+  EXECS(Solution::sortListBubble);
 
   return 0;
 }

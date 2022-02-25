@@ -7,6 +7,8 @@ class Solution {
   public:
     int minimumDeviation(vector<int>& nums) {
       typedef pair<int, int> pii;
+
+      // lowest, highest
       priority_queue<
         pii,
         vector<pii>,

@@ -1,5 +1,40 @@
-#include <unordered_set>
-#include "utils2.hpp"
+#include <local_leetcode.hpp>
+
+class UnionFind {
+  private:
+    unordered_map<int, int> parent;
+
+  public:
+    UnionFind(const unordered_set<int>& s) {
+      for (const int& num : s)
+        parent[num] = num;
+    }
+
+    int find(int p) {
+      int tmp = parent[p];
+      if (tmp == p)
+        return p;
+
+      return parent[p] = find(tmp);
+    }
+
+    void join(int p) {
+      auto iter = parent.find(p + 1);
+
+      if (iter == parent.end())
+        return;
+
+      p = find(p);
+      int q = find(iter->second);
+
+      if (p != q) {
+        if (p < q)
+          parent[q] = p;
+        else
+          parent[p] = q;
+      }
+    }
+};
 
 class Solution {
   private:
@@ -22,6 +57,27 @@ class Solution {
  
 
   public:
+    int longestConsecutiveUF(vector<int>& nums) {
+      unordered_set<int> s(nums.begin(), nums.end());
+
+      UnionFind uf(s);
+
+      for (const int& num : s)
+        uf.join(num);
+
+      // parent, count
+      unordered_map<int, int> m;
+      for (const int& num : s)
+        ++m[uf.find(num)];
+
+      int res = 0;
+      for (auto& p : m)
+        if (p.second > res)
+          res = p.second;
+
+      return res;
+    }
+
     int longestConsecutiveTLE(vector<int>& nums) {
       // failed because of unbalanced UF
 
@@ -60,11 +116,8 @@ class Solution {
 
 
 int main() {
-  {
-    UFUNC(Solution::longestConsecutive);
-  }
-  {
-    UFUNC(Solution::longestConsecutiveTLE);
-  }
+  EXECS(Solution::longestConsecutive);
+  EXECS(Solution::longestConsecutiveUF);
+  EXECS(Solution::longestConsecutiveTLE);
   return 0;
 }

@@ -1,4 +1,4 @@
-#include "utils3.hpp"
+#include <local_leetcode.hpp>
 
 class MyCalendarTwo {
   private:
@@ -47,8 +47,9 @@ class MyCalendarTwo {
 
 
 int main() {
-  UFUNCX(
+  EXECX(
     CTOR(),
-    &MyCalendarTwo::book);
+    &MyCalendarTwo::book
+  );
   return 0;
 }
