@@ -1,38 +1,32 @@
-#include "utils.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
     ListNode* deleteDuplicates(ListNode* head) {
-      ListNode* dummy = new ListNode();
+      ListNode dummy;
 
-      ListNode* p = dummy;
-      ListNode* q, * o;
+      ListNode* p = &dummy;
+      ListNode* q;
       while (head) {
         q = head->next;
-        while (q && q->val==head->val) {
+        while (q && q->val==head->val)
           q = q->next;
-        }
 
-        if (q==head->next) {
+        if (q == head->next) {
           p->next = head;
           p = p->next;
-          head = q;
         }
 
-        while (head!=q) {
-          o = head;
-          head = head->next;
-          delete o;
-        }
+        head = q;
       }
       p->next = nullptr;
 
-      return dummy->next;
+      return dummy.next;
     }
 };
 
 
 int main() {
-  UFUNC(Solution::deleteDuplicates);
+  EXECS(Solution::deleteDuplicates);
   return 0;
 }

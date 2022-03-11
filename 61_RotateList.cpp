@@ -1,11 +1,12 @@
-#include "utils.hpp"
+// #include "utils.hpp"
+// using namespace std;
 
-using namespace std;
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
     ListNode* rotateRight(ListNode* head, int k) {
-      if (!head) return head;
+      if (!head || !head->next) return head;
 
       ListNode* p = head;
       int n = 1;
@@ -14,14 +15,13 @@ class Solution {
         p = p->next;
       }
 
-      if (n<2 || k%n==0) return head;
+      if (k % n==0) return head;
 
-      k = n - k%n;
+      k = n - k % n;
 
       p->next = head;
-      p = head;
 
-      while (--k)
+      while (k--)
         p = p->next;
 
       head = p->next;
@@ -32,6 +32,7 @@ class Solution {
 
 
 int main() {
+  /*
   Solution sol;
 
   vector<string> args;
@@ -47,6 +48,8 @@ int main() {
 
     utils::print_linked_list(sol.rotateRight(head, k));
   }
+  */
 
+  EXECS(Solution::rotateRight);
   return 0;
 }

@@ -1,0 +1,3 @@
+"annabelle", 2
+"leetcode", 3
+"true", 4
