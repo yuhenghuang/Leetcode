@@ -1,12 +1,12 @@
-#include "utils.hpp"
-
-using namespace std;
+#include<local_leetcode.hpp>
 
 class Solution {
   public:
     string removeDuplicateLetters(string s) {
       int n = s.size();
       bool seen[26] = {0};
+
+      // last index of each letter
       int idx[26] = {0};
 
       for (int i=0; i<n; ++i)
@@ -75,6 +75,7 @@ class Solution {
 
 
 int main() {
+  /*
   Solution sol;
 
   ifstream f("Inputs/316_RemoveDuplicateLetters.txt");
@@ -83,6 +84,10 @@ int main() {
     res = sol.removeDuplicateLetters(s);
     cout << res << " " << sol.removeDuplicateLettersBits(s) << endl;
   }
+  */
+
+  EXECS(Solution::removeDuplicateLetters);
+  EXECS(Solution::removeDuplicateLettersBits);
 
   return 0;
 }

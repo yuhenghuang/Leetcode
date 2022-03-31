@@ -1,6 +1,4 @@
-#include "utils.hpp"
-
-using namespace std;
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -16,10 +14,28 @@ class Solution {
 
       return (l<nums.size() && nums[l]==target) ? l : -1;
     }
+
+    int searchNew(vector<int>& nums, int target) {
+      int l = 0, r = static_cast<int>(nums.size()) - 1;
+
+      while (l <= r) {
+        int m = l + (r - l) / 2;
+
+        if (nums[m] < target)
+          l = m + 1;
+        else if (nums[m] > target)
+          r = m - 1;
+        else
+          return m;
+      }
+
+      return -1;
+    }
 };
 
 
 int main() {
+  /*
   Solution sol;
 
   vector<string> args;
@@ -36,6 +52,10 @@ int main() {
 
     cout << sol.search(nums, target) << endl;
   }
+  */
+
+  EXECS(Solution::search);
+  EXECS(Solution::searchNew);
 
   return 0;
 }

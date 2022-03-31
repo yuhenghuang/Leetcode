@@ -1,6 +1,4 @@
-#include <vector>
-#include <iostream>
-using namespace std;
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -19,29 +17,27 @@ class Solution {
       return fast;
     }
 
-    int findDuplicateWrong(vector<int>& nums) {
-      int n=nums.size();
-      for (int i=0; i<n; ++i) {
-        int idx=i;
-        while (idx!=nums[i]-1) {
-          idx = nums[i]-1;
-          if (nums[idx]==nums[i] && idx!=i) return nums[i];
-          swap(i, idx, nums);
-        }
-      }
-      return 0;
-    }
+    int findDuplicateSwap(vector<int>& nums) {
+      // incomplete
 
-    void swap(int& i, int& j, vector<int>& nums) {
-      int temp = nums[i];
-      nums[i] = nums[j];
-      nums[j] = temp;
+      int n = nums.size();
+      for (int i = 0; i < n; ++i) {
+        int j = nums[i] - 1;
+
+      }
+
+      return -1;
     }
 };
 
 int main() {
+  /*
   Solution sol;
   vector<int> nums = {2,1,2};
   cout << sol.findDuplicate(nums) << endl;
+  */
+
+  EXECS(Solution::findDuplicate);
+  // EXECS(Solution::findDuplicateSwap);
   return 0;
 }

@@ -1,4 +1,4 @@
-#include "utils2.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -21,10 +21,26 @@ class Solution {
 
       return res;
     }
+
+    string getSmallestStringNew(int n, int k) {
+      string res(n, 'a');
+
+      int val = n;
+
+      for (int i = n - 1; val < k; val += 25, --i) {
+        if (k - val > 25)
+          res[i] = 'z';
+        else
+          res[i] +=  k - val;
+      }
+
+      return res;
+    }
 };
 
 
 int main() {
-  UFUNC(Solution::getSmallestString);
+  EXECS(Solution::getSmallestString);
+  EXECS(Solution::getSmallestStringNew);
   return 0;
 }

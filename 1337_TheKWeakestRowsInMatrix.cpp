@@ -1,4 +1,4 @@
-#include "utils2.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
@@ -64,11 +64,7 @@ class Solution {
 
 
 int main() {
-  {
-    UFUNC(Solution::kWeakestRows);
-  }
-  {
-    UFUNC(Solution::kWeakestRowsPair);
-  }
+  EXECS(Solution::kWeakestRows);
+  EXECS(Solution::kWeakestRowsPair);
   return 0;
 }

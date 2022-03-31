@@ -1,6 +1,22 @@
-#include "utils2.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
+  private:
+    int dfs(const string& s, int& i) {
+      int res = 0;
+
+      while (i < s.size() && s[i] == '(') {
+        // skip '(' at current level
+        ++i;
+        res += max(dfs(s, i) * 2, 1);
+      }
+
+      // skip ')'
+      ++i;
+
+      return res;
+    }
+
   public:
     int scoreOfParentheses(string S) {
       stack<int> s;
@@ -30,10 +46,17 @@ class Solution {
 
       return res;
     }
+
+    int scoreOfParenthesesDFS(string s) {
+      int i = 0;
+
+      return dfs(s, i);
+    }
 };
 
 
 int main() {
-  UFUNC(Solution::scoreOfParentheses);
+  EXECS(Solution::scoreOfParentheses);
+  EXECS(Solution::scoreOfParenthesesDFS);
   return 0;
 }

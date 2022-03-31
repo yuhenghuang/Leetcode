@@ -1,10 +1,4 @@
-#include <vector>
-#include <string>
-#include <algorithm>
-#include <iostream>
-#include <iterator>
-
-using namespace std;
+#include <local_leetcode.hpp>
 
 class Solution {
 public:
@@ -43,11 +37,48 @@ public:
 
       return res;
     }
+
+    vector<int> partitionLabelsNew(string s) {
+      vector<pair<int, int>> intervals(26, {-1, 0});
+
+      for (int i = 0; i < s.size(); ++i) {
+        int j = s[i] - 'a';
+        
+        if (intervals[j].first < 0)
+          intervals[j].first = i;
+
+        intervals[j].second = i;
+      }
+
+      sort(intervals.begin(), intervals.end());
+
+      vector<int> res;
+      int start = 0, end = 0;
+
+      for (auto& [s, e] : intervals) {
+        if (s > end) {
+          res.push_back(s - start);
+          start = s;
+          end = e;
+        }
+        else
+          end = max(end, e);
+      }
+
+      res.push_back(end - start + 1);
+
+      return res;
+    }
 };
 
 int main() {
+  /*
   Solution sol;
   vector<int> res= sol.partitionLabels("ababcbacadefegdehijhklij");
   copy(res.begin(), res.end(), ostream_iterator<int>(cout, " "));
+  */
+
+  EXECS(Solution::partitionLabels);
+  EXECS(Solution::partitionLabelsNew);
   return 0;
 }

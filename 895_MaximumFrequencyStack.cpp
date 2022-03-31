@@ -1,48 +1,51 @@
-#include <unordered_map>
-#include <stack>
-
-using namespace std;
+#include <local_leetcode.hpp>
 
 class FreqStack {
-  private:
+  private: 
     int maxFreq;
-  
-    unordered_map<int, int> count;
-    unordered_map<int, stack<int>*> mapStack;
+
+    // val, freq
+    unordered_map<int, int> freqs;
+
+    // freq, stack
+    vector<stack<int>> stacks;
   
   public:
-    FreqStack(): maxFreq(0) { }
+    FreqStack(): maxFreq(0), stacks(1) { }
     
     void push(int x) {
-      int x_cnt = ++count[x];
+      // frequency of x
+      int f = ++freqs[x];
       
-      if (x_cnt > maxFreq)
-        maxFreq = x_cnt;
+      if (f > maxFreq)
+        maxFreq = f;
       
-      if (mapStack.count(x_cnt) == 0)
-        mapStack.emplace(x_cnt, new stack<int>());
+      if (f == stacks.size())
+        stacks.emplace_back();
       
-      stack<int>* s = mapStack[x_cnt];
-      s->push(x);
+      stacks[f].push(x);
     }
     
     int pop() {
-      if (mapStack[maxFreq]->size() == 0 && maxFreq > 0)
+      if (stacks[maxFreq].empty() && maxFreq > 0)
         --maxFreq;
       
-      stack<int>* s = mapStack[maxFreq];
+      stack<int>& s = stacks[maxFreq];
       
-      int res = s->top();
-      s->pop();
-      --count[res];
+      int x = s.top(); s.pop();
       
-      return res;
+      --freqs[x];
+      
+      return x;
     }
 };
 
-/**
- * Your FreqStack object will be instantiated and called as such:
- * FreqStack* obj = new FreqStack();
- * obj->push(x);
- * int param_2 = obj->pop();
- */
+
+int main() {
+  EXECX(
+    CTOR(),
+    &FreqStack::push,
+    &FreqStack::pop
+  );
+  return 0;
+}
