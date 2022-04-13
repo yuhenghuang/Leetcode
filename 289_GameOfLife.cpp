@@ -1,4 +1,4 @@
-#include "utils.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
@@ -16,10 +16,9 @@ class Solution {
       m = board.size();
       n = board[0].size();
 
-      int s;
       for (int i=0; i<m; ++i)
         for (int j=0; j<n; ++j) {
-          s = 0;
+          int s = 0;
 
           for (int p=-1; p<2; ++p)
             for (int q=-1; q<2; ++q)
@@ -38,6 +37,6 @@ class Solution {
 
 
 int main() {
-  UFUNC(Solution::gameOfLife);
+  EXECS(Solution::gameOfLife);
   return 0;
 }
