@@ -13,7 +13,9 @@ class SpiralIterator: public iterator<forward_iterator_tag, int> {
 
   public:
     SpiralIterator(vector<vector<int>>& _mat): 
-      mat(_mat), i(0), l(mat.size()), d(0), r(0), c(0) 
+      mat(_mat), 
+      i(0), l(mat.size()), 
+      d(0), r(0), c(0) 
     { }
 
     SpiralIterator& operator++() {
