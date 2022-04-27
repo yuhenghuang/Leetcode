@@ -1,5 +1,4 @@
-#define PRINT_TREE_1D
-#include "utils2.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -20,6 +19,7 @@ class Solution {
         else if (!r)
           return l;
         else {
+          // neven needed ...
           root = l;
           while (l->right)
             l = l->right;
@@ -33,6 +33,6 @@ class Solution {
 
 
 int main() {
-  UFUNC(Solution::trimBST);
+  EXECS(Solution::trimBST);
   return 0;
 }

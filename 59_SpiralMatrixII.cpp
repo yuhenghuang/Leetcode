@@ -25,6 +25,7 @@ class SpiralIterator: public iterator<forward_iterator_tag, int> {
         i = 0;
         d = (d + 1) % 4;
 
+        // shrink l when d is odd
         if (d % 2 == 1)
           --l;
       }

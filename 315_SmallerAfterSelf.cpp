@@ -1,4 +1,5 @@
-#include "utils.hpp"
+#define _LL_PRINT_ARRAY_MAX_LENGTH 100
+#include <local_leetcode.hpp>
 
 class SegmentTree {
   private:
@@ -71,7 +72,7 @@ struct BSTNode
   : public TreeNode {
   // ...
   int small, count;
-  BSTNode(int _v): small(0), count(1), TreeNode(_v) { }
+  BSTNode(int _v): TreeNode(_v), small(0), count(1) { }
 };
 
 
@@ -159,6 +160,20 @@ class Solution {
         return node->small;
     }
 
+    void update(vector<int>& bit, int i) {
+      for (; i < bit.size(); i += i & (-i))
+        ++bit[i];
+    }
+
+    int query(vector<int>& bit, int i) {
+      int res = 0;
+
+      for (; i > 0; i -= i & (-i))
+        res += bit[i];
+
+      return res;
+    }
+
   public:
     vector<int> countSmaller(vector<int>& nums) {
       int n = nums.size();
@@ -167,6 +182,27 @@ class Solution {
       for (int i=n-2; i>=0; --i) {
         root = insert(root, nums[i+1]);
         res[i] = query(root, nums[i]);
+      }
+
+      ll::destroy<TreeNode>(root);
+
+      return res;
+    }
+
+    vector<int> countSmallerBIT(vector<int>& nums) {
+      auto p = minmax_element(nums.begin(), nums.end());
+
+      int min_val = *p.first;
+      int n = *p.second - min_val + 1;
+
+      // binary index tree
+      vector<int> bit(n + 1);
+
+      vector<int> res(nums.size());
+
+      for (int i = static_cast<int>(nums.size()) - 2; i >= 0; --i) {
+        update(bit, nums[i+1] - min_val + 1);
+        res[i] = query(bit, nums[i] - min_val);
       }
 
       return res;
@@ -216,14 +252,9 @@ class Solution {
 
 
 int main() {
-  {
-    UFUNC(Solution::countSmaller);
-  }
-  {
-    UFUNC(Solution::countSmallerST);
-  }
-  {
-    UFUNC(Solution::countSmallerTLE);
-  }
+  EXECS(Solution::countSmaller);
+  EXECS(Solution::countSmallerBIT);
+  EXECS(Solution::countSmallerST);
+  EXECS(Solution::countSmallerTLE);
   return 0;
 }

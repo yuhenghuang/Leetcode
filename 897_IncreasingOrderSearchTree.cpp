@@ -1,4 +1,4 @@
-#include "utils.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
@@ -14,15 +14,15 @@ class Solution {
     }
   public:
     TreeNode* increasingBST(TreeNode* root) {
-      TreeNode* dummy = new TreeNode();
-      curr = dummy;
+      TreeNode dummy;
+      curr = &dummy;
       dfs(root);
-      return dummy->right;
+      return dummy.right;
     }
 
     TreeNode* increasingBSTIter(TreeNode* root) {
-      TreeNode* dummy = new TreeNode();
-      TreeNode* curr = dummy;
+      TreeNode dummy;
+      TreeNode* curr = &dummy;
       stack<TreeNode*> s;
 
       while(!s.empty() || root) {
@@ -40,17 +40,13 @@ class Solution {
         root = root->right;
       }
 
-      return dummy->right;
+      return dummy.right;
     }
 };
 
 
 int main() {
-  {
-    UFUNC(Solution::increasingBST);
-  }
-  {
-    UFUNC(Solution::increasingBSTIter);
-  }
+  EXECS(Solution::increasingBST);
+  EXECS(Solution::increasingBSTIter);
   return 0;
 }

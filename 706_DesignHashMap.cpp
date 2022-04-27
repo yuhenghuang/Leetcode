@@ -1,14 +1,12 @@
-#include <vector>
 #include <forward_list>
-
-using namespace std;
+#include <local_leetcode.hpp>
 
 class MyHashMap {
   private:
-    typedef forward_list<pair<int, int>> list_type;
+    typedef forward_list<pair<const int, int>> list_type;
 
     int size;
-    int bucketSize;
+    int bucketSize; // redundant == buckets.size()
     
     vector<list_type> buckets;
 
@@ -79,3 +77,13 @@ class MyHashMap {
       }
     }
 };
+
+
+int main() {
+  EXECX(
+    CTOR(),
+    &MyHashMap::put,
+    &MyHashMap::get,
+    &MyHashMap::remove
+  );
+}

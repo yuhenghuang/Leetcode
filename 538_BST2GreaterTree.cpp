@@ -1,5 +1,4 @@
-#define PRINT_TREE_1D
-#include "utils2.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
@@ -67,6 +66,7 @@ class Solution {
 
 
 int main() {
-  UFUNC(Solution::convertBST);
+  EXECS(Solution::convertBST);
+  EXECS(Solution::convertBSTRecur);
   return 0;
 }

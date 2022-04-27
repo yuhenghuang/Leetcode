@@ -1,4 +1,4 @@
-#include "DataStructure.h"
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -9,3 +9,9 @@ class Solution {
       else return searchBST(root->right, val);
     }
 };
+
+
+int main() {
+  EXECS(Solution::searchBST);
+  return 0;
+}
