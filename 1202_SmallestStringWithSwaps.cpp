@@ -5,7 +5,7 @@ class Solution {
     vector<int> parent;
 
     int find(int p) {
-      if (parent[p] == p)
+      if (parent[p] == -1)
         return p;
       return parent[p] = find(parent[p]);
     }
@@ -16,6 +16,7 @@ class Solution {
 
       if (p != q) {
         // choose smaller one as parent
+        // or use rank to determine the optimal parent
         if (p < q)
           parent[q] = p;
         else
@@ -25,19 +26,19 @@ class Solution {
 
   public:
     string smallestStringWithSwaps(string s, vector<vector<int>>& pairs) {
-      int n = s.size();
+      const int n = s.size();
 
-      parent.resize(n);
-      iota(parent.begin(), parent.end(), 0);
+      parent.assign(n, -1);
 
       for (auto& p : pairs)
         join(p[0], p[1]);
 
-      // sub strings
+      // sub sequences
       vector<string> sss(n);
       for (int i = 0; i < n; ++i) 
         sss[find(i)].push_back(s[i]);
 
+      // sort sub sequences
       for (auto& ss : sss)
         sort(ss.begin(), ss.end());
 
@@ -48,7 +49,7 @@ class Solution {
       res.reserve(n);
 
       for (int i = 0; i < n; ++i)
-        res.push_back(*ptrs[parent[i]]++);
+        res.push_back(*ptrs[find(i)]++);
 
       return res;
     }

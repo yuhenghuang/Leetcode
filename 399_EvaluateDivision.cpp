@@ -1,10 +1,7 @@
-#include "utils.hpp"
-#include <unordered_map>
-
-using namespace std;
+#include <local_leetcode.hpp>
 
 struct TrieNode {
-  unordered_map<TrieNode*, double> dict;
+  unordered_map<TrieNode*, double> children;
 
   TrieNode() {}
 };
@@ -19,7 +16,7 @@ class Solution {
       seen[curr] = true;
 
       double res=-1.0;
-      for (auto& iter : curr->dict) {
+      for (auto& iter : curr->children) {
         if (seen[iter.first]) continue;
 
         res = iter.second * dfs(iter.first, target);
@@ -31,8 +28,35 @@ class Solution {
       return res > 0 ? res : -1.0;
     }
 
+    void reset() {
+      root.clear();
+      seen.clear();
+    }
+
+    double dfs(int u, int t, const vector<vector<int>>& graph, const vector<vector<double>>& weight , vector<bool>& seen) {
+      if (u == t)
+        return 1.0;
+
+      seen[u] = true;
+
+      double res = -1.0;
+      for (auto& v : graph[u])
+        if (!seen[v]) {
+          res = weight[u][v] * dfs(v, t, graph, weight, seen);
+
+          if (res > 0)
+            break;
+        }
+
+      seen[u] = false;
+
+      return res > 0 ? res : -1.0;
+    }
+
   public:
     vector<double> calcEquation(vector<vector<string>>& equations, vector<double>& values, vector<vector<string>>& queries) {
+      reset();
+
       vector<double> res;
       res.reserve(queries.size());
 
@@ -46,8 +70,8 @@ class Solution {
           root[equations[i][1]] = new TrieNode();
         b = root[equations[i][1]];
 
-        a->dict[b] = values[i];
-        b->dict[a]=1.0/values[i];
+        a->children[b] = values[i];
+        b->children[a]=1.0/values[i];
       }
 
 
@@ -65,14 +89,57 @@ class Solution {
       return res;
     }
 
-    void reset() {
-      root.clear();
-      seen.clear();
+    vector<double> calcEquationPO(vector<vector<string>>& equations, vector<double>& values, vector<vector<string>>& queries) {
+      unordered_map<string, int> m;
+
+      int uid = 0;
+      for (auto& eq : equations)
+        for (auto& var : eq) {
+          if (m.count(var) == 0)
+            m[var] = uid++;
+        }
+
+      int n = m.size();
+      vector<vector<int>> graph(n);
+
+      vector<vector<double>> weight(n, vector<double>(n));
+
+      for (int i = 0; i < equations.size(); ++i) {
+        int u = m[equations[i][0]];
+        int v = m[equations[i][1]];
+      
+        graph[u].push_back(v);
+        graph[v].push_back(u);
+
+        weight[u][v] = values[i];
+        weight[v][u] = 1 / values[i];
+      }
+
+      vector<bool> seen(n);
+
+      vector<double> res;
+      res.reserve(queries.size());
+
+      for (auto& q : queries) {
+        auto iter = m.find(q[0]);
+        int u = iter == m.end() ? -1 : iter->second;
+
+        iter = m.find(q[1]);
+        int v = iter == m.end() ? -1 : iter->second;
+
+        if (u >= 0 && v >= 0)
+          res.push_back(dfs(u, v, graph, weight, seen));
+        else
+          res.push_back(-1.0);
+      }
+
+      return res;
     }
 };
 
 
 int main() {
+  /*
   Solution sol;
 
   vector<string> args;
@@ -95,6 +162,9 @@ int main() {
 
     utils::print_vector_1d(res);
   }
+  */
+
+  EXECS(Solution::calcEquationPO);
 
   return 0;
 }

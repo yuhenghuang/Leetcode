@@ -3,7 +3,7 @@
 class Solution {
   private:
     // return m[t / 2] if t is even, otherwise 0
-    int findHalf(unordered_map<long long, int>& m, long long t) {
+    int findHalf(unordered_map<int64_t, int>& m, int64_t t) {
       if (t % 2 == 0) {
         t /= 2;
         auto iter = m.find(t);
@@ -27,10 +27,10 @@ class Solution {
 
       const int n = nums.size();
 
-      long long sum = 0; // total sum
+      int64_t sum = 0; // total sum
 
       // prefix (suffix) sum, count
-      unordered_map<long long, int> p, s;
+      unordered_map<int64_t, int> p, s;
 
       for (int i = 0; i < n - 1; ++i)
         ++p[sum += nums[i]];
@@ -39,18 +39,18 @@ class Solution {
 
       int res = max(findHalf(p, sum), findHalf(p, sum - k + nums[0]));
 
-      long long suffix = sum;
+      int64_t suffix = sum;
       for (int i = 1; i < n; ++i) {
         suffix -= nums[i - 1];
 
-        // only prefix/suffix sums that incorporate nums[i] will be affected
+        // only prefix/suffix sums that contain nums[i] will be affected
         // thus, prefix/suffix sum is updated as index goes up
 
         ++s[suffix]; // add suffix sum over [i, n-1]
         --p[sum - suffix]; // remove prefix sum over [0, i-1]
 
         // target, 2 * prefix (or suffix) sum
-        long long t = sum - k + nums[i];
+        int64_t t = sum - k + nums[i];
 
         res = max(res, findHalf(p, t) + findHalf(s, t));
       }
