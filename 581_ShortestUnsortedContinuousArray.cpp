@@ -1,4 +1,4 @@
-#include "utils2.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -29,6 +29,6 @@ class Solution {
 
 
 int main() {
-  UFUNC(Solution::findUnsortedSubarray);
+  EXECS(Solution::findUnsortedSubarray);
   return 0;
 }

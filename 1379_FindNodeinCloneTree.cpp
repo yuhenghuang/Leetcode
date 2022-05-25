@@ -15,7 +15,7 @@ class Solution {
       return getTargetCopy(
         original,
         cloned,
-        ll::find_node_in_tree(original, target)
+        ll::find_node(original, target)
       )->val;
     }
 };

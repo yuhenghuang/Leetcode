@@ -1,5 +1,4 @@
-#include "utils.hpp"
-#include <map>
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
@@ -62,10 +61,24 @@ class Solution {
 
       return false;
     }
+
+    bool find132patternNew(vector<int>& nums) {
+      // unfinished
+
+      int num_min = INT_MAX;
+      int num_max = INT_MIN;
+
+      for (const int& num : nums) {
+
+      }
+
+      return false;
+    }
 };
 
 
 int main() {
+  /*
   Solution sol;
 
   vector<int> nums;
@@ -76,6 +89,10 @@ int main() {
 
     cout << boolalpha << sol.find132pattern(nums) << " " << sol.find132patternSimple(nums) << endl;
   }
+  */
+
+  EXECS(Solution::find132pattern);
+  EXECS(Solution::find132patternSimple);
 
   return 0;
 }

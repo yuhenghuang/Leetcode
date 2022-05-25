@@ -1,32 +1,33 @@
-#include <string>
-#include <vector>
-#include <iostream>
-using namespace std;
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
     int longestValidParentheses(string s) {
-      int N = s.size();
-      vector<int> memo(N, 0);
-      
-      int res=0;
-      for (int i=1; i<N; ++i) {
+      int n = s.size();
 
-        if (s[i]==')' && i-1-memo[i-1]>=0 && s[i-1-memo[i-1]] == '(')
+      // size of longest valid parentheses whose right end is at index i
+      vector<int> memo(n, 0);
+      
+      int res = 0;
+      for (int i = 1; i < n; ++i) {
+
+        if (s[i] == ')' && i-1-memo[i-1] >= 0 && s[i-1-memo[i-1]] == '(')
           memo[i] = memo[i-1] + 2;
-        int idx = i - memo[i];
-        while (idx>=0 && memo[idx]) {
-          memo[i] += memo[idx];
-          idx -= memo[idx];
-        }
-        cout << i << " " << memo[i] << endl;
+
+        // concatenate, i.e. (...) + (...)
+        int j = i - memo[i];
+        if (j >= 0 && memo[j] > 0)
+          memo[i] += memo[j];
+          
+        // cout << i << " " << memo[i] << endl;
         res = max(res, memo[i]);
       }
       return res;
     }
 };
 
+
 int main() {
-  Solution sol;
-  cout << sol.longestValidParentheses("())") << endl;
+  EXECS(Solution::longestValidParentheses);
+  return 0;
 }

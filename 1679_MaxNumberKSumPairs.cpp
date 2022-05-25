@@ -1,4 +1,4 @@
-#include "utils.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -8,15 +8,16 @@ class Solution {
         ++m[num];
 
       int res = 0;
-      for (auto iter : m) {
-        if (iter.first * 2 > k)
+      for (auto& [num, freq] : m) {
+        // early stop
+        if (num * 2 > k)
           break;
-        else if (iter.first * 2 == k)
-          res += iter.second / 2;
+        else if (num * 2 == k)
+          res += freq / 2;
         else {
-          auto conj = m.find(k-iter.first);
-          if (conj!=m.end()) 
-            res += min(iter.second, conj->second);
+          auto conj = m.find(k - num);
+          if (conj != m.end()) 
+            res += min(freq, conj->second);
         }
       }
 
@@ -26,6 +27,6 @@ class Solution {
 
 
 int main() {
-  UFUNC(Solution::maxOperations);
+  EXECS(Solution::maxOperations);
   return 0;
 }
