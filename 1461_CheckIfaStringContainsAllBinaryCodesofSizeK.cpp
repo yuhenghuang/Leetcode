@@ -1,5 +1,4 @@
-#include <unordered_set>
-#include "utils2.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -25,6 +24,6 @@ class Solution {
 
 
 int main() {
-  UFUNC(Solution::hasAllCodes);
+  EXECS(Solution::hasAllCodes);
   return 0;
 }

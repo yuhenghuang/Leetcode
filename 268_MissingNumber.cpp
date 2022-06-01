@@ -1,4 +1,4 @@
-#include "utils2.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -6,10 +6,8 @@ class Solution {
       int n = nums.size();
       
       int res = n;
-      for (int i=0; i<n; ++i) {
-        res ^= i;
-        res ^= nums[i];
-      }
+      for (int i = 0; i < n; ++i)
+        res ^= i ^ nums[i];
       
       return res;
     }
@@ -17,6 +15,6 @@ class Solution {
 
 
 int main() {
-  UFUNC(Solution::missingNumber);
+  EXECS(Solution::missingNumber);
   return 0;
 }

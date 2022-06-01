@@ -2,6 +2,9 @@
 
 Save my solutions to leecode problems
 
+### Release of `local_leetcode`!!!
+
+Visit public repository of [local leetcode](https://github.com/yuhenghuang/local_leetcode) for more information!!!
 
 ### Shift to `utils3` seamlessly
 
