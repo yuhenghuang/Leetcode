@@ -1,4 +1,4 @@
-#include "utils.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -26,6 +26,6 @@ class Solution {
 
 
 int main() {
-  UFUNC(Solution::merge);
+  EXECS(Solution::merge);
   return 0;
 }

@@ -1,4 +1,4 @@
-#include "utils2.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -9,15 +9,20 @@ class Solution {
         }
       );
 
+      // durations
       priority_queue<int, vector<int>> heap;
       
+      // current time
       int t = 0;
+
       for (auto& p : courses) {
+        // add new course
         if (t + p[0] <= p[1]) {
           t += p[0];
           heap.push(p[0]);
         }
-        else if (!heap.empty() && p[0] < heap.top()){
+        // replace old course
+        else if (!heap.empty() && p[0] < heap.top()) {
           t += p[0] - heap.top();
           heap.pop();
           heap.push(p[0]);
@@ -30,6 +35,6 @@ class Solution {
 
 
 int main() {
-  UFUNC(Solution::scheduleCourse);
+  EXECS(Solution::scheduleCourse);
   return 0;
 }

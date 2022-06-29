@@ -1,4 +1,4 @@
-#include "utils2.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
@@ -33,6 +33,7 @@ class Solution {
 
   public:
     int totalNQueens(int n) {
+      // O(n^n)
       // reset result
       res = 0;
 
@@ -46,6 +47,6 @@ class Solution {
 
 
 int main() {
-  UFUNC(Solution::totalNQueens);
+  EXECS(Solution::totalNQueens);
   return 0;
 }

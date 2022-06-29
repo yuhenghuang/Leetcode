@@ -1,8 +1,8 @@
-#include "utils2.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
-    bool isPossible(vector<int>& target) {
+    bool isPossibleOld(vector<int>& target) {
       if (target.size() == 1)
         return target[0] == 1;
 
@@ -39,10 +39,31 @@ class Solution {
 
       return true;
     }
+
+    bool isPossible(vector<int>& target) {
+      if (target.size() == 1)
+        return target[0] == 1;
+
+
+      // max heap
+      priority_queue<int> heap(target.begin(), target.end());
+
+      int64_t sum = reduce(target.begin(), target.end(), (int64_t) 0);
+
+      while (heap.top() > 1) {
+        int num = heap.top();
+        heap.pop();
+
+        
+      }
+
+      return true;
+    }
 };
 
 
 int main() {
-  UFUNC(Solution::isPossible);
+  EXECS(Solution::isPossibleOld);
+  EXECS(Solution::isPossible);
   return 0;
 }

@@ -1,5 +1,4 @@
-#include "utils2.hpp"
-
+#include <local_leetcode.hpp>
 
 struct TrieNode {
   unordered_map<char, TrieNode*> dict;
@@ -43,12 +42,12 @@ struct TrieNode {
 };
 
 
-class WordFilter {
+class WordFilterOld {
   private:
     TrieNode* root;
 
   public:
-    WordFilter(vector<string>& words) {
+    WordFilterOld(vector<string>& words) {
       root = new TrieNode();
 
       for (int i = 0; i < words.size(); ++i)
@@ -60,3 +59,42 @@ class WordFilter {
       return root->query(suffix + '#' + prefix);
     }
 };
+
+class WordFilter {
+  private:
+    struct Node {
+      int index; // index of word in words
+      Node* children[26];
+
+      Node(): index(-1), children{0} { };
+    };
+
+    Node* root;
+
+  public:
+    WordFilter(vector<string>& words) {
+      for (int i = 0; i < words.size(); ++i) {
+        // prefix + '#' + reversed suffix
+
+        for (int j = 1; j < words.size(); ++j) {
+
+        }
+      }
+    }
+    
+    int f(string prefix, string suffix) {
+        
+    }
+
+    ~WordFilter() { ll::destroy(root); };
+};
+
+
+int main() {
+  EXECX(
+    CTOR(vector<string>&),
+    &WordFilter::f
+  );
+
+  return 0;
+}

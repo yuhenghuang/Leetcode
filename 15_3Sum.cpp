@@ -1,4 +1,4 @@
-#include "utils3.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
@@ -73,7 +73,7 @@ class Solution {
 };
 
 int main() {
-  UFUNCS(Solution::threeSum);
-  UFUNCS(Solution::threeSumOn2);
+  EXECS(Solution::threeSum);
+  EXECS(Solution::threeSumOn2);
   return 0;
 }

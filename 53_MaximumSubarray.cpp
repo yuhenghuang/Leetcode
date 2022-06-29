@@ -1,10 +1,10 @@
-#include "utils3.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
     // mid point in the target array
     int dv(vector<int>& nums, int l, int r, int m) {
-      // at least one number on each size
+      // at least one number on each side
       
       int sum = 0;
       int left = INT_MIN;
@@ -65,7 +65,7 @@ class Solution {
 
 
 int main() {
-  UFUNCS(Solution::maxSubArray);
-  UFUNCS(Solution::maxSubArrayDivideConqure);
+  EXECS(Solution::maxSubArray);
+  EXECS(Solution::maxSubArrayDivideConqure);
   return 0;
 }

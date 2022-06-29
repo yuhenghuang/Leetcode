@@ -1,4 +1,5 @@
-#include "utils.hpp"
+#define _LL_PRINT_ARRAY_MAX_LENGTH 10
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
@@ -46,6 +47,6 @@ class Solution {
 
 
 int main() {
-  UFUNC(Solution::solveNQueens);
+  EXECS(Solution::solveNQueens);
   return 0;
 }
