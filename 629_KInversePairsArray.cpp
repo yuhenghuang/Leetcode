@@ -1,4 +1,4 @@
-#include "utils2.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -15,15 +15,15 @@ class Solution {
           // must handle negative values due to module and subtraction
           next[j+1] = ((next[j] + prev[j + 1] - (j < i ? 0 : prev[j - i])) % mod + mod) % mod;
 
-        prev = next;
+        swap(prev, next);
       }
-
+      
       return prev[k];
     }
 };
 
 
 int main() {
-  UFUNC(Solution::kInversePairs);
+  EXECS(Solution::kInversePairs);
   return 0;
 }

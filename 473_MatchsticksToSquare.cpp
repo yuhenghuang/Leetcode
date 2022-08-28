@@ -1,11 +1,9 @@
-#include "utils2.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
     bool makesquare(vector<int>& matchsticks) {
-      long totalLength = 0;
-      for (int length : matchsticks)
-        totalLength += length;
+      int64_t totalLength = reduce(matchsticks.begin(), matchsticks.end(), int64_t(0));
 
       if (totalLength % 4 != 0)
         return false;
@@ -13,8 +11,9 @@ class Solution {
       int n = matchsticks.size();
       int N = 1 << n;
 
-      long target = totalLength / 4;
-      vector<long> dp(N, LONG_MAX);
+      int target = totalLength / 4;
+      
+      vector<int> dp(N, INT_MAX);
       dp[0] = 0;
       for (int i = 0; i < N; ++i) {
         if (dp[i] > target) // skip if dp[i] exceeds the length of a side (target)
@@ -35,6 +34,6 @@ class Solution {
 
 
 int main() {
-  UFUNC(Solution::makesquare);
+  EXECS(Solution::makesquare);
   return 0;
 }

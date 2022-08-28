@@ -1,4 +1,4 @@
-#include "utils2.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -25,6 +25,6 @@ class Solution {
 
 
 int main() {
-  UFUNC(Solution::generate);
+  EXECS(Solution::generate);
   return 0;
 }

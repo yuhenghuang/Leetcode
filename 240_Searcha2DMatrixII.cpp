@@ -1,4 +1,4 @@
-#include "utils2.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
@@ -10,7 +10,6 @@ class Solution {
 
       int p = i + (m-i)/2, q = j + (n-j)/2;
 
-      bool res = false;
       if (mat[p][q] >= target && binarySearch(i, j, p, q, mat, target))
         return true;
       
@@ -52,6 +51,7 @@ class Solution {
 
 
 int main() {
-  UFUNC(Solution::searchMatrix);
+  EXECS(Solution::searchMatrix);
+  EXECS(Solution::searchMatrixSlow);
   return 0;
 }

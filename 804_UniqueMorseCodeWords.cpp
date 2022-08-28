@@ -1,11 +1,10 @@
-#include "utils.hpp"
-#include <unordered_set>
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
-    static const vector<string> encoder;
+    static const string encoder[26];
 
-    vector<size_t> code2size(const vector<string>& encoder) const {
+    vector<size_t> code2size() const {
       vector<size_t> out;
       out.reserve(26);
       size_t temp;
@@ -37,10 +36,10 @@ class Solution {
     }
 
     int uniqueMorseRepresentationsBS(vector<string>& words) {
-      static const vector<size_t> bins = code2size(encoder);
+      static const vector<uint64_t> bins = code2size();
 
-      unordered_set<size_t> codes;
-      size_t temp;
+      unordered_set<uint64_t> codes;
+      uint64_t temp;
       for (const string& w : words) {
         temp = 0;
         for (char c : w) {
@@ -54,15 +53,11 @@ class Solution {
     }
 };
 
-const vector<string> Solution::encoder = {".-","-...","-.-.","-..",".","..-.","--.","....","..",".---","-.-",".-..","--","-.","---",".--.","--.-",".-.","...","-","..-","...-",".--","-..-","-.--","--.."};
+const string Solution::encoder[] = {".-","-...","-.-.","-..",".","..-.","--.","....","..",".---","-.-",".-..","--","-.","---",".--.","--.-",".-.","...","-","..-","...-",".--","-..-","-.--","--.."};
 
 
 int main() {
-  {
-    UFUNC(Solution::uniqueMorseRepresentations);
-  }
-  {
-    UFUNC(Solution::uniqueMorseRepresentationsBS);
-  }
+  EXECS(Solution::uniqueMorseRepresentations);
+  EXECS(Solution::uniqueMorseRepresentationsBS);
   return 0;
 }

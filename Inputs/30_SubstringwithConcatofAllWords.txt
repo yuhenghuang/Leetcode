@@ -1,0 +1,4 @@
+"barfoothefoobarman", ["foo","bar"]
+"wordgoodgoodgoodbestword", ["word","good","best","word"]
+"barfoofoobarthefoobarman", ["bar","foo","the"]
+"ababababab", ["ababa","babab"]

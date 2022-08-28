@@ -1,4 +1,4 @@
-#include "utils2.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -30,6 +30,6 @@ class Solution {
 
 
 int main() {
-  UFUNC(Solution::numSubmatrixSumTarget);
+  EXECS(Solution::numSubmatrixSumTarget);
   return 0;
 }

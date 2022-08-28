@@ -1,14 +1,15 @@
-#include "utils2.hpp"
-
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
     int lengthOfLIS(vector<int>& nums) {
+      // use the space from the front of nums to save LIS
+      
       int res = 0;
 
       auto i = nums.begin();
       auto j = i;
-      for (int num : nums) {
+      for (const int& num : nums) {
         auto m = lower_bound(i, j, num);
 
         *m = num;
@@ -26,6 +27,6 @@ class Solution {
 
 
 int main() {
-  UFUNC(Solution::lengthOfLIS);
+  EXECS(Solution::lengthOfLIS);
   return 0;
 }

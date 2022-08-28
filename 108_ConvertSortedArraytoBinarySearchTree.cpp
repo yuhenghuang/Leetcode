@@ -1,5 +1,5 @@
-#define _DELETE_RETURN_POINTER
-#include "utils3.hpp"
+#define _LL_DELETE_RETURN_POINTER
+#include <local_leetcode.hpp>
 
 
 class Solution {
@@ -24,6 +24,6 @@ class Solution {
 };
 
 int main() {
-  UFUNCS(Solution::sortedArrayToBST);
+  EXECS(Solution::sortedArrayToBST);
   return 0;
 }

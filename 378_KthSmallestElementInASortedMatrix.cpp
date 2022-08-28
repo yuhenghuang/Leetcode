@@ -1,5 +1,4 @@
-#include <functional>
-#include "utils2.hpp"
+#include <local_leetcode.hpp>
 
 
 class Solution {
@@ -36,6 +35,6 @@ class Solution {
 
 
 int main() {
-  UFUNC(Solution::kthSmallest);
+  EXECS(Solution::kthSmallest);
   return 0;
 }

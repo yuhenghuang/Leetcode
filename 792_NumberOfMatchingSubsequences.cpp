@@ -1,4 +1,4 @@
-#include "utils2.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -90,11 +90,7 @@ class Solution {
 
 
 int main() {
-  {
-    UFUNC(Solution::numMatchingSubseq);
-  }
-  {
-    UFUNC(Solution::numMatchingSubseqIterator);
-  }
+  EXECS(Solution::numMatchingSubseq);
+  EXECS(Solution::numMatchingSubseqIterator);
   return 0;
 }

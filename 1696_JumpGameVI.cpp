@@ -1,4 +1,4 @@
-#include "utils2.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -27,6 +27,7 @@ class Solution {
     int maxResultOn(vector<int>& nums, int k) {
       int n = nums.size();
 
+      // monotonic deque, highest on front(left)
       // (index, sum)
       deque<pair<int, int>> q;
       q.emplace_back(0, nums.front());
@@ -37,7 +38,7 @@ class Solution {
         while (!q.empty() && q.back().second <= sum)
           q.pop_back();
 
-        while (!q.empty() && i - k >= q.front().first)
+        if (!q.empty() && i - k >= q.front().first)
           q.pop_front();
 
         q.emplace_back(i, sum);
@@ -49,11 +50,7 @@ class Solution {
 
 
 int main() {
-  {
-    UFUNC(Solution::maxResult);
-  }
-  {
-    UFUNC(Solution::maxResultOn);
-  }
+  EXECS(Solution::maxResult);
+  EXECS(Solution::maxResultOn);
   return 0;
 }

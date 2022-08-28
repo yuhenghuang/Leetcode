@@ -1,4 +1,5 @@
-#include "utils3.hpp"
+#include <stack>
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
@@ -106,14 +107,14 @@ class Solution {
     int lowestCommonAncestor(TreeNode* root, int p, int q) {
       return lowestCommonAncestor(
         root,
-        utils3::find_node_in_tree(root, p),
-        utils3::find_node_in_tree(root, q)
+        ll::find_node(root, p),
+        ll::find_node(root, q)
       )->val;
     }
 };
 
 
 int main() {
-  UFUNCS(Solution::lowestCommonAncestor, int, (TreeNode*, int, int));
+  EXECS(Solution::lowestCommonAncestor, int, (TreeNode*, int, int));
   return 0;
 }

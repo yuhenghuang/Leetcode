@@ -1,6 +1,4 @@
-#include <map>
-
-using namespace std;
+#include <local_leetcode.hpp>
 
 class MyCalendar {
   private:
@@ -35,3 +33,12 @@ class MyCalendar {
       return false;
     }
 };
+
+
+int main() {
+  EXECX(
+    CTOR(),
+    &MyCalendar::book
+  );
+  return 0;
+}

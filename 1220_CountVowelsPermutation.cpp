@@ -1,5 +1,4 @@
-#include <numeric>
-#include "utils2.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -8,6 +7,11 @@ class Solution {
 
       vector<int> prev(5, 1), next(5);
 
+      // ae
+      // ea, ei
+      // ia, ie, io, iu
+      // oi, ou
+      // ua
       while (--n) {
         next[0] = ((prev[1] + prev[2]) % mod + prev[4]) % mod;
         next[1] = (prev[0] + prev[2]) % mod;
@@ -18,17 +22,17 @@ class Solution {
         swap(prev, next);
       }
 
-      int res = 0;
-
-      for (int num : prev)
-        res = (res + num) % mod;
-
-      return res;
+      return reduce(
+        prev.begin(), 
+        prev.end(), 
+        0, 
+        [](int x, int y) { return (x + y) % mod; }
+      );
     }
 };
 
 
 int main() {
-  UFUNC(Solution::countVowelPermutation);
+  EXECS(Solution::countVowelPermutation);
   return 0;
 }

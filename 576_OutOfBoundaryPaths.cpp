@@ -1,8 +1,8 @@
-#include "utils2.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
-    int dir[4][2] = {{1,0}, {-1,0}, {0,1}, {0,-1}};
+    static constexpr int dir[4][2] = {{1,0}, {-1,0}, {0,1}, {0,-1}};
   public:
     int findPaths(int m, int n, int N, int i, int j) {
       vector<vector<long>> mat(m, vector<long>(n, 0));
@@ -57,6 +57,7 @@ class Solution {
           }
         }
 
+        // avoid copy
         swap(dp, dp_prime);
         dp_prime.assign(N, 0);
       };
@@ -67,11 +68,7 @@ class Solution {
 
 
 int main() {
-  {
-    UFUNC(Solution::findPaths);
-  }
-  {
-    UFUNC(Solution::findPaths1D);
-  }
+  EXECS(Solution::findPaths);
+  EXECS(Solution::findPaths1D);
   return 0;
 }

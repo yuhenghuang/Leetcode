@@ -1,4 +1,4 @@
-#include "utils.hpp"
+#include <local_leetcode.hpp>
 
 class diag_iterator {
   // ...
@@ -150,8 +150,10 @@ class diag_iterator {
 
 
     diag_iterator operator+(ptrdiff_t dist) {
-      if (dist==1) {
-        return operator++();
+      if (dist == 1) {
+        diag_iterator out(*this);
+        ++out;
+        return out;
       }
 
       int diag_idx = j-i;
@@ -168,6 +170,10 @@ class diag_iterator {
       return diag_iterator(mat, max(0, -diag_idx)+dist-1, max(0, diag_idx)+dist-1);
     }
 
+    diag_iterator& operator+=(ptrdiff_t dist) {
+      *this = *this + dist;
+      return *this;
+    }
 
     diag_iterator operator-(ptrdiff_t dist) {
       if (dist==1) {
@@ -224,6 +230,9 @@ class Solution {
     }
 
     vector<vector<int>> diagonalSortIter(vector<vector<int>>& mat) {
+      // not diagonal-wise
+      // but all elements
+
       int m = mat.size(), n = mat[0].size();
       diag_iterator bg(mat, m-1, 0);
       diag_iterator ed(mat, 0, n);
@@ -254,15 +263,10 @@ class Solution {
     }
 };
 
+
 int main() {
-  {
-    UFUNC(Solution::diagonalSort);
-  }
-  {
-    UFUNC(Solution::diagonalSortOn);
-  }
-  {
-    UFUNC(Solution::diagonalSortIter);
-  }
+  EXECS(Solution::diagonalSort);
+  EXECS(Solution::diagonalSortOn);
+  EXECS(Solution::diagonalSortIter);
   return 0 ;
 }

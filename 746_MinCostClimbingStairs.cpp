@@ -1,4 +1,4 @@
-#include "utils2.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -17,6 +17,6 @@ class Solution {
 
 
 int main() {
-  UFUNC(Solution::minCostClimbingStairs);
+  EXECS(Solution::minCostClimbingStairs);
   return 0;
 }

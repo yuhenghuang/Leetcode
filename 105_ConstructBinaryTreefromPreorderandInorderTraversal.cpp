@@ -1,4 +1,5 @@
-#include "utils2.hpp"
+#define _LL_DELETE_RETURN_POINTER
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
@@ -29,6 +30,6 @@ class Solution {
 
 
 int main() {
-  UFUNC(Solution::buildTree);
+  EXECS(Solution::buildTree);
   return 0;
 }

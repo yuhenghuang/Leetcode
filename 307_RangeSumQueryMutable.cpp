@@ -1,7 +1,4 @@
-#include <vector>
-#include <iostream>
-
-using namespace std;
+#include <local_leetcode.hpp>
 
 
 class NumArray {
@@ -56,7 +53,8 @@ class NumArray {
 
       st.resize((1 << ++i) - 1);
 
-      constructST(0, n - 1, 0);
+      if (n > 0)
+        constructST(0, n - 1, 0);
     }
     
     void update(int i, int val) {
@@ -71,7 +69,45 @@ class NumArray {
 };
 
 
+// binary indexed tree
+class NumArrayBIT {
+  private:
+    vector<int>& nums;
+    vector<int> bit;
+
+    void updateImpl(int i, int diff) {
+      for (; i < (int) bit.size(); i += i & (-i))
+        bit[i] += diff;
+    }
+
+    int query(int i) {
+      int res = 0;
+
+      for (; i > 0; i -= i & (-i))
+        res += bit[i];
+
+      return res;
+    }
+
+  public:
+    NumArrayBIT(vector<int>& _nums): nums(_nums), bit(nums.size() + 1) {
+      for (int i = 0; i < nums.size(); ++i)
+        updateImpl(i+1, nums[i]);
+    }
+
+    void update(int i, int val) {
+      updateImpl(i + 1, val - nums[i]);
+      nums[i] = val;
+    }
+    
+    int sumRange(int left, int right) {
+      return query(right + 1) - query(left);
+    }
+};
+
+
 int main() {
+  /*
   vector<int> nums {9, -8};
 
   NumArray st(nums);
@@ -82,6 +118,18 @@ int main() {
   
   st.update(1, -3);
   cout << st.sumRange(0, 1) << endl;
+  */
 
+  EXECX(
+    CTOR(vector<int>&),
+    &NumArray::sumRange,
+    &NumArray::update
+  ); 
+
+  EXECX(
+    CTOR(vector<int>&),
+    &NumArrayBIT::sumRange,
+    &NumArrayBIT::update
+  );
   return 0;
 }

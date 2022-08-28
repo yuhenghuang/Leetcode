@@ -1,0 +1,3 @@
+["NumArray", "sumRange", "update", "sumRange"], [[[1, 3, 5]], [0, 2], [1, 2], [0, 2]]
+["NumArray"], [[[]]]
+["NumArray","update","sumRange","sumRange","update","sumRange"], [[[9,-8]],[0,3],[1,1],[0,1],[1,-3],[0,1]]

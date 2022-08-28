@@ -1,4 +1,4 @@
-#include "utils2.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
@@ -54,12 +54,7 @@ class Solution {
 };
 
 int main() {
-  {
-    UFUNC(Solution::flattenRecursive);
-  }
-  {
-    UFUNC(Solution::flatten);
-  }
-
+  EXECS(Solution::flattenRecursive);
+  EXECS(Solution::flatten);
   return 0;
 }

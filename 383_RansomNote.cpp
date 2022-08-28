@@ -1,5 +1,4 @@
-#include <string>
-using namespace std;
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -7,9 +6,17 @@ class Solution {
       int arr[26] = {0};
       for (char c : magazine)
         ++arr[c-'a'];
+
       for (char c : ransomNote)
-        if (--arr[c-'a']<0)
+        if (--arr[c-'a'] < 0)
           return false;
+      
       return true;
     }
 };
+
+
+int main() {
+  EXECS(Solution::canConstruct);
+  return 0;
+}

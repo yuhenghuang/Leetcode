@@ -1,4 +1,4 @@
-#include "utils3.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
@@ -40,12 +40,14 @@ class Solution {
     int lowestCommonAncestor(TreeNode* root, int p, int q) {
       return lowestCommonAncestor(
         root,
-        utils3::find_node_in_bst(root, p),
-        utils3::find_node_in_bst(root, q)
+        ll::find_node(root, p, true),
+        ll::find_node(root, q, true)
       )->val;
     }
 
     TreeNode* lowestCommonAncestorOn(TreeNode* root, TreeNode* p, TreeNode* q) {
+      // O(h)
+
       stack<TreeNode*> sp, sq;
 
       recursion(root, sp, p->val);
@@ -66,17 +68,17 @@ class Solution {
     }
 
     int lowestCommonAncestorOn(TreeNode* root, int p, int q) {
-      return lowestCommonAncestor(
+      return lowestCommonAncestorOn(
         root,
-        utils3::find_node_in_tree(root, p, true),
-        utils3::find_node_in_tree(root, q, true)
+        ll::find_node(root, p, true),
+        ll::find_node(root, q, true)
       )->val;
     }
 };
 
 
 int main() {
-  UFUNCS(Solution::lowestCommonAncestor, int, (TreeNode*, int, int));
-  UFUNCS(Solution::lowestCommonAncestorOn, int, (TreeNode*, int, int));
+  EXECS(Solution::lowestCommonAncestor, int, (TreeNode*, int, int));
+  EXECS(Solution::lowestCommonAncestorOn, int, (TreeNode*, int, int));
   return 0;
 }

@@ -1,4 +1,4 @@
-#include "utils2.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -47,6 +47,6 @@ class Solution {
 
 
 int main() {
-  UFUNC(Solution::isPalindrome);
+  EXECS(Solution::isPalindrome);
   return 0;
 }

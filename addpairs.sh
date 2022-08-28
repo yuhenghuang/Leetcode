@@ -13,7 +13,7 @@ then
     printf "#include <local_leetcode.hpp>\n\n" >> ${cppfile}
 
     # wsl or not
-    if [ -f /etc/resolv.conf ]
+    if [ -x "$(command -v powershell.exe)" ]
     then
       template=$(powershell.exe -Command get-clipboard)
     else

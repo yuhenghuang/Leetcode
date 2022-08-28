@@ -1,4 +1,4 @@
-#include "utils2.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -11,10 +11,12 @@ class Solution {
       for (int i=0; i<n; ++i)
         num2idx[arr[i]] = i;
       
-      constexpr long mod = 1e9 + 7;
-      vector<long> dp(n, 1);
+      constexpr int64_t mod = 1e9 + 7;
 
-      long res = 0;
+      // index, num. of binary trees with arr[index] as root
+      vector<int64_t> dp(n, 1);
+
+      int64_t res = 0;
       for (int i=0; i<n; ++i) {
         for (int j=0; arr[j] <= arr[i] / arr[j]; ++j)
           if (arr[i] % arr[j] == 0 && num2idx.count(arr[i] / arr[j]) > 0) {
@@ -32,6 +34,6 @@ class Solution {
 
 
 int main() {
-  UFUNC(Solution::numFactoredBinaryTrees);
+  EXECS(Solution::numFactoredBinaryTrees);
   return 0;
 }
