@@ -2,11 +2,11 @@
 
 class Solution {
   private:
-    typedef pair<int, int> ii_t;
+    typedef pair<int, int> ll_t;
 
     static constexpr int dirs[4][2] = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
 
-    bool canEscape(vector<vector<bool>> seen, vector<vector<ii_t>>& fires, int k) const {
+    bool canEscape(vector<vector<bool>> seen, vector<vector<ll_t>>& fires, int k) const {
       const int m = seen.size();
       const int n = seen[0].size();
       
@@ -15,7 +15,7 @@ class Solution {
         for (auto& [r, c] : fires[i])
           seen[r][c] = true;
 
-      queue<ii_t> q;
+      queue<ll_t> q;
       q.emplace(0, 0);
 
       // why you move first and then fire spreads
@@ -65,12 +65,12 @@ class Solution {
       const int n = grid[0].size();
 
       // new fires at [r, c] on day i
-      vector<vector<ii_t>> fires;
+      vector<vector<ll_t>> fires;
 
       // scope to compute the spreading of fires day by day
       {
         vector<vector<bool>> seen(m, vector<bool>(n));
-        queue<ii_t> q;
+        queue<ll_t> q;
 
         for (int i = 0; i < m; ++i)
           for (int j = 0; j < n; ++j)
@@ -82,7 +82,7 @@ class Solution {
             }
 
         while (!q.empty()) {
-          vector<ii_t>& f = fires.emplace_back();
+          vector<ll_t>& f = fires.emplace_back();
 
           int N = q.size();
           while (N--) {

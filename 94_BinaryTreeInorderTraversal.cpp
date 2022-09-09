@@ -1,4 +1,4 @@
-#include "utils3.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -21,10 +21,39 @@ class Solution {
 
       return res;
     }
+
+    vector<int> inorderTraversalO1(TreeNode* root) {
+      vector<int> res;
+
+      while (root) {
+        if (root->left == nullptr) {
+          res.push_back(root->val);
+          root = root->right;
+        }
+        else {
+          TreeNode* pre = root->left;
+          while (pre->right && pre->right != root)
+            pre = pre->right;
+
+          if (pre->right == nullptr) {
+            pre->right = root;
+            root = root->left;
+          }
+          else {
+            pre->right = nullptr;
+            res.push_back(root->val);
+            root = root->right;
+          }
+        }
+      }
+
+      return res;
+    }
 };
 
 
 int main() {
-  UFUNCS(Solution::inorderTraversal);
+  EXECS(Solution::inorderTraversal);
+  EXECS(Solution::inorderTraversalO1);
   return 0;
 }
