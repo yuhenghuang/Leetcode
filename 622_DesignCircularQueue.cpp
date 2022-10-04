@@ -1,6 +1,4 @@
-#include <vector>
-
-using namespace std;
+#include <local_leetcode.hpp>
 
 class MyCircularQueue {
   private:
@@ -51,3 +49,98 @@ class MyCircularQueue {
       return (end+1)%size == begin;
     }
 };
+
+
+// [begin, end) -> [front, rear + 1)
+class CircularQueue {
+  private:
+    struct Node {
+      int val;
+      Node* next;
+    };
+
+    Node* root;
+
+  protected:
+    Node* begin;
+    Node* end;
+
+    int rear;
+
+  public:
+    CircularQueue(int k) {
+      root = new Node[k + 1];
+
+      root[k].next = root;
+      for (int i = 0; i < k; ++i)
+        root[i].next = &root[i+1];
+
+      begin = root;
+      end = root;
+    }
+
+    ~CircularQueue() { delete[] root;}
+    
+    bool enQueue(int value) {
+      if (!isFull()) {
+        
+        end->val = rear = value;
+        end = end->next;
+
+        return true;
+      }
+
+      return false;
+    }
+    
+    bool deQueue() {
+      if (!isEmpty()) {
+        begin = begin->next;
+
+        return true;
+      }
+
+      return false;
+    }
+    
+    int Front() {
+      return isEmpty() ? -1 : begin->val;
+    }
+    
+    int Rear() {
+      return isEmpty() ? -1 : rear;
+    }
+    
+    bool isEmpty() {
+      return begin == end;
+    }
+    
+    bool isFull() {
+      return end->next == begin;
+    }
+};
+
+
+int main() {
+  EXECX(
+    CTOR(int),
+    &MyCircularQueue::deQueue,
+    &MyCircularQueue::enQueue,
+    &MyCircularQueue::Front,
+    &MyCircularQueue::Rear,
+    &MyCircularQueue::isEmpty,
+    &MyCircularQueue::isFull
+  );
+
+  EXECX(
+    CTOR(int),
+    &CircularQueue::deQueue,
+    &CircularQueue::enQueue,
+    &CircularQueue::Front,
+    &CircularQueue::Rear,
+    &CircularQueue::isEmpty,
+    &CircularQueue::isFull
+  );
+
+  return 0;
+}

@@ -1,4 +1,4 @@
-#include "utils2.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -19,7 +19,7 @@ class Solution {
       ListNode* q = p->next;
 
       p->next = q->next;
-      delete q;
+      // delete q;
 
       return dummy.next;
     }
@@ -39,7 +39,7 @@ class Solution {
 
       q = p->next;
       p->next = q->next;
-      delete q;
+      // delete q;
 
       return dummy.next;
     }
@@ -47,11 +47,7 @@ class Solution {
 
 
 int main() {
-  {
-    UFUNC(Solution::removeNthFromEnd);
-  }
-  {
-    UFUNC(Solution::removeNthFromEnd2Pointers);
-  }
+  EXECS(Solution::removeNthFromEnd);
+  EXECS(Solution::removeNthFromEnd2Pointers);
   return 0;
 }

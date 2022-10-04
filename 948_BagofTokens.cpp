@@ -1,21 +1,22 @@
-#include "utils.hpp"
-#include <algorithm>
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
-    int bagOfTokensScore(vector<int>& tokens, int P) {
+    int bagOfTokensScore(vector<int>& tokens, int power) {
       int n = tokens.size();
+
       int res = 0, score = 0;
 
       sort(tokens.begin(), tokens.end());
+
       int i = 0, j = n-1;
-      while (i<=j) {
-        if (P>=tokens[i]) {
-          P -= tokens[i++];
+      while (i <= j) {
+        if (power >= tokens[i]) {
+          power -= tokens[i++];
           ++score;
         }
-        else if (score>0) {
-          P += tokens[j--];
+        else if (score > 0) {
+          power += tokens[j--];
           --score;
         }
         else
@@ -30,6 +31,7 @@ class Solution {
 
 
 int main() {
+  /*
   Solution sol;
   vector<int> tokens;
   int P;
@@ -44,6 +46,9 @@ int main() {
 
     cout << sol.bagOfTokensScore(tokens, P) << endl;
   }
+  */
+
+  EXECS(Solution::bagOfTokensScore);
 
   return 0;
 }

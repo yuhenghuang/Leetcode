@@ -1,15 +1,15 @@
-#include "utils2.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
     int concatenatedBinary(int n) {
-      static constexpr long mod = 1e9 + 7;
+      constexpr int64_t mod = 1e9 + 7;
 
       int digits = 1;
       int threshold = 2;
 
-      long res = 0;
-      for (int i=1; i<=n; ++i) {
+      int64_t res = 0;
+      for (int i = 1; i <= n; ++i) {
         if (i >= threshold) {
           threshold <<= 1;
           ++digits;
@@ -25,6 +25,6 @@ class Solution {
 
 
 int main() {
-  UFUNC(Solution::concatenatedBinary);
+  EXECS(Solution::concatenatedBinary);
   return 0;
 }

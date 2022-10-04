@@ -31,7 +31,12 @@ class Solution {
     }
 
     int numberOfWeakCharactersNew(vector<vector<int>>& properties) {
+      // it is costly to sort a 2D vector
+      // a vector is 24 bytes v.s. an integer pair is 8 bytes
+      
+
       typedef pair<int, int> ii_t;
+      // (attack, defense)
       vector<ii_t> props(properties.size());
 
       transform(

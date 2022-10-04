@@ -1,6 +1,4 @@
-#include "utils.hpp"
-
-using namespace std;
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -24,10 +22,38 @@ class Solution {
 
       return res;
     }
+
+    int maxProfitNew(int k, vector<int>& prices) {
+      int n = prices.size();
+
+      k = min(2 * k, n);
+
+      // odd index: holding stock
+      vector<int> prev(k+1);
+      vector<int> curr(k+1);
+
+      for (int i = 0; i < n; ++i) {
+        for (int j = 0; j <= i; ++j) {
+          // don't do anything
+          curr[j] = max(prev[j], curr[j]);
+
+          if (j == k)
+            break;
+          
+          // sell or buy
+          curr[j+1] = prev[j] + (j % 2 == 0 ? -prices[i] : prices[i]);
+        }
+
+        swap(prev, curr);
+      }
+
+      return *max_element(prev.begin(), prev.begin() + k + 1);
+    }
 };
 
 
 int main() {
+  /*
   Solution sol;
 
   vector<int> prices;
@@ -43,6 +69,10 @@ int main() {
 
     cout << sol.maxProfit(k, prices) << endl;
   }
+  */
+
+  EXECS(Solution::maxProfit);
+  EXECS(Solution::maxProfitNew);
 
   return 0;
 }

@@ -1,4 +1,4 @@
-#include "utils3.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -51,10 +51,55 @@ class Solution {
 
       return res;
     }
+
+
+    string pushDominoesTwoPointers(string dominoes) {
+      int n = dominoes.size();
+
+      string res(n, '.');
+
+      int li = -1; // left index
+      char ld = 'L'; // left direction
+
+      while (li < n) {
+        int ri = li + 1; // right index
+        
+        while (ri < n && dominoes[ri] == '.')
+          ++ri;
+
+        char rd = ri < n ? dominoes[ri] : 'R'; // right direction
+
+        if (ri < n)
+          res[ri] = rd;
+      
+        if (ld == 'L') {
+          if (rd == 'L')
+            for (int i = ri - 1; i > li; --i)
+              res[i] = 'L';
+        }
+        else {
+          if (rd == 'R')
+            for (int i = li + 1; i < ri; ++i)
+              res[i] = 'R';
+          else
+            for (int i = li + 1, j = ri - 1; i < j; ++i, --j) {
+              res[i] = 'R';
+              res[j] = 'L';
+            }
+        }
+
+        li = ri;
+        ld = rd;
+      }
+
+      return res;
+    }
+
 };
 
 
 int main() {
-  UFUNCS(Solution::pushDominoes);
+  EXECS(Solution::pushDominoes);
+  EXECS(Solution::pushDominoesTwoPointers);
   return 0;
 }

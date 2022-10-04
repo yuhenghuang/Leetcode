@@ -1,4 +1,4 @@
-#include "utils.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
@@ -44,6 +44,6 @@ class Solution {
 
 
 int main() {
-  UFUNC(Solution::getSkyline);
+  EXECS(Solution::getSkyline);
   return 0;
 }
