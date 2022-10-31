@@ -1,4 +1,4 @@
-#include "utils3.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
@@ -68,6 +68,6 @@ class Solution {
 
 
 int main() {
-  UFUNCS(Solution::groupAnagrams);
+  EXECS(Solution::groupAnagrams);
   return 0;
 }

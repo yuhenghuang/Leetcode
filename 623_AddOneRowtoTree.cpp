@@ -1,15 +1,17 @@
-#define PRINT_TREE_1D
-#include "utils2.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
+    vector<TreeNode*> nodes;
+
+
     void recurse(TreeNode* root, int v, int d) {
       if (!root)
         return;
       
       if (d==2) {
-        root->left = new TreeNode(v, root->left, nullptr);
-        root->right = new TreeNode(v, nullptr, root->right);
+        root->left = nodes.emplace_back(new TreeNode(v, root->left, nullptr));
+        root->right = nodes.emplace_back(new TreeNode(v, nullptr, root->right));
         return;
       }
       
@@ -18,9 +20,14 @@ class Solution {
     }
   
   public:
+    ~Solution() {
+      for (auto& node : nodes)
+        delete node;
+    }
+
     TreeNode* addOneRow(TreeNode* root, int v, int d) {
       if (d==1) 
-        return new TreeNode(v, root, nullptr);
+        return nodes.emplace_back(new TreeNode(v, root, nullptr));
       
       recurse(root, v, d);
       return root;
@@ -29,6 +36,6 @@ class Solution {
 
 
 int main() {
-  UFUNC(Solution::addOneRow);
+  EXECS(Solution::addOneRow);
   return 0;
 }

@@ -15,7 +15,7 @@ class Solution {
         }
       );
 
-      int t = accumulate(plantTime.begin(), plantTime.end(), 0);
+      int t = reduce(plantTime.begin(), plantTime.end(), 0);
       int res = t;
       for (const int& i : indicies) {
         res = max(res, t + growTime[i]);

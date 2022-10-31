@@ -1,4 +1,4 @@
-#include "utils.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -21,10 +21,27 @@ class Solution {
 
       return false;
     }
+
+    bool increasingTripletO1(vector<int>& nums) {
+      int num1 = INT_MAX;
+      int num2 = INT_MAX;
+
+      for (const int& num : nums) {
+        if (num > num2)
+          return true;
+        else if (num > num1)
+          num2 = num;
+        else
+          num1 = num;
+      }
+
+      return false;
+    }
 };
 
 
 int main() {
-  UFUNC(Solution::increasingTriplet);
+  EXECS(Solution::increasingTriplet);
+  EXECS(Solution::increasingTripletO1);
   return 0;
 }

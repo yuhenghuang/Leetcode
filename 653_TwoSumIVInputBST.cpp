@@ -1,4 +1,4 @@
-#include "utils3.hpp"
+#include <local_leetcode.hpp>
 
 /**
  * @brief unidirectional tree iterator. from leftmost to rightmost, or reverse
@@ -29,14 +29,14 @@ class TreeIterator {
       pushNodes(root);
     }
 
-    int operator++() {
+    TreeIterator& operator++() {
       if (!s.empty()) {
         TreeNode* root = s.top();
         s.pop();
         pushNodes(root->*R);
       }
       // call operator*;
-      return **this;
+      return *this;
     }
 
     int operator*() {
@@ -73,6 +73,6 @@ class Solution {
 
 
 int main() {
-  UFUNCS(Solution::findTarget);
+  EXECS(Solution::findTarget);
   return 0;
 }

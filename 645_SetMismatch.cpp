@@ -1,4 +1,4 @@
-#include "utils2.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -21,10 +21,42 @@ class Solution {
       
       return {-1, -1};
     }
+
+
+    vector<int> findErrorNumsBit(vector<int>& nums) {
+      int n = nums.size();
+
+      int b = 0;
+      for (int i = 1; i <= n; ++i)
+        b ^= i ^ nums[i - 1];
+
+      // x: repeatition, y: loss, or reverse
+      // b = x ^ y
+
+      // rightmost bit of either x or y
+      int j = 1 << __builtin_ctz(b); // b & ~(b - 1)
+
+      int x = 0;
+      for (int i = 1; i <= n; ++i) {
+        if (i & j)
+          x ^= i;
+
+        if (nums[i-1] & j)
+          x ^= nums[i-1];
+      }
+
+      // if x is repeatition
+      for (int i = 0; i < n; ++i)
+        if (nums[i] == x)
+          return {x, b ^ x};
+
+      return {b ^ x, x};
+    }
 };
 
 
 int main() {
-  UFUNC(Solution::findErrorNums);
+  EXECS(Solution::findErrorNums);
+  EXECS(Solution::findErrorNumsBit);
   return 0;
 }

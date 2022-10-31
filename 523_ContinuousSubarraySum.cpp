@@ -14,7 +14,7 @@ class Solution {
           return true;
 
         s.insert(prev % k);
-        prev += nums[i];
+        prev += nums[i]; // by constraints of the input, no need to consider overflow
       }
 
       return false;
