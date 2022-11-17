@@ -2,14 +2,14 @@
 
 class Solution {
   public:
-    string removeDuplicates(string s) {
+    string makeGood(string s) {
       string res;
 
       for (char c : s) {
-        if (res.empty() || res.back() != c)
-          res.push_back(c);
-        else
+        if (!res.empty() && abs(res.back() - c) == 32)
           res.pop_back();
+        else
+          res.push_back(c);
       }
 
       return res;
@@ -18,6 +18,6 @@ class Solution {
 
 
 int main() {
-  EXECS(Solution::removeDuplicates);
+  EXECS(Solution::makeGood);
   return 0;
 }

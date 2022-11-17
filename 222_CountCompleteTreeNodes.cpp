@@ -1,4 +1,4 @@
-#include "utils3.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
@@ -66,10 +66,48 @@ class Solution {
 
       return (1 << (h - 1)) + s.top()->val;
     }
+
+    int countNodesOlog2n(TreeNode* root) {
+      // time complexity: O(logn * logn)
+
+      int height = 0; // the height of rightmost right node
+      for (TreeNode* node = root; node != nullptr; ++height, node = node->right);
+
+      // index of node on last layer (from left to right, 0-base)
+      int l = 0, r = (1 << height) - 1;
+
+      // O(logn), binary search
+      while (l <= r) {
+        int m = l + (r - l) / 2;
+
+        // find node on last layer given index m O(logn)
+        TreeNode* node = root;
+        for (int h = height - 1, i = m; h >= 0; --h) {
+          if (i < (1 << h))
+            node = node->left;
+          else {
+            node = node->right;
+            i -= 1 << h;
+          }
+        }
+
+        if (node == nullptr)
+          r = m - 1;
+        else
+          l = m + 1;
+      }
+
+      // (nodes of 1 ~ height layers) + (nodes of height + 1 layer)
+      // 2 ^ height - 1             + (size of height + 1 layer)
+      // 2 ^ height - 1             + m + 1
+      // 2 ^ height + m
+      return (1 << height) + r;
+    }
 };
 
 int main() {
-  UFUNCS(Solution::countNodes);
-  UFUNCS(Solution::countNodesOlogn);
+  EXECS(Solution::countNodes);
+  EXECS(Solution::countNodesOlogn);
+  EXECS(Solution::countNodesOlog2n);
   return 0;
 }

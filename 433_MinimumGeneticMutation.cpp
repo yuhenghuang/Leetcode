@@ -1,4 +1,4 @@
-#include "utils3.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
@@ -72,13 +72,12 @@ class Solution {
         ++res;
       }
 
-
       return -1;
     }
 };
 
 
 int main() {
-  UFUNCS(Solution::minMutation);
+  EXECS(Solution::minMutation);
   return 0;
 }

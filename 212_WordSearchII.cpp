@@ -1,5 +1,5 @@
-#define _NONTRIVIAL_SOLUTION_CTOR
-#include "utils3.hpp"
+#define _LL_NONTRIVIAL_SOLUTION_CTOR
+#include <local_leetcode.hpp>
 
 struct TrieNode {
     TrieNode* children[26]={0};
@@ -44,7 +44,7 @@ class Solution {
         for (int j=0; j<n; ++j)
           dfs(root, i, j, board, words);
 
-      utils3::destroy(root);
+      ll::destroy(root);
       return res;
     }
 
@@ -69,6 +69,6 @@ class Solution {
 };
 
 int main() {
-  UFUNCS(Solution::findWords);
+  EXECS(Solution::findWords);
   return 0;
 }
