@@ -1,0 +1,1 @@
+["MyQueue", "push", "push", "peek", "pop", "empty"], [[], [1], [2], [], [], []]

@@ -1,11 +1,18 @@
-#include "utils3.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
-public:
-    int numSquares(int n) {
+  private:
+    static vector<int> squareArray() {
       vector<int> nums;
-      for (int i = 1; i * i <= n; ++i)
+      for (int i = 1; i * i <= 10000; ++i)
         nums.push_back(i * i);
+
+      return nums;
+    }
+
+  public:
+    int numSquares(int n) {
+      static const vector<int> nums = squareArray();
 
       vector<bool> visited(n);
 
@@ -17,7 +24,7 @@ public:
         while (N--) {
           int v = q.front();
           q.pop();
-          for (int e : nums) {
+          for (auto& e : nums) {
             int w = v + e;
             if (w > n) break;
             else if (w == n)
@@ -37,15 +44,13 @@ public:
     }
 
     int numSquaresDP(int n) {
-      vector<int> nums;
-      for (int i = 1; i * i <= n; ++i)
-        nums.push_back(i * i);
+      static const vector<int> nums = squareArray();
 
       vector<int> dp(n + 1, INT_MAX);
 
       dp[0] = 0;
       for (int i = 0; i < n; ++i)
-        for (int e : nums) {
+        for (auto& e : nums) {
           if (i + e > n) break;
 
           dp[i + e] = min(dp[i + e], dp[i] + 1);
@@ -57,7 +62,7 @@ public:
 
 
 int main() {
-  UFUNCS(Solution::numSquares);
-  UFUNCS(Solution::numSquaresDP);
+  EXECS(Solution::numSquares);
+  EXECS(Solution::numSquaresDP);
   return 0;
 }

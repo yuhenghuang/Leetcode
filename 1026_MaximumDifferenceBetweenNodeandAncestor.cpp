@@ -1,4 +1,4 @@
-#include "utils.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
@@ -28,11 +28,7 @@ class Solution {
 
 
 int main() {
-  {
-    UFUNC(Solution::maxAncestorDiff);
-  }
-  {
-    UFUNC(Solution::maxAncestorDiffOn);
-  }
+  EXECS(Solution::maxAncestorDiff);
+  EXECS(Solution::maxAncestorDiffOn);
   return 0;
 }

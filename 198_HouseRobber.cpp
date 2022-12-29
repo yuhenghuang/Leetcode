@@ -1,4 +1,4 @@
-#include "utils3.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -9,6 +9,18 @@ class Solution {
       for (int i=n-2; i>=0; --i)
         nums[i] = max(nums[i] + (i+2<n ? nums[i+2] : 0), nums[i+1]);
       return nums[0];
+    }
+
+    int robO1(vector<int>& nums) {
+      int prev = 0, curr = 0;
+
+      for (const int& num : nums) {
+        int next = max(num + prev, curr);
+        prev = curr;
+        curr = next;
+      }
+
+      return curr;
     }
 };
 
@@ -41,6 +53,7 @@ void parse_vec(vector<int> &vec) {
 */
 
 int main() {
-  UFUNCS(Solution::rob);
+  EXECS(Solution::rob);
+  EXECS(Solution::robO1);
   return 0;
 }

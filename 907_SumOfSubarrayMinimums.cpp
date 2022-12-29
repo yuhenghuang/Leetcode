@@ -1,4 +1,4 @@
-#include "utils2.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -33,6 +33,6 @@ class Solution {
 
 
 int main() {
-  UFUNC(Solution::sumSubarrayMins);
+  EXECS(Solution::sumSubarrayMins);
   return 0;
 }

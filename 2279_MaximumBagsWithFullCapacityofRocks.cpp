@@ -11,8 +11,7 @@ class Solution {
 
       sort(remains.begin(), remains.end());
 
-      int i = 0;
-      for (; i < n; ++i) {
+      for (int i = 0; i < n; ++i) {
         additionalRocks -= remains[i];
 
         if (additionalRocks < 0)

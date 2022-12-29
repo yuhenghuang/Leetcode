@@ -1,4 +1,4 @@
-#include "utils3.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -17,6 +17,6 @@ class Solution {
 };
 
 int main() {
-  UFUNCS(Solution::longestCommonSubsequence);
+  EXECS(Solution::longestCommonSubsequence);
   return 0;
 }

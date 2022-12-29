@@ -1,4 +1,4 @@
-#include "utils3.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -25,13 +25,32 @@ class Solution {
     }
 
     ListNode* oddEvenList(ListNode* head) {
-      // until new algorithms come up
-      return nullptr;
+      if (!head)
+        return nullptr;
+
+      ListNode* odd = head; // end of odd nodes
+      ListNode* even = head->next; // end of even nodes
+
+      while (even && even->next) {
+        // move next node of $even$ to the next of $odd$
+
+        ListNode* tmp = even->next;
+
+        even->next = tmp->next;
+
+        tmp->next = odd->next;
+        odd->next = tmp;
+
+        odd = odd->next;
+        even = even->next;
+      }
+
+      return head;
     }
 };
 
 int main() {
-  UFUNCS(Solution::oddEvenListOld);
-  UFUNCS(Solution::oddEvenList);
+  EXECS(Solution::oddEvenListOld);
+  EXECS(Solution::oddEvenList);
   return 0;
 }

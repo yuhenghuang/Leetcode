@@ -1,4 +1,4 @@
-#include "utils2.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
 public:
@@ -29,6 +29,6 @@ public:
 
 
 int main() {
-  UFUNC(Solution::canVisitAllRooms);
+  EXECS(Solution::canVisitAllRooms);
   return 0;
 }

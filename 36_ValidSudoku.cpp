@@ -1,4 +1,4 @@
-#include "utils3.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -30,6 +30,6 @@ class Solution {
 
 
 int main() {
-  UFUNCS(Solution::isValidSudoku);
+  EXECS(Solution::isValidSudoku);
   return 0;
 }
