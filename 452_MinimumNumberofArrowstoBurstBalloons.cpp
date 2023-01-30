@@ -10,26 +10,34 @@ using namespace std;
 
 class Solution {
   public:
-    int findMinArrowShots(vector<vector<int>>& points) {
+    int findMinArrowShots(vector<vector<int>>& _points) {
+      typedef pair<int, int> ii_t;
+
+      vector<ii_t> points;
+      transform(
+        _points.begin(), _points.end(),
+        back_inserter(points),
+        [](const vector<int>& p) -> ii_t { return {p[0], p[1]};  }
+      );
+
       sort(points.begin(), points.end(),
-        [](const vector<int>& lhs, const vector<int>& rhs) {
-          return lhs[0] == rhs[0] ? lhs[1] < rhs[1] : lhs[0] < rhs[0];
+        [](const ii_t& lhs, const ii_t& rhs) {
+          return lhs.second < rhs.second;
         }
       );
 
-      int res=0;
-      int ed = INT_MIN;
-      for (vector<int>& baloon : points) {
-        if (baloon[0] > ed) {
+      int res = 0;
+      int end = INT_MIN;
+      for (auto& [s, e] : points) {
+        if (s > end) {
           ++res;
-          ed = baloon[1];
+          end = e;
         }
-        else {
-          ed = min(ed, baloon[1]);
-        }
+        else
+          end = min(end, e);
       }
 
-      if (points.size()>0 && points[0][0]==INT_MIN)
+      if (!points.empty() && points[0].first == INT_MIN)
         ++res;
 
       return res;

@@ -1,5 +1,5 @@
+#include <local_leetcode.hpp>
 #include <forward_list>
-#include "utils3.hpp"
 
 class LFUCache {
   private:
@@ -99,12 +99,12 @@ class LFUCache {
       }
     }
 
-    ~LFUCache() { utils3::destroy(head); }
+    ~LFUCache() { ll::destroy(head); }
 };
 
 
 int main() {
-  UFUNCX(
+  EXECX(
     CTOR(int),
     &LFUCache::get,
     &LFUCache::put

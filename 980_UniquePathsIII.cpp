@@ -1,10 +1,10 @@
-#define _NONTRIVIAL_SOLUTION_CTOR
-#include "utils3.hpp"
+#define _LL_NONTRIVIAL_SOLUTION_CTOR
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
     int m, n, res, target;
-    int dir[4][2] = {{0,1}, {1,0}, {0,-1}, {-1,0}};
+    static constexpr int dir[4][2] = {{0,1}, {1,0}, {0,-1}, {-1,0}};
     vector<vector<bool>> seen;
 
     void dfs(int i, int j, int sum, vector<vector<int>>& grid) {
@@ -51,6 +51,6 @@ class Solution {
 
 
 int main() {
-  UFUNCS(Solution::uniquePathsIII);
+  EXECS(Solution::uniquePathsIII);
   return 0;
 }

@@ -54,10 +54,51 @@ class Solution {
 
       return res;
     }
+
+    int longestPathPO(vector<int>& parent, string s) {
+      int n = parent.size();
+
+      // count of children
+      vector<int> children_count(n);
+
+      for (int i = 1; i < n; ++i)
+        ++children_count[parent[i]];
+
+      queue<int> q;
+
+      // push leaves
+      for (int i = 0; i < n; ++i)
+        if (children_count[i] == 0)
+          q.push(i);
+
+      // length of longest path starting at node i
+      vector<int> dp(n, 1);
+
+      int res = 1;
+
+      // loop until root is at the front of queue
+      while (q.front() > 0) {
+        int c = q.front(); // child
+        q.pop();
+
+        int p = parent[c]; // parent
+
+        if (s[c] != s[p]) {
+          res = max(res, dp[c] + dp[p]);
+          dp[p] = max(dp[p], dp[c] + 1);
+        }
+
+        if (--children_count[p] == 0)
+          q.push(p);
+      }
+
+      return res;
+    }
 };
 
 
 int main() {
   EXECS(Solution::longestPath);
+  EXECS(Solution::longestPathPO);
   return 0;
 }

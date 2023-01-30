@@ -1,4 +1,4 @@
-#include "utils3.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -25,10 +25,22 @@ class Solution {
 
       return res;
     }
+
+    int minFlipsMonoIncrIter(string s) {
+      typedef pair<int, int> ii_t;
+
+      int n = s.size();
+
+      int total = count_if(s.begin(), s.end(), [](char c) { return c == '1'; });
+
+      // unfinished
+
+      return -1;
+    }
 };
 
 
 int main() {
-  UFUNCS(Solution::minFlipsMonoIncr);
+  EXECS(Solution::minFlipsMonoIncr);
   return 0;
 }

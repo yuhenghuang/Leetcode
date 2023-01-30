@@ -1,5 +1,4 @@
-#include <set>
-#include "utils3.hpp"
+#include <local_leetcode.hpp>
 
 class SummaryRanges {
   private:
@@ -68,11 +67,78 @@ class SummaryRanges {
 };
 
 
+class SummaryRangesNew {
+  private:
+    vector<vector<int>> itvs;
+
+  public:
+    SummaryRangesNew() { }
+
+    void addNum(int val) {
+      if (itvs.empty()) {
+        itvs.push_back({val, val});
+        return;
+      }
+
+      typedef vector<vector<int>>::iterator iter_t;
+
+      iter_t next = upper_bound(
+        itvs.begin(), itvs.end(), 
+        val, 
+        [](int i, const vector<int>& j) -> bool { return i < j.front(); }
+      );
+
+      iter_t prev = next == itvs.begin() ? next : std::prev(next);
+
+      // only previous interval found
+      if (next == itvs.end()) {
+        if (prev->back() + 1 == val)
+          ++(prev->back());
+        else if (prev->back() + 1 < val)
+          itvs.push_back({val, val});
+      }
+      // only next interval found
+      else if (next == itvs.begin()) {
+        if (val + 1 == next->front())
+          --(next->front());
+        else if (val + 1 < next->front())
+          itvs.insert(next, {val, val});
+      }
+      else {
+        // prev + val + next
+        if (prev->back() + 1 == val && val + 1 == next->front()) {
+          prev->back() = next->back();
+          itvs.erase(next);
+        }
+        // prev + val
+        else if (prev->back() + 1 == val)
+          ++(prev->back());
+        // val + next
+        else if (val + 1 == next->front())
+          --(next->front());
+        // val not in prev
+        else if (prev->back() + 1 < val)
+          itvs.insert(next, {val, val});
+      }
+    }
+
+    vector<vector<int>> getIntervals() {
+      return itvs;
+    }
+};
+
+
 int main() {
-  UFUNCX(
+  EXECX(
     CTOR(),
     &SummaryRanges::addNum,
     &SummaryRanges::getIntervals
+  );
+
+  EXECX(
+    CTOR(),
+    &SummaryRangesNew::addNum,
+    &SummaryRangesNew::getIntervals
   );
   return 0;
 }

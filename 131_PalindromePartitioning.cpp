@@ -23,6 +23,7 @@ class Solution {
           temp.pop_back();
         }
     }
+
   public:
     vector<vector<string>> partition(string s) {
       int n = s.size();
@@ -54,11 +55,37 @@ class Solution {
 
       return res;
     }
+
+    vector<vector<string>> partitionDP(string s) {
+      int n = s.size();
+
+      // is palindromic
+      vector<vector<bool>> memo(n, vector<bool>(n));
+
+      vector<vector<string>> dp[n+1];
+      dp[0].push_back({});
+
+      for (int i = 0; i < n; ++i)
+        for (int j = 0; j <= i; ++j) {
+          memo[j][i] = s[i] == s[j] && (i - j < 3 || memo[j+1][i-1]);
+
+          if (memo[j][i]) {
+            // rightmost palindromic substring
+            string temp = s.substr(j, i-j+1);
+
+            for (auto& vec : dp[j])
+              dp[i+1].emplace_back(vec).push_back(temp);
+          }
+        }
+
+      return dp[n];
+    }
 };
 
 
 int main() {
   EXECS(Solution::partition);
   EXECS(Solution::partitionDFS);
+  EXECS(Solution::partitionDP);
   return 0;
 }
