@@ -1,4 +1,4 @@
-#include "utils2.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
@@ -56,11 +56,7 @@ class Solution {
 
 
 int main() {
-  {
-    UFUNC(Solution::isAlienSorted);
-  }
-  {
-    UFUNC(Solution::isAlienSortedSlow);
-  }
+  EXECS(Solution::isAlienSorted);
+  EXECS(Solution::isAlienSortedSlow);
   return 0;
 }

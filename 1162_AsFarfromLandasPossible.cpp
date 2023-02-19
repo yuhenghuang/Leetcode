@@ -1,10 +1,8 @@
-#include <vector>
-#include <queue>
-using namespace std;
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
-    int dir[4][2] = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+    static constexpr int dir[4][2] = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
   public:
     int maxDistance(vector<vector<int>>& grid) {
       int m = grid.size(), n = m==0 ? 0 : grid[0].size();
@@ -36,3 +34,9 @@ class Solution {
       return res;
     }
 };
+
+
+int main() {
+  EXECS(Solution::maxDistance);
+  return 0;
+}

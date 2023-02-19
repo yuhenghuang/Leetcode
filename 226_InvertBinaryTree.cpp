@@ -1,12 +1,18 @@
-#include "DataStructure.h"
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
     TreeNode* invertTree(TreeNode* root) {
-      if (!root) return nullptr;
-      TreeNode* tmp = root->left;
-      root->left = invertTree(root->right);
-      root->right = invertTree(tmp);
+      if (root) {
+        TreeNode* tmp = root->left;
+        root->left = invertTree(root->right);
+        root->right = invertTree(tmp);
+      }
       return root;
     }
 };
+
+int main() {
+  EXECS(Solution::invertTree);
+  return 0;
+}
