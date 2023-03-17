@@ -5,7 +5,7 @@ class Solution {
     int compress(vector<char>& chars, int) {
       int j = 1;
       int freq = 1;
-      for (int i = 1; i < chars.size(); ++i) {
+      for (int i = 1; i < (int) chars.size(); ++i) {
         if (chars[i] == chars[i-1])
           ++freq;
         else {

@@ -1,7 +1,4 @@
-#include <iostream>
-using namespace std;
-
-typedef unsigned int uint32_t;
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -15,7 +12,10 @@ class Solution {
 };
 
 int main() {
+  /*
   Solution sol;
   cout << sol.reverseBits(4294967293) << endl;
+  */
+  EXECS(Solution::reverseBits);
   return 0;
 }

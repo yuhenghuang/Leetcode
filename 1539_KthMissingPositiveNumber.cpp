@@ -1,4 +1,4 @@
-#include "utils.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -32,11 +32,7 @@ class Solution {
 
 
 int main() {
-  {
-    UFUNC(Solution::findKthPositive);
-  }
-  {
-    UFUNC(Solution::findKthPositiveOn);
-  }
+  EXECS(Solution::findKthPositive);
+  EXECS(Solution::findKthPositiveOn);
   return 0;
 }

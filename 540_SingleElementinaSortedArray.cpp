@@ -1,14 +1,14 @@
-#include "utils3.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
     int singleNonDuplicate(vector<int>& nums) {
-      int l = 0, r = nums.size() - 1;
+      int l = 0, r = (int) nums.size() - 1;
 
       while (l < r) {
         int m = l + (r - l) / 2;
 
-        if ((m & 1) > 0)
+        if (m & 1)
           --m;
 
         if (nums[m] == nums[m+1])
@@ -25,6 +25,6 @@ class Solution {
 
 
 int main() {
-  UFUNCS(Solution::singleNonDuplicate);
+  EXECS(Solution::singleNonDuplicate);
   return 0;
 }

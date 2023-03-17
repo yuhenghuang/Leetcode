@@ -1,4 +1,4 @@
-#include "utils.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
@@ -14,7 +14,7 @@ class Solution {
       int v;
       int n = 1;
       while (p) {
-        if (rand()%n++ == 0)
+        if (rand() % n++ == 0)
           v = p->val;
         p = p->next;
       }
@@ -24,6 +24,7 @@ class Solution {
 
 
 int main(int argc, const char** argv) {
+  /*
   if (argc>1) {
     int seed;
     sscanf(argv[1], "%d", &seed);
@@ -40,6 +41,12 @@ int main(int argc, const char** argv) {
   for (int i=0; i<15; ++i)
     cout << sol.getRandom() << ", ";
   cout << sol.getRandom() << ']' << endl;
+  */
+
+  EXECX(
+    CTOR(ListNode*),
+    &Solution::getRandom
+  );
 
   return 0;
 }

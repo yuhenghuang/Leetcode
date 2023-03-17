@@ -1,0 +1,3 @@
+"sadbutsad", "sad"
+"leetcode", "leeto"
+"hello", "ll"

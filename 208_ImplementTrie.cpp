@@ -1,4 +1,4 @@
-#include "utils3.hpp"
+#include <local_leetcode.hpp>
 
 struct TrieNode {
   unordered_map<char, TrieNode*> children;
@@ -45,13 +45,13 @@ struct TrieNode {
 };
 
 
-class Trie {
+class TrieOld {
   private:
     TrieNode* root;
 
   public:
     /** Initialize your data structure here. */
-    Trie() {
+    TrieOld() {
       root = new TrieNode();
     }
 
@@ -70,11 +70,76 @@ class Trie {
       return root->startsWith(prefix);
     }
 
-    ~Trie() { utils3::destroy(root); }
+    ~TrieOld() { ll::destroy(root); }
 };
 
+
+class Trie {
+  private:
+    struct Node {
+      Node* children[26];
+      bool leaf;
+
+      Node(): children{0}, leaf(false) { }
+    };
+
+    Node* root;
+
+  public:
+    Trie(): root(new Node()) { }
+
+    
+    
+    void insert(string word) {
+      Node* node = root;
+      for (char c : word) {
+        int i = c - 'a';
+        if (node->children[i] == nullptr)
+          node->children[i] = new Node();
+
+        node = node->children[i];
+      }
+
+      node->leaf = true;
+    }
+    
+    bool search(string word) {
+      Node* node = root;
+      for (char c : word) {
+        node = node->children[c - 'a'];
+
+        if (!node)
+          return false;
+      }
+
+      return node->leaf;
+    }
+    
+    bool startsWith(string prefix) {
+      Node* node = root;
+      for (char c : prefix) {
+        node = node->children[c - 'a'];
+
+        if (!node)
+          return false;
+      }
+
+      return true;
+    }
+    
+    ~Trie() { ll::destroy(root); }
+};
+
+
 int main() {
-  UFUNCX(
+  EXECX(
+    CTOR(),
+    &TrieOld::insert,
+    &TrieOld::search,
+    &TrieOld::startsWith
+  );
+
+  EXECX(
     CTOR(),
     &Trie::insert,
     &Trie::search,

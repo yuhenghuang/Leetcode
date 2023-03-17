@@ -16,7 +16,7 @@ class Solution {
 
         auto iter = m.find(desc[0]);
 
-        if (iter != m.end()) 
+        if (iter != m.end()) [[likely]]
           iter->second->*child = m[desc[1]];
         else {
           root = m[desc[0]] = new TreeNode(desc[0]);

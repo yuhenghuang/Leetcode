@@ -2,7 +2,7 @@
 
 class Solution {
   public:
-    int subarrayBitwiseORs(vector<int>& arr) {
+    int subarrayBitwiseORsWrong(vector<int>& arr) {
       // wrong answer
       vector<int> dp;
       dp.push_back(arr[0]);
@@ -24,6 +24,14 @@ class Solution {
           dp.push_back(arr[i]);
         }
       }
+
+      return res;
+    }
+
+    int subarrayBitwiseORs(vector<int>& arr) {
+      int res = 1;
+      
+
 
       return res;
     }

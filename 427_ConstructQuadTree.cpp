@@ -1,6 +1,6 @@
 #define QUAD_NODE
-#define _DELETE_RETURN_POINTER
-#include "utils3.hpp"
+#define _LL_DELETE_RETURN_POINTER
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
@@ -40,6 +40,6 @@ class Solution {
 
 
 int main() {
-  UFUNCS(Solution::construct);
+  EXECS(Solution::construct);
   return 0;
 }

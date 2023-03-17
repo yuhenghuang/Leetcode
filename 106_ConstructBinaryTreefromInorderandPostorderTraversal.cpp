@@ -19,6 +19,25 @@ class Solution {
       root->right = dfs(i+l+1, j+l, k-l-1, inorder, postorder);
       return root;
     }
+
+    TreeNode* buildTreeLambda(vector<int>& inorder, vector<int>& postorder) {
+      function<TreeNode* (int, int, int)> build = [&inorder, &postorder, &build] (int start1, int start2, int length) -> TreeNode* {
+        if (length <= 0)
+          return nullptr;
+
+        int i = 0;
+        int val = postorder[start2 + length - 1];
+        for (; inorder[start1 + i] != val; ++i);
+
+        return new TreeNode(
+          val,
+          build(start1, start2, i),
+          build(start1 + i + 1, start2 + i, length - i - 1)
+        );
+      };
+
+      return build(0, 0, inorder.size());
+    }
 };
 
 int main(){
@@ -29,5 +48,6 @@ int main(){
   */
 
   EXECS(Solution::buildTree);
+  EXECS(Solution::buildTreeLambda);
   return 0;
 }
