@@ -1,3 +1,5 @@
+#include <local_leetcode.hpp>
+
 class Solution {
   public:
     int addDigits(int num) {
@@ -12,3 +14,9 @@ class Solution {
       return num;
     }
 };
+
+
+int main() {
+  EXECS(Solution::addDigits);
+  return 0;
+}

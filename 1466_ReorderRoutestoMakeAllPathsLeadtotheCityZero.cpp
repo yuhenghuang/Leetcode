@@ -1,5 +1,4 @@
-#include <vector>
-using namespace std;
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
@@ -32,4 +31,30 @@ class Solution {
         dfs(w, e);
       }
     }
+
+    int minReorderNew(int n, vector<vector<int>>& connections) {
+      vector<vector<pair<int, int>>> graph(n);
+      for (auto& con : connections) {
+        graph[con[0]].emplace_back(con[1], 1);
+        graph[con[1]].emplace_back(con[0], 0);
+      }
+
+      function<int (int, int)> traverse = [&graph, &traverse] (int u, int v) -> int {
+        int res = 0;
+        for (auto [w, d] : graph[v])
+          if (w != u)
+            res += traverse(v, w) + d;
+
+        return res;
+      };
+
+      return traverse(-1, 0);
+    }
 };
+
+
+int main() {
+  EXECS(Solution::minReorder);
+  EXECS(Solution::minReorderNew);
+  return 0;
+}

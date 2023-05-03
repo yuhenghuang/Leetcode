@@ -1,4 +1,4 @@
-#include "utils3.hpp"
+#include <local_leetcode.hpp>
 
 class BrowserHistory {
   private:
@@ -7,7 +7,7 @@ class BrowserHistory {
     vector<string> history;
 
   public:
-    BrowserHistory(string homepage): i(0), history{homepage}, cap(0) { }
+    BrowserHistory(string homepage): i(0), cap(0), history{homepage} { }
     
     void visit(string url) {
       if (++i == history.size())
@@ -31,7 +31,7 @@ class BrowserHistory {
 
 
 int main() {
-  UFUNCX(
+  EXECX(
     CTOR(string),
     &BrowserHistory::visit,
     &BrowserHistory::back,

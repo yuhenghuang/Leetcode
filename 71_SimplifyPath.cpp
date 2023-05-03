@@ -1,4 +1,5 @@
-#include "utils2.hpp"
+#include <sstream>
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -25,10 +26,41 @@ class Solution {
 
       return res.size() ? res : "/";
     }
+
+    string simplifyPathO1(string path) {
+      int n = path.size();
+
+      vector<string_view> dirs;
+      for (int i = 0; i < n; ++i)
+        if (path[i] != '/') {
+          int j = i + 1;
+          for (; j < n && path[j] != '/'; ++j);
+
+          string_view sv(path.c_str() + i, j - i);
+
+          if (".." == sv) {
+            if (!dirs.empty())
+              dirs.pop_back();
+          }
+          else if ("." != sv)
+            dirs.push_back(sv);
+
+          i = j;
+        }
+
+      string res;
+      for (int i = 0; i < (int) dirs.size(); ++i) {
+        res.push_back('/');
+        res.append(dirs[i]);
+      }
+
+      return res.empty() ? "/" : res;
+    }
 };
 
 
 int main() {
-  UFUNC(Solution::simplifyPath);
+  EXECS(Solution::simplifyPath);
+  EXECS(Solution::simplifyPathO1);
   return 0;
 }

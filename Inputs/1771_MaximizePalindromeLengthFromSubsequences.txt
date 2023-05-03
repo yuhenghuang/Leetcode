@@ -1,0 +1,6 @@
+"cacb", "cbba"
+"ab", "ab"
+"aa", "bb"
+"a", "a"
+"e", "dc"
+"afaaadacb", "ca"
