@@ -1,0 +1,3 @@
+["FrequencyTracker", "add", "add", "hasFrequency"], [[], [3], [3], [2]]
+["FrequencyTracker", "add", "deleteOne", "hasFrequency"], [[], [1], [1], [1]]
+["FrequencyTracker", "hasFrequency", "add", "hasFrequency"], [[], [2], [3], [1]]

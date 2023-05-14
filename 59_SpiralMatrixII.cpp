@@ -1,6 +1,13 @@
 #include <local_leetcode.hpp>
 
-class SpiralIterator: public iterator<forward_iterator_tag, int> {
+class SpiralIterator {
+  public:
+    typedef int value_type;
+    typedef ptrdiff_t difference_type;
+    typedef int* pointer;
+    typedef int& reference;
+    typedef forward_iterator_tag iterator_category;
+
   private:
     static constexpr int dirs[4][2] = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
 
@@ -84,11 +91,41 @@ class Solution {
 
       return res;
     }
+
+    vector<vector<int>> generateMatrixNew(int _n) {
+      constexpr int dirs[4][2] {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+
+      int m = _n - 1;
+      int n = _n;
+
+      int i = 0;
+      int j = -1;
+      int d = 0;
+
+      int num = 0;
+
+      vector<vector<int>> res(n, vector<int>(n));
+      while (m >= 0 && n >= 0) {
+        int& l = (d & 1) ? m : n;
+
+        for (int k = 0; k < l; ++k) {
+          i += dirs[d][0];
+          j += dirs[d][1];
+          res[i][j] = ++num;
+        }
+
+        --l;
+        d = (d + 1) % 4;
+      }
+
+      return res;
+    }
 };
 
 
 int main() {
   EXECS(Solution::generateMatrix);
   EXECS(Solution::generateMatrixIter);
+  EXECS(Solution::generateMatrixNew);
   return 0;
 }

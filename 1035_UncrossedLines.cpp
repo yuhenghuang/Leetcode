@@ -3,8 +3,8 @@
 class Solution {
   public:
     int maxUncrossedLines(vector<int>& nums1, vector<int>& nums2) {
-      int m = nums1.size();
-      int n = nums2.size();
+      const int m = nums1.size();
+      const int n = nums2.size();
 
       int dp[m+1][n+1];
       for (int i = 0; i <= m; ++i)
