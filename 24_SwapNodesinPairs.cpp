@@ -1,4 +1,4 @@
-#include "utils.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -18,6 +18,6 @@ class Solution {
 
 
 int main() {
-  UFUNC(Solution::swapPairs);
+  EXECS(Solution::swapPairs);
   return 0;
 }

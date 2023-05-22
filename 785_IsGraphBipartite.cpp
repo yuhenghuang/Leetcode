@@ -1,4 +1,4 @@
-#include "utils2.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
@@ -43,6 +43,6 @@ class Solution {
 
 
 int main() {
-  UFUNC(Solution::isBipartite);
+  EXECS(Solution::isBipartite);
   return 0;
 }

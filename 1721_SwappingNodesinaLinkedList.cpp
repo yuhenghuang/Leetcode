@@ -1,4 +1,4 @@
-#include "utils2.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
@@ -45,6 +45,6 @@ class Solution {
 
 
 int main() {
-  UFUNC(Solution::swapNodes);
+  EXECS(Solution::swapNodes);
   return 0;
 }

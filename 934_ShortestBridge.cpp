@@ -1,3 +1,4 @@
+/*
 #include <vector>
 #include <queue>
 #include <iostream>
@@ -8,6 +9,10 @@ static int emm = [](){
   cin.tie(nullptr);
   return 0;
 }();
+*/
+
+#include <local_leetcode.hpp>
+
 
 class Solution {
   private:
@@ -19,6 +24,7 @@ class Solution {
       m = A.size();
       n = A[0].size();
 
+      // update values of $island 1$ to 2
       bool flag=false;
       for (int i=0; i<m; ++i) {
         for (int j=0; j<n; ++j)
@@ -38,7 +44,10 @@ class Solution {
           for (int k=0; k<4; ++k) {
             int i = p.first+dir[k][0], j = p.second+dir[k][1];
             if (i<0 || i>=m || j<0 || j>=n || A[i][j]==2) continue;
+            // until $island 2$ whose value is 1 is found
             if (A[i][j]==1) return res;
+
+            // expand island 1 by one step each time
             A[i][j] = 2;
             q.push({i, j});
           }
@@ -59,8 +68,12 @@ class Solution {
 };
 
 int main() {
+  /*
   Solution sol;
   vector<vector<int>> A = {{0,1,0},{0,0,0},{0,0,1}};
   cout << sol.shortestBridge(A) << endl;
+  */
+
+  EXECS(Solution::shortestBridge);
   return 0;
 }

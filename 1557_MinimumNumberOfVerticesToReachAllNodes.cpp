@@ -1,16 +1,12 @@
-#include <numeric>
-#include <set>
-#include "utils3.hpp"
+#include <local_leetcode.hpp>
 
 struct UnionFind {
   vector<int> parent;
 
-  UnionFind(int n): parent(n) {
-    iota(parent.begin(), parent.end(), 0);
-  }
+  UnionFind(int n): parent(n, -1) { }
 
   int find(int p) {
-    if (parent[p] == p)
+    if (parent[p] == -1)
       return p;
     
     return parent[p] = find(parent[p]);
@@ -25,22 +21,22 @@ struct UnionFind {
 class Solution {
   public:
     vector<int> findSmallestSetOfVertices(int n, vector<vector<int>>& edges) {
-
       UnionFind uf(n);
 
       for (vector<int>& e : edges)
         uf.join(e[0], e[1]);
 
-      set<int> res;
+      vector<int> res;
       for (int i = 0; i < n; ++i)
-        res.insert(uf.find(i));
+        if (uf.find(i) == i)
+          res.push_back(i);
 
-      return vector<int>(res.begin(), res.end());
+      return res;
     }
 };
 
 
 int main() {
-  UFUNCS(Solution::findSmallestSetOfVertices);
+  EXECS(Solution::findSmallestSetOfVertices);
   return 0;
 }
