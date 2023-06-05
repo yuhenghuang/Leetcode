@@ -1,8 +1,8 @@
-#include "utils2.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
-    int dir[8][2] = {
+    static constexpr int dir[8][2] = {
       {1, 0}, {-1, 0}, {0, 1}, {0, -1},
       {-1, -1}, {-1, 1}, {1, -1}, {1, 1}
     };
@@ -45,6 +45,6 @@ class Solution {
 
 
 int main() {
-  UFUNC(Solution::shortestPathBinaryMatrix);
+  EXECS(Solution::shortestPathBinaryMatrix);
   return 0;
 }

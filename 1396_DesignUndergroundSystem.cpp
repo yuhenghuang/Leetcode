@@ -2,7 +2,10 @@
 
 class UndergroundSystem {
   private:
+    // interval, (total time, total trips)
     unordered_map<string, pair<int, int>> trips;
+
+    // id, (checkin station, checkin time)
     unordered_map<int, pair<string, int>> onBoard;
   
   public:

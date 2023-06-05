@@ -90,7 +90,7 @@ class MyHashSet {
 
       // to do: early stop needed?
       b.remove_if(
-        [this, &key](const int& val) -> bool {
+        [this, key](int val) -> bool {
           if (val == key) {
             --size;
             return true;

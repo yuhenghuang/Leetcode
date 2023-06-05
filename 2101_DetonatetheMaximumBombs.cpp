@@ -25,7 +25,7 @@ class Solution {
         }
     };
 
-    long square(long x) { return x*x;}
+    int64_t square(int64_t x) { return x*x;}
 
     int dfs(int v, const vector<vector<int>>& graph, bool visited[]) {
       if (visited[v])
@@ -75,7 +75,7 @@ class Solution {
         for (int j = 0; j < i; ++j) {
           vector<int>& y = bombs[j];
 
-          long dist = square(x[0] - y[0]) + square(x[1] - y[1]);
+          int64_t dist = square(x[0] - y[0]) + square(x[1] - y[1]);
 
           if (dist <= square(x[2])) 
             graph[i].push_back(j);

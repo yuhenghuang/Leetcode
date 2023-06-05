@@ -1,4 +1,4 @@
-#include "utils3.hpp"
+#include <local_leetcode.hpp>
 
 class KthLargest {
   private:
@@ -11,7 +11,7 @@ class KthLargest {
       // count of nodes less than val
       int large;
 
-      Node(int _val): val(_val), count(1), large(0), left(nullptr), right(nullptr) { }
+      Node(int _val): left(nullptr), right(nullptr), val(_val), count(1), large(0) { }
     };
 
     int k;
@@ -56,14 +56,43 @@ class KthLargest {
       return query(root, k);
     }
 
-    ~KthLargest() { utils3::destroy(root); };
+    ~KthLargest() { ll::destroy(root); };
+};
+
+
+class KthLargestPQ {
+  private:
+    int k;
+    priority_queue<int, vector<int>, greater<int>> heap; // min heap
+
+  public:
+    KthLargestPQ(int k, vector<int>& nums): k(k) {
+      for (int num : nums)
+        add(num);
+    }
+    
+    int add(int val) {
+      if (heap.size() < k)
+        heap.push(val);
+      else if (val > heap.top()) {
+        heap.pop();
+        heap.push(val);
+      }
+
+      return heap.top();
+    }
 };
 
 
 int main() {
-  UFUNCX(
+  EXECX(
     CTOR(int, vector<int>&),
     &KthLargest::add
+  );
+
+  EXECX(
+    CTOR(int, vector<int>&),
+    &KthLargestPQ::add
   );
   return 0;
 }

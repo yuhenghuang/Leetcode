@@ -1,6 +1,4 @@
-#include <numeric>
-#include <unordered_set>
-#include "utils3.hpp"
+#include <local_leetcode.hpp>
 
 
 class UnionFind {
@@ -8,12 +6,10 @@ class UnionFind {
     vector<int> parent, rank;
   
   public:
-    UnionFind(int n): parent(n), rank(n) {
-      iota(parent.begin(), parent.end(), 0);
-    }
+    UnionFind(int n): parent(n, -1), rank(n) { }
 
     int find(int p) {
-      if (parent[p] == p)
+      if (parent[p] == -1)
         return p;
       
       return parent[p] = find(parent[p]);
@@ -65,6 +61,6 @@ class Solution {
 
 
 int main() {
-  UFUNCS(Solution::findCircleNum);
+  EXECS(Solution::findCircleNum);
   return 0;
 }
