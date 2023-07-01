@@ -1,8 +1,8 @@
-#include "utils3.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
-    long area(long d, long h) {
+    int64_t area(int64_t d, int64_t h) {
       return (h + max(h - d, 0L) + 1) * min(d, h) / 2 + max(d - h, 0L);
     }
 
@@ -24,6 +24,6 @@ class Solution {
 
 
 int main() {
-  UFUNCS(Solution::maxValue);
+  EXECS(Solution::maxValue);
   return 0;
 }

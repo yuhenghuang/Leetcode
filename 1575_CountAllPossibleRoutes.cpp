@@ -1,11 +1,11 @@
-#include "utils3.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
     int countRoutes(vector<int>& locations, int start, int finish, int fuel) {
       constexpr int mod = 1e9 + 7;
 
-      int n = locations.size();
+      const int n = locations.size();
 
       int distance[n][n];
       for (int i = 0; i < n; ++i) {
@@ -42,6 +42,6 @@ class Solution {
 
 
 int main() {
-  UFUNCS(Solution::countRoutes);
+  EXECS(Solution::countRoutes);
   return 0;
 }
