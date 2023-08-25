@@ -45,7 +45,7 @@ class Solution {
 
         int64_t res = 0;
         for (int i = 0; i < n - k; ++i)
-          res += pairs[n-1 - i] - pairs[i];
+          res += pairs[n - 1 - i] - pairs[i];
 
         return res;
       }

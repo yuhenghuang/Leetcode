@@ -1,8 +1,10 @@
-bool isBadVersion(int version);
+#include <local_leetcode.hpp>
+
+// bool isBadVersion(int version);
 
 class Solution {
   public:
-    int firstBadVersion(int n) {
+    int firstBadVersion(int n, IsBadVersion isBadVersion) {
       int l=1, r=n;
       while (l<r) {
         int m = (r-l)/2 + l;
@@ -14,3 +16,9 @@ class Solution {
       return l;
     }
 };
+
+
+int main() {
+  EXECS(Solution::firstBadVersion);
+  return 0;
+}

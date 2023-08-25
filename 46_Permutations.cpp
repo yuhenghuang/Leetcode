@@ -1,4 +1,4 @@
-#include "utils3.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
@@ -34,6 +34,6 @@ class Solution {
 
 
 int main() {
-  UFUNCS(Solution::permute);
+  EXECS(Solution::permute);
   return 0;
 }

@@ -1,3 +1,4 @@
+/*
 #include <vector>
 #include <queue>
 #include <iostream>
@@ -8,6 +9,10 @@ static int emm = []() {
   cin.tie(nullptr);
   return 1;
 }();
+
+*/
+
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -40,3 +45,9 @@ class Solution {
       return true;
     }
 };
+
+
+int main() {
+  EXECS(Solution::canFinish);
+  return 0;
+}
