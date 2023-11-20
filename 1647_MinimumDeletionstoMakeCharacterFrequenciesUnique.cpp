@@ -1,4 +1,4 @@
-#include "utils3.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -29,10 +29,34 @@ class Solution {
 
       return res;
     }
+
+    int minDeletionsHeap(string s) {
+      int count[26] = {0};
+
+      for (char c : s)
+        ++count[c - 'a'];
+
+      int res = 0;
+      priority_queue<int> heap(begin(count), end(count)); // max heap;
+
+      while (heap.size() > 1 && heap.top() > 0) {
+        int f = heap.top();
+        heap.pop();
+
+        // characters of the same frequency found
+        if (heap.top() == f) {
+          heap.push(f - 1); // decrement frequency of either character by 1
+          ++res; // increment result
+        }
+      }
+
+      return res;
+    }
 };
 
 
 int main() {
-  UFUNCS(Solution::minDeletions);
+  EXECS(Solution::minDeletions);
+  EXECS(Solution::minDeletionsHeap);
   return 0;
 }

@@ -1,0 +1,11 @@
+["This", "is", "an", "example", "of", "text", "justification."], 16
+["What","must","be","acknowledgment","shall","be"], 16
+["Science","is","what","we","understand","well","enough","to","explain","to","a","computer.","Art","is","everything","else","we","do"], 20
+["My","momma","always","said,","Life","was","like","a","box","of","chocolates.","You","never","know","what","you're","gonna","get."], 20
+["What","must","be","shall","be."], 12
+["a","b","c","d"], 3
+["a"], 2
+["Here","is","an","example","of","text","justification."], 14
+["What","must","be","shall","be."], 12
+["", "", "", "","a"], 4
+["a","b","c","d", "asdfghjkl"], 9

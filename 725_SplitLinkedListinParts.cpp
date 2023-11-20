@@ -1,4 +1,4 @@
-#include "utils3.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -35,6 +35,6 @@ class Solution {
 
 
 int main() {
-  UFUNCS(Solution::splitListToParts);
+  EXECS(Solution::splitListToParts);
   return 0;
 }

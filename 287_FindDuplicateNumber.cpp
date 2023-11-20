@@ -17,16 +17,15 @@ class Solution {
       return fast;
     }
 
-    int findDuplicateSwap(vector<int>& nums) {
-      // incomplete
+    int findDuplicateBit(vector<int>& nums) {
+      // wrong answer
+      const int n = nums.size();
 
-      int n = nums.size();
-      for (int i = 0; i < n; ++i) {
-        int j = nums[i] - 1;
+      int res = n;
+      for (int i = 0; i < n; ++i)
+        res ^= nums[i] ^ (i + 1);
 
-      }
-
-      return -1;
+      return res;
     }
 };
 
@@ -38,6 +37,6 @@ int main() {
   */
 
   EXECS(Solution::findDuplicate);
-  // EXECS(Solution::findDuplicateSwap);
+  EXECS(Solution::findDuplicateBit);
   return 0;
 }

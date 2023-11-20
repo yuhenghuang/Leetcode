@@ -1,5 +1,4 @@
-#include <numeric>
-#include "utils2.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -46,11 +45,7 @@ class Solution {
 
 
 int main() {
-  {
-    UFUNC(Solution::candyOn);
-  }
-  {
-    UFUNC(Solution::candy);
-  }
+  EXECS(Solution::candyOn);
+  EXECS(Solution::candy);
   return 0;
 }

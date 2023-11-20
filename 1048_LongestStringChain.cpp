@@ -1,5 +1,4 @@
-#include <unordered_set>
-#include "utils2.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
@@ -75,11 +74,7 @@ class Solution {
 
 
 int main() {
-  {
-    UFUNC(Solution::longestStrChain);
-  }
-  {
-    UFUNC(Solution::longestStrChainDP);
-  }
+    EXECS(Solution::longestStrChain);
+    EXECS(Solution::longestStrChainDP);
   return 0;
 }
