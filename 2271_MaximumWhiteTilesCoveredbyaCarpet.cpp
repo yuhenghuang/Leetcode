@@ -2,9 +2,9 @@
 
 class Solution {
   private:
-    typedef pair<int, int> ll_t;
+    typedef pair<int, int> ii_t;
 
-    int lower_bound(vector<ll_t>& arr, int t, int l, int r) {
+    int lower_bound(vector<ii_t>& arr, int t, int l, int r) {
       while (l < r) {
         int m = l + (r - l) / 2;
 
@@ -22,7 +22,7 @@ class Solution {
       int n = _tiles.size();
 
       // start index, length
-      vector<ll_t> tiles;
+      vector<ii_t> tiles;
       tiles.reserve(n);
 
       for (auto& t : _tiles)
@@ -56,7 +56,7 @@ class Solution {
       // O(1) memory
 
       int n = _tiles.size();
-      vector<ll_t> tiles(n);
+      vector<ii_t> tiles(n);
 
       for (int i = 0; i < n; ++i) {
         tiles[i].first = _tiles[i][0];

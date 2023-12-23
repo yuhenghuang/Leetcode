@@ -3,8 +3,8 @@
 class Solution {
   public:
     vector<vector<int>> transpose(vector<vector<int>>& matrix) {
-      int m = matrix.size();
-      int n = matrix[0].size();
+      const int m = matrix.size();
+      const int n = matrix[0].size();
 
       if (m == n) {
         for (int i = 1; i < n; ++i)

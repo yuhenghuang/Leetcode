@@ -1,0 +1,3 @@
+"AAABABB"
+"AA"
+"ABBBBBBBAAA"

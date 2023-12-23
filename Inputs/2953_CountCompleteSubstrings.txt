@@ -1,0 +1,6 @@
+"vvyyyvyvvyvvvyvvyvvvvyvvvyvvvyvvyyyyvyyy", 5
+"abab", 1
+"igigee", 2
+"aaabbbccc", 3
+"a", 1
+"aaa", 1

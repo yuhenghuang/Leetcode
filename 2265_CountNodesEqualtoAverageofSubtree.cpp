@@ -2,18 +2,18 @@
 
 class Solution {
   private:
-    typedef pair<int, int> ll_t;
+    typedef pair<int, int> ii_t;
 
     int res;
 
-    ll_t dfs(TreeNode* root) {
+    ii_t dfs(TreeNode* root) {
       if (!root)
-        return ll_t();
+        return ii_t();
 
-      ll_t out(root->val, 1);
+      ii_t out(root->val, 1);
 
-      ll_t&& left = dfs(root->left);
-      ll_t&& right = dfs(root->right);
+      ii_t&& left = dfs(root->left);
+      ii_t&& right = dfs(root->right);
 
       out.first += left.first + right.first;
       out.second += left.second + right.second;
