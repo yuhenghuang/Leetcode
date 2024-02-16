@@ -1,4 +1,4 @@
-#include "utils3.hpp"
+#include <local_leetcode.hpp>
 
 class RandomizedSet {
   private:
@@ -48,7 +48,7 @@ class RandomizedSet {
 };
 
 int main() {
-  UFUNCX(
+  EXECX(
     CTOR(),
     &RandomizedSet::insert,
     &RandomizedSet::remove,
