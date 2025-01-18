@@ -16,6 +16,10 @@ then
     if [ -x "$(command -v powershell.exe)" ]
     then
       template=$(powershell.exe -Command get-clipboard)
+    # macos or not
+    elif [ -x "$(command -v pbpaste)" ]
+    then
+      template=$(pbpaste)
     else
       template=$(xclip -selection c -o)
     fi
