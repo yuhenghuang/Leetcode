@@ -1,0 +1,22 @@
+{
+  "configurations": [
+    {
+      "name": "Mac",
+      "includePath": [
+        "${workspaceFolder}/",
+        "${HOME}/programming/local_leetcode/include/"
+      ],
+      "defines": [],
+      "compilerPath": "/usr/bin/clang",
+      "compilerArgs": [
+        // "-stdlib=libc++"
+        "-L${HOME}/programming/local_leetcode/build/lib",
+        "-llocal_leetcode"
+      ],
+      "cStandard": "c17",
+      "cppStandard": "c++17",
+      "intelliSenseMode": "macos-clang-arm64"
+    }
+  ],
+  "version": 4
+}

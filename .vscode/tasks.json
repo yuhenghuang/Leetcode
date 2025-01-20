@@ -1,0 +1,77 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "shell",
+      "label": "C/C++: clang++ build active file",
+      "command": "/usr/bin/clang++",
+      "args": [
+        "-std=c++17",
+        // "-stdlib=libc++",
+
+        // where headers of local leetcode located
+        "-I${HOME}/programming/local_leetcode/include",
+        // where library of local leetcode located
+        "-L${HOME}/programming/local_leetcode/build/lib",
+        "-fsanitize=address",
+        "-fsanitize=undefined",
+        "-fno-omit-frame-pointer",
+        "-Wall",
+        "-O2",
+        "${file}",
+        "-o",
+        // where output executable binary located
+        "${workspaceFolder}/ExeFiles/${fileBasenameNoExtension}",
+        // "-g",
+        // "-lc++abi",
+        "-llocal_leetcode"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "detail": "compiler: /usr/bin/clang++"
+    },
+    {
+      "type": "shell",
+      "label": "C/C++: clang++ build active file for debug",
+      "command": "/usr/bin/clang++",
+      "args": [
+        "-std=c++17",
+        // "-stdlib=libc++",
+
+        // where headers of local leetcode located
+        "-I${HOME}/programming/local_leetcode/include",
+        // where library of local leetcode located
+        "-L${HOME}/programming/local_leetcode/build/lib",
+        "-fsanitize=address",
+        "-fsanitize=undefined",
+        "-fno-omit-frame-pointer",
+        "-fstandalone-debug",
+        "-g",
+        // "-D_LIBCPP_DEBUG=1",
+        // "-O2",
+        "${file}",
+        "-o",
+        // where output executable binary located
+        "${workspaceFolder}/ExeFiles/${fileBasenameNoExtension}",
+        // "-lc++abi",
+        "-llocal_leetcode"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "group": "build",
+      "detail": "compiler: /usr/bin/clang++"
+    },
+  ]
+}
