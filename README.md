@@ -6,6 +6,13 @@ Save my solutions to leecode problems
 
 Visit public repository of [local leetcode](https://github.com/yuhenghuang/local_leetcode) for more information!!!
 
+
+
+EVERYTHING BELOW IS OUTDATED!!!
+EVERYTHING BELOW IS OUTDATED!!!
+EVERYTHING BELOW IS OUTDATED!!!
+
+
 ### Shift to `utils3` seamlessly
 
 **MAJOR UPDATE!!**
