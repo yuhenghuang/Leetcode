@@ -1,16 +1,18 @@
 #!/bin/sh
 
 cppfile=$1
+
+cpppath="src/$cppfile"
 ext=${cppfile#*.}
 
 if [ "$ext" = "cpp" ] || [ "$ext" = "java" ]
 then
 
   # avoid unexpected overwrite
-  if [ ! -f $cppfile ]
+  if [ ! -f $cpppath ]
   then # flush header and clipboard
   
-    printf "#include <local_leetcode.hpp>\n\n" >> ${cppfile}
+    printf "#include <local_leetcode.hpp>\n\n" >> ${cpppath}
 
     # wsl or not
     if [ -x "$(command -v powershell.exe)" ]
@@ -27,10 +29,10 @@ then
     # remove line numbers
     template=$(echo "$template" | sed -E 's/^[0-9]+//')
     
-    printf "${template}" >> $cppfile;
+    printf "${template}" >> $cpppath;
     # create main() and flush
     method=$(echo $template | sed -E 's/.*[a-zA-Z<>\\*]+\s([a-zA-Z]+)\s?\(.*/\1/')
-    printf "\n\n\nint main() {\n  EXECS(Solution::${method});\n  return 0;\n}" >> ${cppfile}
+    printf "\n\n\nint main() {\n  EXECS(Solution::${method});\n  return 0;\n}" >> ${cpppath}
   fi
 
   # create input file
@@ -39,8 +41,8 @@ then
   if [ -x "$(command -v code)" ]
   then
     # open $cppfile first and return to it last
-    code $cppfile
+    code $cpppath
     code $txtfile
-    code $cppfile
+    code $cpppath
   fi
 fi
