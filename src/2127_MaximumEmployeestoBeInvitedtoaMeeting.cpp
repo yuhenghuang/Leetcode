@@ -5,23 +5,26 @@ class Solution {
     enum COLOR {WHITE, BLACK, GREY};
 
     struct Node {
+      COLOR color;
+
       bool circle; // is node on a circle
-      int chain; // is node on a chain with a circle of size 2 at end
+      bool chain; // is node on a chain with a circle of size 2 at end
       int id;
       int level;
       int length;
-      COLOR color;
 
-      Node(): color(WHITE), chain(-1) { }
+      Node(): color(WHITE), chain(false) { }
     };
 
     int uid;
 
-    int dfs(int v, vector<int>& edge, vector<Node>& nodes, vector<int>& side) {
+    int dfs(int v, vector<int>& edge, vector<Node>& nodes) {
       Node& node = nodes[v];
-
-      if (node.color == BLACK) // visited node
-        return nodes[node.level].length;
+      
+      // visited node
+      if (node.color == BLACK) {
+        return node.chain ? node.length : 0;
+      }
 
       node.color = GREY;
       node.level = node.id = uid++;
@@ -33,29 +36,26 @@ class Solution {
         node.level = next.level;
       }
       else if (next.color == BLACK) {
-        len = dfs(edge[v], edge, nodes, side);
+        len = dfs(edge[v], edge, nodes);
       }
       else {
-        len = dfs(edge[v], edge, nodes, side);
+        len = dfs(edge[v], edge, nodes);
         node.level = min(node.id, next.level);
       }
         
       node.circle = node.level == next.level;
 
-      if (next.chain >= 0)
+      if (next.chain)
         node.chain = next.chain;
+      // node in a circle
+      // node is the first one searched in the circle
+      // size of circle is 1 (without node)
       else if (node.circle && node.id == node.level && len == 1) {
-        node.chain = node.id;
-        next.chain = next.id;
-
-        side[next.chain] = 2;
+        node.chain = next.chain = true;
       }
 
-      if (node.circle || node.chain >= 0)
+      if (node.circle || node.chain)
         ++len;
-
-      if (node.chain >= 0)
-        side[node.chain] = max(side[node.chain], len);
 
       node.color = BLACK;
 
@@ -70,19 +70,18 @@ class Solution {
 
       int n = favorite.size();
 
-      vector<int> side(n);
       vector<Node> nodes(n);
 
-      int res = 0;
+      int res = 0; // longest circle or chain
       for (int i = 0; i < n; ++i)
-        res = max(res, dfs(i, favorite, nodes, side));
+        res = max(res, dfs(i, favorite, nodes));
 
-      int temp = 0;
+      int tmp = 0; // combination of all chains
       for (int i = 0; i < n; ++i)
-        if (i < favorite[i] && favorite[favorite[i]] == i) 
-          temp += side[i] + side[favorite[i]] - 2;
+        if (nodes[i].chain)
+          ++tmp;
 
-      return max(res, temp);
+      return max(res, tmp);
     }
 };
 
