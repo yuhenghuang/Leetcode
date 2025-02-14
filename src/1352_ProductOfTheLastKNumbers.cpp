@@ -1,4 +1,4 @@
-#include "utils3.hpp"
+#include <local_leetcode.hpp>
 
 class ProductOfNumbers {
   private:
@@ -24,7 +24,7 @@ class ProductOfNumbers {
 
 
 int main() {
-  UFUNCX(
+  EXECX(
     CTOR(),
     &ProductOfNumbers::add,
     &ProductOfNumbers::getProduct
