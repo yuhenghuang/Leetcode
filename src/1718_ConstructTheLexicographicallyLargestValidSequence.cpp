@@ -1,4 +1,4 @@
-#include "utils3.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   private:
@@ -41,7 +41,7 @@ class Solution {
     vector<int> constructDistancedSequence(int n) {
       vector<int> s(n*2 - 1, -1);
       vector<int> res;
-      vector<bool> used(n + 1);
+      vector<bool> used(n + 1);s
 
       dfs(0, n, used, s, res);
 
@@ -51,6 +51,6 @@ class Solution {
 
 
 int main() {
-  UFUNCS(Solution::constructDistancedSequence);
+  EXECS(Solution::constructDistancedSequence);
   return 0;
 }

@@ -60,10 +60,51 @@ class Solution {
       }
       return root;
     }
+
+    
+    TreeNode* recoverFromPreorderNew(string traversal) {
+      auto next_int = [](const char* &c_ptr) {
+        int res = 0;
+        for (;*c_ptr != '\0' and *c_ptr != '-'; ++c_ptr)
+          res = res * 10 + (*c_ptr - '0');
+        return res;
+      };
+
+      auto next_depth = [](const char* &c_ptr) {
+        size_t depth = 0;
+        for (;*c_ptr == '-'; ++c_ptr)
+          ++depth;
+        return depth;
+      };
+
+      const char* c_ptr = traversal.c_str();
+
+      TreeNode* root = new TreeNode(next_int(c_ptr));
+
+      stack<TreeNode*> s;
+      s.push(root);
+      while (*c_ptr != '\0') {
+        size_t depth = next_depth(c_ptr);
+
+        TreeNode* node = new TreeNode(next_int(c_ptr));
+
+        for (; s.size() > depth; s.pop());
+
+        if (s.top()->left)
+          s.top()->right = node;
+        else
+          s.top()->left = node;
+        
+        s.push(node);
+      }
+
+      return root;
+    }
 };
 
 
 int main() {
   EXECS(Solution::recoverFromPreorder);
+  EXECS(Solution::recoverFromPreorderNew);
   return 0;
 }
