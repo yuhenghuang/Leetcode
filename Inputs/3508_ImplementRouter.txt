@@ -1,0 +1,4 @@
+["Router", "addPacket", "addPacket", "addPacket", "addPacket", "addPacket", "forwardPacket", "addPacket", "getCount"], [[3], [1, 4, 90], [2, 5, 90], [1, 4, 90], [3, 5, 95], [4, 5, 105], [], [5, 2, 110], [5, 100, 110]]
+["Router", "addPacket", "forwardPacket", "forwardPacket"], [[2], [7, 4, 90], [], []]
+["Router","addPacket","addPacket","addPacket","getCount","forwardPacket","addPacket"], [[2],[3,5,1],[1,4,3],[1,3,3],[5,2,3],[],[1,4,3]]
+["Router","addPacket","getCount"], [[4],[4,5,1],[5,1,1]]
