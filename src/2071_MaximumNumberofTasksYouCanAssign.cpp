@@ -1,4 +1,4 @@
-#include "utils3.hpp"
+#include <local_leetcode.hpp>
 
 class Solution {
   public:
@@ -87,7 +87,7 @@ class Solution {
 
 
 int main() {
-  UFUNCS(Solution::maxTaskAssignWrong);
-  UFUNCS(Solution::maxTaskAssign);
+  EXECS(Solution::maxTaskAssignWrong);
+  EXECS(Solution::maxTaskAssign);
   return 0;
 }

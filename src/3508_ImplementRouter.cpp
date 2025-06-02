@@ -181,7 +181,7 @@ class RouterFast {
         s.emplace(source, destination);
       }
       else {
-        i2_t p =i2_t(source, destination);
+        i2_t p = i2_t(source, destination);
         if (s.count(p))
           return false;
         else
@@ -249,5 +249,6 @@ int main() {
     &RouterFast::forwardPacket,
     &RouterFast::getCount
   );
+  
   return 0;
 }
