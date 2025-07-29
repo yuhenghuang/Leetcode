@@ -29,7 +29,7 @@ class Bit {
 
     bool operator!=(int num) const { return this->num != num; }
 
-    const int& get_num() const { return num; }
+    const int get_num() const { return num; }
 };
 
 
@@ -38,7 +38,8 @@ class Solution {
     vector<int> smallestSubarrays(vector<int>& nums) {
       int n = nums.size();
 
-      Bit remain, curr;
+      Bit remain; // remaining subarray with max bitor
+      Bit curr; // current subarray
 
       for (int num : nums)
         remain += num;
@@ -46,7 +47,7 @@ class Solution {
       vector<int> res(n);
       int j = 0;
       for (int i = 0; i < n; ++i) {
-        for (; j < n && curr != remain.get_num(); ++j)
+        for (; j < n and curr != remain.get_num(); ++j)
           curr += nums[j];
 
         res[i] = max(j - i, 1);
